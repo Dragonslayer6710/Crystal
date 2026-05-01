@@ -1,0 +1,13 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation project(':crystal-engine')
+
+    implementation "org.slf4j:slf4j-api:2.0.13"
+}
+
+application {
+    mainClass = 'com.crystal.sandbox.SandboxMain'
+}

@@ -1,0 +1,23 @@
+plugins {
+    id 'java-library'
+}
+
+def lwjglVersion = "3.3.3"
+def natives = "natives-windows"
+
+dependencies {
+    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+
+    implementation "org.lwjgl:lwjgl"
+    implementation "org.lwjgl:lwjgl-glfw"
+    implementation "org.lwjgl:lwjgl-opengl"
+
+    runtimeOnly "org.lwjgl:lwjgl:$natives"
+    runtimeOnly "org.lwjgl:lwjgl-glfw:$natives"
+    runtimeOnly "org.lwjgl:lwjgl-opengl:$natives"
+
+    // Logging
+    implementation "org.slf4j:slf4j-api:2.0.13"
+    runtimeOnly 'ch.qos.logback:logback-classic:1.5.13'
+    runtimeOnly "org.fusesource.jansi:jansi:2.4.1"
+}
