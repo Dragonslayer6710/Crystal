@@ -1,0 +1,30 @@
+package com.crystal.engine.render;
+
+import static org.lwjgl.opengl.GL46.*;
+
+public class Renderer {
+
+    private final RenderQueue queue = new RenderQueue();
+
+    public void init(int width, int height) {
+        glViewport(0, 0, width, height);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LESS);
+    }
+
+    // Called at start of frame
+    public void beginFrame() {
+        queue.clear();
+    }
+
+    // Game submits commands through context -> renderer
+    public void submit(RenderCommand command) {
+        queue.submit(command);
+    }
+
+    // Called at end of frame
+    public void renderFrame() {
+        queue.execute();
+    }
+
+}

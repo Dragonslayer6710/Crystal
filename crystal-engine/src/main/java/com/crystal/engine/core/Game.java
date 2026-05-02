@@ -1,7 +1,7 @@
 package com.crystal.engine.core;
 
 public interface Game {
-    void init();
+    void init(EngineContext ctx);
     void update(double deltaTime);
     void render();
     void shutdown();
