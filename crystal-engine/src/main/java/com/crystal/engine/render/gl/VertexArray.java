@@ -19,7 +19,8 @@ public class VertexArray {
         );
     }
 
-    public void setAttribute(int attribIndex, int bindingIndex, int size, int type, boolean normalized, int rOffset) {
+    public void setAttribute(int attribIndex, int bindingIndex, int size,
+                             int type, boolean normalized, int relativeOffset) {
         glEnableVertexArrayAttrib(id, attribIndex);
         glVertexArrayAttribFormat(
                 id,
@@ -27,7 +28,7 @@ public class VertexArray {
                 size,
                 type,
                 normalized,
-                rOffset
+                relativeOffset
         );
 
         glVertexArrayAttribBinding(
@@ -43,10 +44,6 @@ public class VertexArray {
 
     public void unbind() {
         glBindVertexArray(0);
-    }
-
-    public int getId() {
-        return id;
     }
 
     public void delete() {

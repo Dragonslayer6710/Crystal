@@ -1,12 +1,14 @@
 package com.crystal.engine.render.shader;
 
+import com.crystal.engine.core.Disposable;
+
 import static org.lwjgl.opengl.GL46.*;
 
-public class Shader {
+public class ShaderProgram implements Disposable {
 
     private final int programId;
 
-    public Shader(String vertexSrc, String fragmentSrc) {
+    public ShaderProgram(String vertexSrc, String fragmentSrc) {
         int vs = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vs, vertexSrc);
         glCompileShader(vs);
@@ -40,7 +42,8 @@ public class Shader {
         glUseProgram(programId);
     }
 
-    public void delete() {
+    @Override
+    public void dispose() {
         glDeleteProgram(programId);
     }
 }

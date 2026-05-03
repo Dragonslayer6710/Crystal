@@ -1,5 +1,9 @@
 package com.crystal.engine.render;
 
+import com.crystal.engine.render.commands.DrawRenderableCommand;
+import com.crystal.engine.render.scene.Renderable;
+import com.crystal.engine.render.scene.Scene;
+
 import static org.lwjgl.opengl.GL46.*;
 
 public class Renderer {
@@ -15,6 +19,8 @@ public class Renderer {
     // Called at start of frame
     public void beginFrame() {
         queue.clear();
+        glClearColor(0.1f, 0.1f, 0.15f, 1f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
     // Game submits commands through context -> renderer
@@ -27,4 +33,11 @@ public class Renderer {
         queue.execute();
     }
 
+    public void render(Scene scene) {
+        beginFrame();
+        for (Renderable r : scene.getRenderables()) {
+            submit(new DrawRenderableCommand(r));
+        }
+        renderFrame();
+    }
 }

@@ -2,10 +2,10 @@ package com.crystal.sandbox;
 
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.render.api.PrimitiveType;
-import com.crystal.engine.render.commands.ClearCommand;
-import com.crystal.engine.render.commands.DrawMeshCommand;
+import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
-import com.crystal.engine.render.shader.Shader;
+import com.crystal.engine.render.scene.Renderable;
+import com.crystal.engine.render.shader.ShaderProgram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,26 +17,17 @@ public class SandboxMain implements Game {
     private static final Logger logger =
             LoggerFactory.getLogger(SandboxMain.class);
 
-    private EngineContext ctx;
-
-    private float[] vertices;
-
-    private Mesh mesh;
-
-    private Shader shader;
-
     @Override
     public void init(EngineContext ctx) {
         logger.info("Game init");
-        this.ctx = ctx;
 
-        vertices = new float[]{
+        Mesh mesh = ctx.getResources().createMesh(PrimitiveType.TRIANGLES, new float[]{
                 0.0f, 0.5f, 0.0f,
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f
-        };
-        mesh = new Mesh(PrimitiveType.TRIANGLES, vertices);
-        shader  = new Shader(
+        });
+
+        ShaderProgram shaderProgram = ctx.getResources().createShaderProgram(
                 """
                 #version 330 core
                 layout(location = 0) in vec3 position;
@@ -52,22 +43,17 @@ public class SandboxMain implements Game {
                 }
                 """
         );
+
+        Material material = new Material(shaderProgram);
+
+        Renderable renderable = new Renderable(mesh, material);
+
+        ctx.getScene().add(renderable);
     }
 
     @Override
     public void update(double dt) {
         // input + game logic later
-    }
-
-    @Override
-    public void render() {
-        ctx.getRenderer().submit(
-                new ClearCommand(0.1f, 0.1f, 0.15f, 1f)
-        );
-
-        ctx.getRenderer().submit(
-                new DrawMeshCommand(mesh, shader)
-        );
     }
 
     @Override

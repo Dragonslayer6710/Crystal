@@ -1,6 +1,7 @@
 package com.crystal.engine.core;
 
 import com.crystal.engine.render.Renderer;
+import com.crystal.engine.render.scene.Scene;
 import org.lwjgl.opengl.GL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,10 +10,13 @@ public class Engine {
 
     private static final Logger logger = LoggerFactory.getLogger(Engine.class);
 
+
     private final Game game;
 
     private Window window;
     private Renderer renderer;
+    private ResourceManager resourceManager;
+    private Scene scene;
     private EngineContext context;
 
     private boolean running;
@@ -36,7 +40,11 @@ public class Engine {
         renderer = new Renderer();
         renderer.init(1280, 720);
 
-        context = new EngineContext(window, renderer);
+        resourceManager = new ResourceManager();
+
+        scene = new Scene();
+
+        context = new EngineContext(window, renderer, resourceManager, scene);
 
         game.init(context);
 
@@ -56,16 +64,10 @@ public class Engine {
             // 1. INPUT / GAME LOGIC
             game.update(dt);
 
-            // 2. START FRAME RENDER
-            renderer.beginFrame();
+            // 2. Renderer Renders Scene
+            renderer.render(context.getScene());
 
-            // 3. GAME SUBMITS DRAW COMMANDS
-            game.render();
-
-            // 4. EXECUTE RENDER COMMANDS
-            renderer.renderFrame();
-
-            // 5. PRESENT FRAME (WINDOW RESPONSIBILITY)
+            // 3. PRESENT FRAME (WINDOW RESPONSIBILITY)
             window.update();
 
             throttle(frameStart);
@@ -87,7 +89,9 @@ public class Engine {
 
     private void shutdown() {
         logger.info("Engine shutting down");
+
         game.shutdown();
+        resourceManager.disposeAll();
         window.destroy();
     }
 }

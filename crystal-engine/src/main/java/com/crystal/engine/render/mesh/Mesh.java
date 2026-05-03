@@ -1,12 +1,13 @@
 package com.crystal.engine.render.mesh;
 
+import com.crystal.engine.core.Disposable;
 import com.crystal.engine.render.api.PrimitiveType;
 import com.crystal.engine.render.gl.VertexArray;
 import com.crystal.engine.render.gl.VertexBuffer;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class Mesh {
+public class Mesh implements Disposable {
 
     private final VertexArray vao;
     private final VertexBuffer vbo;
@@ -45,7 +46,8 @@ public class Mesh {
         vao.unbind();
     }
 
-    public void delete() {
+    @Override
+    public void dispose() {
        vao.delete();
        vbo.delete();
     }
