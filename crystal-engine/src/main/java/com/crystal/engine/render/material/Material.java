@@ -50,4 +50,8 @@ public class Material {
              materialUBO.bind();
         }
     }
+
+    public ShaderProgram getShaderProgram() {
+        return shaderProgram;
+    }
 }

@@ -23,11 +23,6 @@ public class Renderer {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    // Game submits commands through context -> renderer
-    public void submit(RenderCommand command) {
-        queue.submit(command);
-    }
-
     // Called at end of frame
     public void renderFrame() {
         queue.execute();
@@ -36,7 +31,8 @@ public class Renderer {
     public void render(Scene scene) {
         beginFrame();
         for (Renderable r : scene.getRenderables()) {
-            submit(new DrawRenderableCommand(r));
+            // later: use r.getTransform()
+            queue.submit(new DrawRenderableCommand(r, scene.getCamera()));
         }
         renderFrame();
     }

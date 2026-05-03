@@ -5,6 +5,7 @@ import com.crystal.engine.render.api.PrimitiveType;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Renderable;
+import com.crystal.engine.render.scene.Transform;
 import com.crystal.engine.render.shader.ShaderProgram;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,9 +31,14 @@ public class SandboxMain implements Game {
         ShaderProgram shaderProgram = ctx.getResources().createShaderProgram(
                 """
                 #version 330 core
+                
                 layout(location = 0) in vec3 position;
+                
+                uniform vec3 modelPos;
+                
                 void main() {
-                    gl_Position = vec4(position, 1.0);
+                    vec3 worldPos = position - modelPos;
+                    gl_Position = vec4(worldPos, 1.0);
                 }
                 """,
                 """
@@ -46,7 +52,7 @@ public class SandboxMain implements Game {
 
         Material material = new Material(shaderProgram);
 
-        Renderable renderable = new Renderable(mesh, material);
+        Renderable renderable = new Renderable(mesh, material, new Transform(0.5f, 0.0f, 0.0f));
 
         ctx.getScene().add(renderable);
     }

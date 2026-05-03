@@ -2,11 +2,16 @@ package com.crystal.engine.render.shader;
 
 import com.crystal.engine.core.Disposable;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.lwjgl.opengl.GL46.*;
 
 public class ShaderProgram implements Disposable {
 
-    private final int programId;
+    private final int id;
+    private final Map<String, Integer> uniformMap = new HashMap<>();
+
 
     public ShaderProgram(String vertexSrc, String fragmentSrc) {
         int vs = glCreateShader(GL_VERTEX_SHADER);
@@ -19,13 +24,13 @@ public class ShaderProgram implements Disposable {
         glCompileShader(fs);
         checkCompile(fs);
 
-        programId = glCreateProgram();
-        glAttachShader(programId, vs);
-        glAttachShader(programId, fs);
+        id = glCreateProgram();
+        glAttachShader(id, vs);
+        glAttachShader(id, fs);
 
-        glLinkProgram(programId);
-        if (glGetProgrami(programId, GL_LINK_STATUS) == GL_FALSE) {
-            throw new RuntimeException(glGetProgramInfoLog(programId));
+        glLinkProgram(id);
+        if (glGetProgrami(id, GL_LINK_STATUS) == GL_FALSE) {
+            throw new RuntimeException(glGetProgramInfoLog(id));
         }
 
         glDeleteShader(vs);
@@ -38,12 +43,23 @@ public class ShaderProgram implements Disposable {
         }
     }
 
+    private int getUniformLocation(String uniformName) {
+        if (!uniformMap.containsKey(uniformName)) {
+            uniformMap.put(uniformName, glGetUniformLocation(id, uniformName));
+        }
+        return uniformMap.get(uniformName);
+    }
+
+    public void setVec3(String name, float x, float y, float z) {
+        glUniform3f(getUniformLocation(name), x, y, z);
+    }
+
     public void bind() {
-        glUseProgram(programId);
+        glUseProgram(id);
     }
 
     @Override
     public void dispose() {
-        glDeleteProgram(programId);
+        glDeleteProgram(id);
     }
 }
