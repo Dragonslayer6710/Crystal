@@ -11,6 +11,15 @@ public class Transform {
 
     private final Matrix4f modelMatrix = new Matrix4f();
 
+    public Transform() {
+
+    }
+
+    public Transform(float xPos, float yPos, float zPos) {
+        this();
+        this.position.set(xPos, yPos, zPos);
+    }
+
     public Vector3f getPosition() {
         return position;
     }

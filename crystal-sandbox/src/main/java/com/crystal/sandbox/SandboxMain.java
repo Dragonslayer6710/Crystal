@@ -18,27 +18,29 @@ public class SandboxMain implements Game {
     private static final Logger logger =
             LoggerFactory.getLogger(SandboxMain.class);
 
+    private EngineContext ctx;
+
     @Override
     public void init(EngineContext ctx) {
+        this.ctx = ctx;
         logger.info("Game init");
 
-        Mesh mesh = ctx.getResources().createMesh(PrimitiveType.TRIANGLES, new float[]{
+        Mesh mesh = this.ctx.getResources().createMesh(PrimitiveType.TRIANGLES, new float[]{
                 0.0f, 0.5f, 0.0f,
                 -0.5f, -0.5f, 0.0f,
                 0.5f, -0.5f, 0.0f
         });
 
-        ShaderProgram shaderProgram = ctx.getResources().createShaderProgram(
+        ShaderProgram shaderProgram = this.ctx.getResources().createShaderProgram(
                 """
                 #version 330 core
                 
                 layout(location = 0) in vec3 position;
                 
-                uniform vec3 modelPos;
+                uniform mat4 model;
                 
                 void main() {
-                    vec3 worldPos = position - modelPos;
-                    gl_Position = vec4(worldPos, 1.0);
+                    gl_Position = model * vec4(position, 1.0);
                 }
                 """,
                 """
@@ -52,14 +54,20 @@ public class SandboxMain implements Game {
 
         Material material = new Material(shaderProgram);
 
-        Renderable renderable = new Renderable(mesh, material, new Transform(0.5f, 0.0f, 0.0f));
+        Renderable renderable = new Renderable(mesh, material, new Transform());
 
-        ctx.getScene().add(renderable);
+        this.ctx.getScene().add(renderable);
     }
 
     @Override
     public void update(double dt) {
         // input + game logic later
+        var transform = ctx.getScene().getRenderables().get(0).getTransform();
+        transform.setPosition(
+                transform.getPosition().x + 0.001f,
+                transform.getPosition().y,
+                transform.getPosition().z
+        );
     }
 
     @Override

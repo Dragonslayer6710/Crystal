@@ -25,11 +25,9 @@ public class DrawRenderableCommand implements RenderCommand {
         material.bind();
         mesh.bind();
 
-        material.getShaderProgram().setVec3(
-                "modelPos",
-                transform.x,
-                transform.y,
-                transform.z
+        material.getShaderProgram().setMat4(
+                "model",
+                transform.getModelMatrix()
         );
 
         glDrawArrays(

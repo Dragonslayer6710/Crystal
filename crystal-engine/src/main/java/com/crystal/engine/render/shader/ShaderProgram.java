@@ -1,6 +1,8 @@
 package com.crystal.engine.render.shader;
 
 import com.crystal.engine.core.Disposable;
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -52,6 +54,16 @@ public class ShaderProgram implements Disposable {
 
     public void setVec3(String name, float x, float y, float z) {
         glUniform3f(getUniformLocation(name), x, y, z);
+    }
+
+    public void setMat4(String name, Matrix4f mat) {
+        try (var stack = MemoryStack.stackPush()) {
+            glUniformMatrix4fv(
+                    getUniformLocation(name),
+                    false,
+                    mat.get(stack.mallocFloat(16))
+            );
+        }
     }
 
     public void bind() {
