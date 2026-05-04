@@ -63,7 +63,10 @@ public class Engine implements WindowEventListener {
             double dt = (frameStart - lastTime) / 1_000_000_000.0;
             lastTime = frameStart;
 
-            // 1. INPUT / GAME LOGIC
+            // 1. INPUT LOGIC
+            context.getInput().update();
+
+            // 2. GAME LOGIC
             game.update(dt);
 
             // 2. Renderer Renders Scene

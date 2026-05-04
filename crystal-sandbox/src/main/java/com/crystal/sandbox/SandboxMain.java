@@ -42,9 +42,9 @@ public class SandboxMain implements Game {
         this.ctx.getScene().add(renderable);
     }
 
-    private void handleMovement(double dt) {
+    private void move(double dt) {
         var input = ctx.getInput();
-        var camPos = ctx.getScene().getCamera().getTransform().getPosition();
+        var camPos = ctx.getSceneCamera().getTransform().getPosition();
 
         float modifier = (input.isKeyDown(Key.LEFT_SHIFT)) ? 2f : 1f;
 
@@ -78,11 +78,35 @@ public class SandboxMain implements Game {
             camPos.y -= speed;
         }
     }
+    
+    private void look() {
+        var input = ctx.getInput();
+        var camera = ctx.getSceneCamera();
+        var cameraTransform = camera.getTransform();
 
+        float mouseSensitivity = 0.002f;
+
+        var rotation = cameraTransform.getRotation();
+
+        rotation.y += input.getMouseDeltaX() * mouseSensitivity;
+        rotation.x += input.getMouseDeltaY() * mouseSensitivity;
+
+        // clamp pitch to not flip upside down
+        float maxPitch = (float) Math.toRadians(89.0f);
+
+        if (rotation.x > maxPitch) {
+            rotation.x = maxPitch;
+        }
+
+        if (rotation.x < -maxPitch) {
+            rotation.x = -maxPitch;
+        }
+    }
+    
     @Override
     public void update(double dt) {
         // input + game logic later
-        handleMovement(dt);
+        move(dt);
     }
 
     @Override

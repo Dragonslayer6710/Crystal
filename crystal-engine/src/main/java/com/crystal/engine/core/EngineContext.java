@@ -2,6 +2,7 @@ package com.crystal.engine.core;
 
 import com.crystal.engine.input.Input;
 import com.crystal.engine.render.Renderer;
+import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.window.Window;
 
@@ -42,5 +43,9 @@ public class EngineContext {
 
     public Scene getScene() {
         return scene;
+    }
+
+    public Camera getSceneCamera() {
+        return getScene().getCamera();
     }
 }

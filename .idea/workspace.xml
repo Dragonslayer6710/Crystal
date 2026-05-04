@@ -4,8 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="Tidied up Repo with gitignore changes and introduced basic XZ plane movement, added speed modifier with left shift and y movement with space and control">
-      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/Key.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/Key.java" afterDir="false" />
+    <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="Added Y traversal">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/Engine.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/Engine.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/EngineContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/EngineContext.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/Input.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -293,7 +296,23 @@
       <option name="project" value="LOCAL" />
       <updated>1777907807358</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="Added Y traversal">
+      <option name="closed" value="true" />
+      <created>1777907989870</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1777907989870</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Added Y traversal">
+      <option name="closed" value="true" />
+      <created>1777908042200</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1777908042200</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -320,7 +339,8 @@
     <MESSAGE value="tweaked" />
     <MESSAGE value="Tidied up Repo with gitignore changes and introduced basic XZ plane movement" />
     <MESSAGE value="Tidied up Repo with gitignore changes and introduced basic XZ plane movement, added speed modifier with left shift and y movement with space and control" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tidied up Repo with gitignore changes and introduced basic XZ plane movement, added speed modifier with left shift and y movement with space and control" />
+    <MESSAGE value="Added Y traversal" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added Y traversal" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
