@@ -36,7 +36,7 @@ public class SandboxMain implements Game {
 
         Material material = new Material(shaderProgram);
 
-        Renderable renderable = new Renderable(mesh, material, new Transform());
+        Renderable renderable = new Renderable(mesh, material, new Transform().setPosition(0, 0, -2f));
 
         this.ctx.getScene().add(renderable);
     }
@@ -44,11 +44,11 @@ public class SandboxMain implements Game {
     @Override
     public void update(double dt) {
         // input + game logic later
-        var transform = ctx.getScene().getRenderables().get(0).getTransform();
-        transform.setPosition(
-                transform.getPosition().x + 0.001f,
-                transform.getPosition().y,
-                transform.getPosition().z
+        var camPos = ctx.getScene().getCamera().getTransform().getPosition();
+        camPos.set(
+                camPos.x,
+                camPos.y,
+                camPos.z += 0.001f
         );
     }
 

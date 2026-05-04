@@ -28,11 +28,11 @@ public class Renderer {
         queue.execute();
     }
 
-    public void render(Scene scene) {
+    public void render(Scene scene, float aspectRatio) {
         beginFrame();
         for (Renderable r : scene.getRenderables()) {
             // later: use r.getTransform()
-            queue.submit(new DrawRenderableCommand(r, scene.getCamera()));
+            queue.submit(new DrawRenderableCommand(r, scene.getCamera(), aspectRatio));
         }
         renderFrame();
     }

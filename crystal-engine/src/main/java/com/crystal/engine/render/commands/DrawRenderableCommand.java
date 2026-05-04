@@ -10,10 +10,12 @@ public class DrawRenderableCommand implements RenderCommand {
 
     private final Renderable renderable;
     private final Camera camera;
+    private final float aspectRatio;
 
-    public DrawRenderableCommand(Renderable renderable, Camera camera) {
+    public DrawRenderableCommand(Renderable renderable, Camera camera, float aspectRatio) {
         this.renderable = renderable;
         this.camera = camera;
+        this.aspectRatio = aspectRatio;
     }
 
     @Override
@@ -28,6 +30,16 @@ public class DrawRenderableCommand implements RenderCommand {
         material.getShaderProgram().setMat4(
                 "model",
                 transform.getModelMatrix()
+        );
+
+        material.getShaderProgram().setMat4(
+                "view",
+                camera.getViewMatrix()
+        );
+
+        material.getShaderProgram().setMat4(
+                "projection",
+                camera.getProjectionMatrix(aspectRatio)
         );
 
         glDrawArrays(

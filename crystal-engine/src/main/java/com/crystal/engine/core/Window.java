@@ -13,10 +13,14 @@ public class Window {
     private int height;
     private String title;
 
+    private float aspectRatio;
+
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
         this.title = title;
+
+        this.aspectRatio = (float) width / (float) height;
     }
 
     public void create() {
@@ -62,5 +66,9 @@ public class Window {
 
     public long getHandle() {
         return handle;
+    }
+
+    public float getAspectRatio() {
+        return aspectRatio;
     }
 }

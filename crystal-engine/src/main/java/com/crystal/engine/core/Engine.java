@@ -65,7 +65,7 @@ public class Engine {
             game.update(dt);
 
             // 2. Renderer Renders Scene
-            renderer.render(context.getScene());
+            renderer.render(context.getScene(), window.getAspectRatio());
 
             // 3. PRESENT FRAME (WINDOW RESPONSIBILITY)
             window.update();
