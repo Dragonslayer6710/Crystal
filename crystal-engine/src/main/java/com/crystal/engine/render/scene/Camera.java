@@ -1,6 +1,7 @@
 package com.crystal.engine.render.scene;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
 public class Camera {
 
@@ -41,5 +42,45 @@ public class Camera {
                 zNear,
                 zFar
         );
+    }
+
+    public Vector3f getForward() {
+        var rotation = transform.getRotation();
+
+        return new Vector3f(0, 0, -1)
+                .rotateX(rotation.x)
+                .rotateY(rotation.y)
+                .rotateZ(rotation.z)
+                .normalize();
+    }
+
+    public Vector3f getRight() {
+        var rotation = transform.getRotation();
+
+        return new Vector3f(1, 0, 0)
+                .rotateX(rotation.x)
+                .rotateY(rotation.y)
+                .rotateZ(rotation.z)
+                .normalize();
+    }
+
+    public Vector3f getForwardXZ() {
+        float yaw = transform.getRotation().y;
+
+        return new Vector3f(
+                (float) -Math.sin(yaw),
+                0.0f,
+                (float) -Math.cos(yaw)
+        ).normalize();
+    }
+
+    public Vector3f getRightXZ() {
+        float yaw = transform.getRotation().y;
+
+        return new Vector3f(
+                (float) Math.cos(yaw),
+                0.0f,
+                (float) -Math.sin(yaw)
+        ).normalize();
     }
 }

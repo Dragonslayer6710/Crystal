@@ -77,6 +77,14 @@ public class Window {
         return glfwWindowShouldClose(handle);
     }
 
+    public void setCursorCaptured(boolean captured) {
+        if (captured) {
+            glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        } else {
+            glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+        }
+    }
+
     public void update() {
         glfwSwapBuffers(handle);
         glfwPollEvents();

@@ -4,11 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="Added Y traversal">
+    <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="Corrected look">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/Engine.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/Engine.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/EngineContext.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/EngineContext.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/Input.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/Input.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/Key.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/Key.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/scene/Camera.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/scene/Camera.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/window/Window.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/window/Window.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -182,7 +183,7 @@
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/crystal-sandbox" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" value="--stacktrace --console=plain" />
+        <option name="scriptParameters" value="--stacktrace" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -312,7 +313,23 @@
       <option name="project" value="LOCAL" />
       <updated>1777908042200</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Mouse Movement controlling camera?">
+      <option name="closed" value="true" />
+      <created>1777908860905</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1777908860905</updated>
+    </task>
+    <task id="LOCAL-00013" summary="Corrected look">
+      <option name="closed" value="true" />
+      <created>1777909010199</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1777909010199</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -340,7 +357,9 @@
     <MESSAGE value="Tidied up Repo with gitignore changes and introduced basic XZ plane movement" />
     <MESSAGE value="Tidied up Repo with gitignore changes and introduced basic XZ plane movement, added speed modifier with left shift and y movement with space and control" />
     <MESSAGE value="Added Y traversal" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added Y traversal" />
+    <MESSAGE value="Mouse Movement controlling camera?" />
+    <MESSAGE value="Corrected look" />
+    <option name="LAST_COMMIT_MESSAGE" value="Corrected look" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -15,6 +15,10 @@ public class Input {
     private double mouseDeltaY;
     private boolean firstMouse = true;
 
+    // Key Input
+    private final boolean[] currentKeys = new boolean[512];
+    private final boolean[] previousKeys = new boolean[512];
+
     public Input(Window window) {
         this.window = window;
     }
@@ -36,6 +40,11 @@ public class Input {
 
         lastMouseX = x[0];
         lastMouseY = y[0];
+
+        for (int i = 0; i < currentKeys.length; i++) {
+            previousKeys[i] = currentKeys[i];
+            currentKeys[i] = glfwGetKey(window.getHandle(), i) == GLFW_PRESS;
+        }
     }
 
     public double getMouseDeltaX() {
@@ -44,6 +53,11 @@ public class Input {
 
     public double getMouseDeltaY() {
         return mouseDeltaY;
+    }
+
+    public boolean isKeyPressed(Key key) {
+        int code = key.getCode();
+        return currentKeys[code] && !previousKeys[code];
     }
 
     public boolean isKeyDown(Key key) {

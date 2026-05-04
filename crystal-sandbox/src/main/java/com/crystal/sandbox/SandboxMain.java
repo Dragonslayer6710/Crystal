@@ -8,6 +8,7 @@ import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Renderable;
 import com.crystal.engine.render.scene.Transform;
 import com.crystal.engine.render.shader.ShaderProgram;
+import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,40 +43,42 @@ public class SandboxMain implements Game {
         this.ctx.getScene().add(renderable);
     }
 
+    private final boolean flying = false;
+
     private void move(double dt) {
         var input = ctx.getInput();
-        var camPos = ctx.getSceneCamera().getTransform().getPosition();
+        var camera = ctx.getSceneCamera();
+        var position = camera.getTransform().getPosition();
+        
+        float speed = ((input.isKeyDown(Key.LEFT_SHIFT)) ? 2f : 1f) * (float) dt;
 
-        float modifier = (input.isKeyDown(Key.LEFT_SHIFT)) ? 2f : 1f;
+        var forward = (flying) ? camera.getForward() : camera.getForwardXZ();
+        var right = (flying) ? camera.getRight() :camera.getRightXZ();
 
-        float speed = modifier * (float) dt;
+        Vector3f movement = new Vector3f();
 
-        if (input.isKeyDown(Key.W)) {
-            camPos.z -= speed;
+        if (input.isKeyDown(Key.W) && !input.isKeyDown(Key.S)) {
+            movement.add(forward);
+        } else if (input.isKeyDown(Key.S)) {
+            movement.sub(forward);
         }
 
-        if (input.isKeyDown(Key.A)) {
-            camPos.x -= speed;
+        if (input.isKeyDown(Key.D) && !input.isKeyDown(Key.A)) {
+            movement.add(right);
+        } else if (input.isKeyDown(Key.A)) {
+            movement.sub(right);
         }
 
-        if (input.isKeyDown(Key.S)) {
-            camPos.z += speed;
+        if (input.isKeyDown(Key.SPACE) && !input.isKeyDown(Key.LEFT_CTRL)) {
+            movement.y += 1.0f;
+        } else if (input.isKeyDown(Key.LEFT_CTRL)) {
+            movement.y -= 1.0f;
         }
 
-        if (input.isKeyDown(Key.D)) {
-            camPos.x += speed;
-        }
-
-        if (input.isKeyDown(Key.W)) {
-            camPos.z -= speed;
-        }
-
-        if (input.isKeyDown(Key.SPACE)) {
-            camPos.y += speed;
-        }
-
-        if (input.isKeyDown(Key.LEFT_CTRL)) {
-            camPos.y -= speed;
+        if (movement.lengthSquared() > 0.0f) {
+            movement.normalize();
+            movement.mul(speed);
+            position.add(movement);
         }
     }
     
@@ -102,10 +105,25 @@ public class SandboxMain implements Game {
             rotation.x = -maxPitch;
         }
     }
-    
+
+    private boolean cursorCaptured = true;
+
     @Override
     public void update(double dt) {
-        // input + game logic later
+        var input = ctx.getInput();
+        var window = ctx.getWindow();
+
+        // toggle capture
+        if (input.isKeyPressed(Key.ESCAPE)) {
+            cursorCaptured = false;
+            window.setCursorCaptured(false);
+        }
+
+        if (input.isKeyPressed(Key.MOUSE_LEFT)) {
+            cursorCaptured = true;
+            window.setCursorCaptured(true);
+        }
+
         move(dt);
         look();
     }
