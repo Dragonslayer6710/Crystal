@@ -16,7 +16,6 @@ public class Transform {
     }
 
     public Transform(float xPos, float yPos, float zPos) {
-        this();
         this.position.set(xPos, yPos, zPos);
     }
 

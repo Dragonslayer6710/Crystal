@@ -31,26 +31,8 @@ public class SandboxMain implements Game {
                 0.5f, -0.5f, 0.0f
         });
 
-        ShaderProgram shaderProgram = this.ctx.getResources().createShaderProgram(
-                """
-                #version 330 core
-                
-                layout(location = 0) in vec3 position;
-                
-                uniform mat4 model;
-                
-                void main() {
-                    gl_Position = model * vec4(position, 1.0);
-                }
-                """,
-                """
-                #version 330 core
-                out vec4 color;
-                void main() {
-                    color = vec4(1,1,1,1);
-                }
-                """
-        );
+        ShaderProgram shaderProgram = this.ctx.getResources()
+                .createShaderProgram("basic");
 
         Material material = new Material(shaderProgram);
 
