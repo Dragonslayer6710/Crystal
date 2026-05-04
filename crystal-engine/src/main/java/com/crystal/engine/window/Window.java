@@ -1,5 +1,6 @@
 package com.crystal.engine.window;
 
+import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -57,7 +58,7 @@ public class Window {
                 }
 
                 if (eventListener != null) {
-                    eventListener.onFrameBufferResize(width, height);
+                    eventListener.onFrameBufferResize(newWidth, newHeight);
                 }
             });
         }
@@ -81,16 +82,17 @@ public class Window {
         glfwPollEvents();
     }
 
-    public void destroy() {
-        glfwDestroyWindow(handle);
-        glfwTerminate();
-    }
-
     public long getHandle() {
         return handle;
     }
 
     public float getAspectRatio() {
         return aspectRatio;
+    }
+
+    public void destroy() {
+        Callbacks.glfwFreeCallbacks(handle);
+        glfwDestroyWindow(handle);
+        glfwTerminate();
     }
 }

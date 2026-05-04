@@ -1,0 +1,25 @@
+package com.crystal.engine.input;
+
+import static org.lwjgl.glfw.GLFW.*;
+
+public enum Key {
+
+    W(GLFW_KEY_W),
+    A(GLFW_KEY_A),
+    S(GLFW_KEY_S),
+    D(GLFW_KEY_D),
+
+    SPACE(GLFW_KEY_SPACE),
+    LEFT_SHIFT(GLFW_KEY_LEFT_SHIFT),
+    ESCAPE(GLFW_KEY_ESCAPE);
+
+    private final int code;
+
+    Key(int code) {
+        this.code = code;
+    }
+
+    public int getCode() {
+        return code;
+    }
+}

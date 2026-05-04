@@ -1,6 +1,7 @@
 package com.crystal.sandbox;
 
 import com.crystal.engine.core.EngineContext;
+import com.crystal.engine.input.Key;
 import com.crystal.engine.render.api.PrimitiveType;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
@@ -44,8 +45,26 @@ public class SandboxMain implements Game {
     @Override
     public void update(double dt) {
         // input + game logic later
-        ctx.getScene().getCamera().getTransform().getPosition()
-                .add(0f, 0f, 0.001f);
+        var input = ctx.getInput();
+        var camPos = ctx.getScene().getCamera().getTransform().getPosition();
+
+        float speed = 2f * (float) dt;
+
+        if (input.isKeyDown(Key.W)) {
+            camPos.z -= speed;
+        }
+
+        if (input.isKeyDown(Key.A)) {
+            camPos.x -= speed;
+        }
+
+        if (input.isKeyDown(Key.S)) {
+            camPos.z += speed;
+        }
+
+        if (input.isKeyDown(Key.D)) {
+            camPos.x += speed;
+        }
     }
 
     @Override
