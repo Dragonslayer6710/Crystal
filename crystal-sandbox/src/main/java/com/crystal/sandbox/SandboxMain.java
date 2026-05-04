@@ -88,8 +88,8 @@ public class SandboxMain implements Game {
 
         var rotation = cameraTransform.getRotation();
 
-        rotation.y += input.getMouseDeltaX() * mouseSensitivity;
-        rotation.x += input.getMouseDeltaY() * mouseSensitivity;
+        rotation.y -= input.getMouseDeltaX() * mouseSensitivity;
+        rotation.x -= input.getMouseDeltaY() * mouseSensitivity;
 
         // clamp pitch to not flip upside down
         float maxPitch = (float) Math.toRadians(89.0f);
@@ -107,6 +107,7 @@ public class SandboxMain implements Game {
     public void update(double dt) {
         // input + game logic later
         move(dt);
+        look();
     }
 
     @Override
