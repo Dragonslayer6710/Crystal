@@ -11,7 +11,7 @@ public class Renderer {
     private final RenderQueue queue = new RenderQueue();
 
     public void init(int width, int height) {
-        glViewport(0, 0, width, height);
+        resizeViewport(width, height);
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
     }
@@ -35,5 +35,9 @@ public class Renderer {
             queue.submit(new DrawRenderableCommand(r, scene.getCamera(), aspectRatio));
         }
         renderFrame();
+    }
+
+    public void resizeViewport(int width, int height) {
+        glViewport(0, 0, width, height);
     }
 }

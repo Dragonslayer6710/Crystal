@@ -2,14 +2,15 @@ package com.crystal.engine.core;
 
 import com.crystal.engine.render.Renderer;
 import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.window.Window;
+import com.crystal.engine.window.WindowEventListener;
 import org.lwjgl.opengl.GL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Engine {
+public class Engine implements WindowEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(Engine.class);
-
 
     private final Game game;
 
@@ -34,6 +35,7 @@ public class Engine {
 
         window = new Window(1280, 720, "Crystal Engine");
         window.create();
+        window.setEventListener(this);
 
         GL.createCapabilities();
 
@@ -93,5 +95,10 @@ public class Engine {
         game.shutdown();
         resourceManager.disposeAll();
         window.destroy();
+    }
+
+    @Override
+    public void onFrameBufferResize(int width, int height) {
+        renderer.resizeViewport(width, height);
     }
 }

@@ -1,4 +1,4 @@
-package com.crystal.engine.core;
+package com.crystal.engine.window;
 
 import org.lwjgl.glfw.GLFWErrorCallback;
 
@@ -15,12 +15,18 @@ public class Window {
 
     private float aspectRatio;
 
+    private WindowEventListener eventListener;
+
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
         this.title = title;
 
         this.aspectRatio = (float) width / (float) height;
+    }
+
+    public void setEventListener(WindowEventListener eventListener) {
+        this.eventListener = eventListener;
     }
 
     public void create() {
@@ -39,6 +45,22 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
+
+        // Set Callbacks
+        {
+            glfwSetFramebufferSizeCallback(handle, (window, newWidth, newHeight) -> {
+                this.width = newWidth;
+                this.height = newHeight;
+
+                if (newHeight != 0) {
+                    this.aspectRatio = (float) newWidth / (float) newHeight;
+                }
+
+                if (eventListener != null) {
+                    eventListener.onFrameBufferResize(width, height);
+                }
+            });
+        }
 
         if (handle == NULL) {
             throw new RuntimeException("Failed to create window");

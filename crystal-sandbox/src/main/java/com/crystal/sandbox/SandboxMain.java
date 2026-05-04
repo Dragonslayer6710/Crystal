@@ -44,12 +44,8 @@ public class SandboxMain implements Game {
     @Override
     public void update(double dt) {
         // input + game logic later
-        var camPos = ctx.getScene().getCamera().getTransform().getPosition();
-        camPos.set(
-                camPos.x,
-                camPos.y,
-                camPos.z += 0.001f
-        );
+        ctx.getScene().getCamera().getTransform().getPosition()
+                .add(0f, 0f, 0.001f);
     }
 
     @Override

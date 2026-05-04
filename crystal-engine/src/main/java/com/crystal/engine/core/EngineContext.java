@@ -2,6 +2,7 @@ package com.crystal.engine.core;
 
 import com.crystal.engine.render.Renderer;
 import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.window.Window;
 
 public class EngineContext {
 
