@@ -42,13 +42,13 @@ public class SandboxMain implements Game {
         this.ctx.getScene().add(renderable);
     }
 
-    @Override
-    public void update(double dt) {
-        // input + game logic later
+    private void handleMovement(double dt) {
         var input = ctx.getInput();
         var camPos = ctx.getScene().getCamera().getTransform().getPosition();
 
-        float speed = 2f * (float) dt;
+        float modifier = (input.isKeyDown(Key.LEFT_SHIFT)) ? 2f : 1f;
+
+        float speed = modifier * (float) dt;
 
         if (input.isKeyDown(Key.W)) {
             camPos.z -= speed;
@@ -65,6 +65,24 @@ public class SandboxMain implements Game {
         if (input.isKeyDown(Key.D)) {
             camPos.x += speed;
         }
+
+        if (input.isKeyDown(Key.W)) {
+            camPos.z -= speed;
+        }
+
+        if (input.isKeyDown(Key.SPACE)) {
+            camPos.y += speed;
+        }
+
+        if (input.isKeyDown(Key.LEFT_CTRL)) {
+            camPos.y -= speed;
+        }
+    }
+
+    @Override
+    public void update(double dt) {
+        // input + game logic later
+        handleMovement(dt);
     }
 
     @Override
