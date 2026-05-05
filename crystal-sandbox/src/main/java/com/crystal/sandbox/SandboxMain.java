@@ -10,6 +10,7 @@ import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.scene.Renderable;
 import com.crystal.engine.render.scene.Transform;
 import com.crystal.engine.render.shader.ShaderProgram;
+import com.crystal.engine.render.texture.Texture;
 import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +80,9 @@ public class SandboxMain implements Game {
                 .createShaderProgram("basic");
 
         Material material = new Material(shaderProgram);
+
+        Texture texture = ctx.getResources().createTexture("test.png");
+        material.setAlbedo(texture);
 
         Renderable renderable = new Renderable(mesh, material, new Transform().setPosition(0, 0, -2f));
 

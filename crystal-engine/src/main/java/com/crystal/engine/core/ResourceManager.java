@@ -4,6 +4,8 @@ import com.crystal.engine.render.api.PrimitiveType;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.shader.ShaderProgram;
+import com.crystal.engine.render.texture.Texture;
+import com.crystal.engine.render.texture.TextureLoader;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -41,6 +43,10 @@ public class ResourceManager {
 
     public ShaderProgram createShaderProgram(String name) {
         return  createShaderProgram(name, name);
+    }
+
+    public Texture createTexture(String path) {
+        return register(TextureLoader.load(assetRoot.resolve("textures/" + path)));
     }
 
     public void disposeAll() {

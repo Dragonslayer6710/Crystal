@@ -52,6 +52,10 @@ public class ShaderProgram implements Disposable {
         return uniformMap.get(uniformName);
     }
 
+    public void setInt(String name, int value) {
+        glUniform1i(getUniformLocation(name), value);
+    }
+
     public void setVec3(String name, float x, float y, float z) {
         glUniform3f(getUniformLocation(name), x, y, z);
     }
@@ -74,4 +78,5 @@ public class ShaderProgram implements Disposable {
     public void dispose() {
         glDeleteProgram(id);
     }
+
 }

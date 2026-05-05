@@ -1,6 +1,6 @@
 package com.crystal.engine.render.material;
 
-import com.crystal.engine.render.Texture;
+import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.gl.UniformBuffer;
 import com.crystal.engine.render.shader.ShaderProgram;
 
@@ -37,6 +37,7 @@ public class Material {
 
     public void bind() {
         shaderProgram.bind();
+        shaderProgram.setInt("albedoTexture", 0);
 
         if (albedo != null) {
             albedo.bind(GL_TEXTURE0, GL_TEXTURE_2D);

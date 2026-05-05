@@ -1,4 +1,4 @@
-package com.crystal.engine.render;
+package com.crystal.engine.render.texture;
 
 import com.crystal.engine.core.Disposable;
 
@@ -19,6 +19,6 @@ public class Texture implements Disposable {
 
     @Override
     public void dispose() {
-        // glDeleteTextures(id);
+         glDeleteTextures(id);
     }
 }
