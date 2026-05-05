@@ -107,7 +107,7 @@ public class SandboxMain implements Game {
         }
     }
 
-    private boolean cursorCaptured = true;
+    private boolean cursorCaptured = false;
 
     @Override
     public void update(double dt) {
@@ -125,8 +125,10 @@ public class SandboxMain implements Game {
             window.setCursorCaptured(true);
         }
 
-        move(dt);
-        look();
+        if (cursorCaptured) {
+            move(dt);
+            look();
+        }
     }
 
     @Override

@@ -69,7 +69,7 @@ public class Window {
             });
 
             glfwSetKeyCallback(handle, (window, keyCode, scancode, action, mods) -> {
-                if (inputListener ==  null)
+                if (inputListener == null)
                     return;
 
                 Key key = Key.fromCode(keyCode);
@@ -121,9 +121,12 @@ public class Window {
         }
     }
 
-    public void update() {
-        glfwSwapBuffers(handle);
+    public void pollEvents() {
         glfwPollEvents();
+    }
+
+    public void swapBuffers() {
+        glfwSwapBuffers(handle);
     }
 
     public long getHandle() {
