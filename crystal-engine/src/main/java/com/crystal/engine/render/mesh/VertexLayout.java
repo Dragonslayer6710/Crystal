@@ -17,7 +17,17 @@ public enum VertexLayout {
             new VertexAttribute(0, 3, 0),
             new VertexAttribute(1, 3, 3 * Float.BYTES),
             new VertexAttribute(2, 2, 6 * Float.BYTES)
+    ),
+
+    POSITION_COLOR_UV_NORMAL(
+            11,
+            new VertexAttribute(0, 3, 0),
+            new VertexAttribute(1, 3, 3 * Float.BYTES),
+            new VertexAttribute(2, 2, 6 * Float.BYTES),
+            new VertexAttribute(3, 3, 8 * Float.BYTES)
     );
+
+
 
     private final int floatsPerVertex;
     private final VertexAttribute[] attributes;
