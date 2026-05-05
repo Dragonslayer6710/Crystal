@@ -4,16 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="UV introduced">
-      <change afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/texture/TextureLoader.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/crystal-sandbox/assets/textures/test.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-engine/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/build.gradle" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/ResourceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/ResourceManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/Texture.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/texture/Texture.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/material/Material.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/material/Material.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/shader/ShaderProgram.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/shader/ShaderProgram.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.frag" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.frag" afterDir="false" />
+    <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="Texture Loading!">
       <change beforePath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -119,6 +110,9 @@
   &quot;associatedIndex&quot;: 0
 }</component>
   <component name="ProjectId" id="3D7ryvU3UnlC4nxsVXo17FgMqiF" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
@@ -419,7 +413,15 @@
       <option name="project" value="LOCAL" />
       <updated>1777991291369</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="Texture Loading!">
+      <option name="closed" value="true" />
+      <created>1777992368943</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1777992368943</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -455,7 +457,8 @@
     <MESSAGE value="Tweaks" />
     <MESSAGE value="ElementBuffer, VertexLayout, VertexAttribute" />
     <MESSAGE value="UV introduced" />
-    <option name="LAST_COMMIT_MESSAGE" value="UV introduced" />
+    <MESSAGE value="Texture Loading!" />
+    <option name="LAST_COMMIT_MESSAGE" value="Texture Loading!" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
