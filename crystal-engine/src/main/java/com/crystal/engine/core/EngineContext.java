@@ -14,10 +14,9 @@ public class EngineContext {
     private final ResourceManager resources;
     private final Scene scene;
 
-    public EngineContext(Window window, Renderer renderer, ResourceManager resources, Scene scene) {
+    public EngineContext(Window window, Input input, Renderer renderer, ResourceManager resources, Scene scene) {
         this.window = window;
-        input = new Input(window);
-
+        this.input = input;
         this.renderer = renderer;
         this.resources = resources;
         this.scene = scene;

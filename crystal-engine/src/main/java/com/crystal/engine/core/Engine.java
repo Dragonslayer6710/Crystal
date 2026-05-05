@@ -1,5 +1,6 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.input.Input;
 import com.crystal.engine.render.Renderer;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.window.Window;
@@ -15,9 +16,11 @@ public class Engine implements WindowEventListener {
     private final Game game;
 
     private Window window;
+    private Input input;
     private Renderer renderer;
     private ResourceManager resourceManager;
     private Scene scene;
+
     private EngineContext context;
 
     private boolean running;
@@ -33,9 +36,13 @@ public class Engine implements WindowEventListener {
     private void init() {
         logger.info("Engine initialising");
 
+        input = new Input();
+
         window = new Window(1280, 720, "Crystal Engine");
         window.create();
-        window.setEventListener(this);
+
+        window.setWindowEventListener(this);
+        window.setInputListener(input);
 
         GL.createCapabilities();
 
@@ -46,7 +53,7 @@ public class Engine implements WindowEventListener {
 
         scene = new Scene();
 
-        context = new EngineContext(window, renderer, resourceManager, scene);
+        context = new EngineContext(window, input, renderer, resourceManager, scene);
 
         game.init(context);
 

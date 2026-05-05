@@ -26,4 +26,14 @@ public enum Key {
     public int getCode() {
         return code;
     }
+
+    public static Key fromCode(int code) {
+        for (Key key : values()) {
+            if (key.code == code) {
+                return key;
+            }
+        }
+
+        return null;
+    }
 }

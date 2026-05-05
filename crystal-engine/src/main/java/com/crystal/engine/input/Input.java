@@ -2,49 +2,56 @@ package com.crystal.engine.input;
 
 import com.crystal.engine.window.Window;
 
+import java.util.EnumSet;
+
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Input {
+public class Input implements InputListener{
 
-    private final Window window;
+    private final EnumSet<Key> keysDown = EnumSet.noneOf(Key.class);
+    private final EnumSet<Key> keysPressed = EnumSet.noneOf(Key.class);
+    private final EnumSet<Key> keysReleased = EnumSet.noneOf(Key.class);
 
     // Mouse Input
+    private double mouseX;
+    private double mouseY;
+
     private double lastMouseX;
     private double lastMouseY;
+
     private double mouseDeltaX;
     private double mouseDeltaY;
+
     private boolean firstMouse = true;
 
-    // Key Input
-    private final boolean[] currentKeys = new boolean[512];
-    private final boolean[] previousKeys = new boolean[512];
-
-    public Input(Window window) {
-        this.window = window;
-    }
+    private final EnumSet<MouseButton> btnsDown = EnumSet.noneOf(MouseButton.class);
+    private final EnumSet<MouseButton> btnsPressed = EnumSet.noneOf(MouseButton.class);
+    private final EnumSet<MouseButton> btnsReleased = EnumSet.noneOf(MouseButton.class);
 
     public void update() {
-        double[] x = new double[1];
-        double[] y = new double[1];
+        keysPressed.clear();
+        keysReleased.clear();
 
-        glfwGetCursorPos(window.getHandle(), x, y);
+        mouseDeltaX = mouseX - lastMouseX;
+        mouseDeltaY = mouseY - lastMouseY;
 
-        if (firstMouse) {
-            lastMouseX = x[0];
-            lastMouseY = y[0];
-            firstMouse = false;
-        }
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
 
-        mouseDeltaX = x[0] - lastMouseX;
-        mouseDeltaY = y[0] - lastMouseY;
+        btnsPressed.clear();
+        btnsReleased.clear();
+    }
 
-        lastMouseX = x[0];
-        lastMouseY = y[0];
+    public boolean isKeyDown(Key key) {
+        return keysDown.contains(key);
+    }
 
-        for (int i = 0; i < currentKeys.length; i++) {
-            previousKeys[i] = currentKeys[i];
-            currentKeys[i] = glfwGetKey(window.getHandle(), i) == GLFW_PRESS;
-        }
+    public boolean isKeyPressed(Key key) {
+        return keysPressed.contains(key);
+    }
+
+    public boolean isKeyReleased(Key key) {
+        return keysReleased.contains(key);
     }
 
     public double getMouseDeltaX() {
@@ -55,16 +62,52 @@ public class Input {
         return mouseDeltaY;
     }
 
-    public boolean isKeyPressed(Key key) {
-        int code = key.getCode();
-        return currentKeys[code] && !previousKeys[code];
+    @Override
+    public void onKey(Key key, boolean pressed) {
+        if (pressed) {
+            if (!keysDown.contains(key)) {
+                keysPressed.add(key);
+            }
+
+            keysDown.add(key);
+        } else {
+            if (keysDown.contains(key)) {
+                keysReleased.add(key);
+            }
+
+            keysDown.remove(key);
+        }
     }
 
-    public boolean isKeyDown(Key key) {
-        return glfwGetKey(window.getHandle(), key.getCode()) == GLFW_PRESS;
+    @Override
+    public void onMouseMove(double x, double y) {
+        if (firstMouse) {
+            mouseX = x;
+            mouseY = y;
+            lastMouseX = x;
+            lastMouseY = y;
+            firstMouse = false;
+            return;
+        }
+
+        mouseX = x;
+        mouseY = y;
     }
 
-    public boolean isKeyUp(Key key) {
-        return glfwGetKey(window.getHandle(), key.getCode()) == GLFW_RELEASE;
+    @Override
+    public void onMouseButton(MouseButton btn, boolean pressed) {
+        if (pressed) {
+            if (!btnsDown.contains(btn)) {
+                btnsPressed.add(btn);
+            }
+
+            btnsDown.add(btn);
+        } else {
+            if (btnsDown.contains(btn)) {
+                btnsReleased.add(btn);
+            }
+
+            btnsDown.remove(btn);
+        }
     }
 }

@@ -1,5 +1,8 @@
 package com.crystal.engine.window;
 
+import com.crystal.engine.input.InputListener;
+import com.crystal.engine.input.Key;
+import com.crystal.engine.input.MouseButton;
 import org.lwjgl.glfw.Callbacks;
 import org.lwjgl.glfw.GLFWErrorCallback;
 
@@ -16,7 +19,8 @@ public class Window {
 
     private float aspectRatio;
 
-    private WindowEventListener eventListener;
+    private WindowEventListener windowEventListener;
+    private InputListener inputListener;
 
     public Window(int width, int height, String title) {
         this.width = width;
@@ -26,8 +30,12 @@ public class Window {
         this.aspectRatio = (float) width / (float) height;
     }
 
-    public void setEventListener(WindowEventListener eventListener) {
-        this.eventListener = eventListener;
+    public void setWindowEventListener(WindowEventListener eventListener) {
+        this.windowEventListener = eventListener;
+    }
+
+    public void setInputListener(InputListener inputListener) {
+        this.inputListener = inputListener;
     }
 
     public void create() {
@@ -53,14 +61,42 @@ public class Window {
                 this.width = newWidth;
                 this.height = newHeight;
 
-                if (newHeight != 0) {
+                if (newHeight != 0)
                     this.aspectRatio = (float) newWidth / (float) newHeight;
-                }
 
-                if (eventListener != null) {
-                    eventListener.onFrameBufferResize(newWidth, newHeight);
+                if (windowEventListener != null)
+                    windowEventListener.onFrameBufferResize(newWidth, newHeight);
+            });
+
+            glfwSetKeyCallback(handle, (window, keyCode, scancode, action, mods) -> {
+                if (inputListener ==  null)
+                    return;
+
+                Key key = Key.fromCode(keyCode);
+
+                if (key == null)
+                    return;
+
+                inputListener.onKey(key, action == GLFW_PRESS);
+            });
+
+            glfwSetCursorPosCallback(handle, (window, x, y) -> {
+                if (inputListener != null) {
+                    inputListener.onMouseMove(x, y);
                 }
             });
+
+            glfwSetMouseButtonCallback(handle, ((window, button, action, mods) -> {
+                if (inputListener ==  null)
+                    return;
+
+                MouseButton btn = MouseButton.fromCode(button);
+
+                if (btn == null)
+                    return;
+
+                inputListener.onMouseButton(btn, action == GLFW_PRESS);
+            }));
         }
 
         if (handle == NULL) {
