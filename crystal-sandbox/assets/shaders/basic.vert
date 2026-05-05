@@ -1,15 +1,19 @@
 #version 460 core
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec3 color;
+layout (location = 0) in vec3 a_Position;
+layout (location = 1) in vec3 a_Color;
+layout (location = 2) in vec2 a_TexCoord;
 
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
 out vec3 v_FragColor;
+out vec2 v_TexCoord;
 
 void main() {
-    v_FragColor = color;
-    gl_Position = projection * view * model * vec4(position, 1.0);
+    v_FragColor = a_Color;
+    v_TexCoord = a_TexCoord;
+
+    gl_Position = projection * view * model * vec4(a_Position, 1.0);
 }

@@ -10,6 +10,13 @@ public enum VertexLayout {
             6,
             new VertexAttribute(0, 3, 0),
             new VertexAttribute(1, 3, 3 * Float.BYTES)
+    ),
+
+    POSITION_COLOR_UV(
+            8,
+            new VertexAttribute(0, 3, 0),
+            new VertexAttribute(1, 3, 3 * Float.BYTES),
+            new VertexAttribute(2, 2, 6 * Float.BYTES)
     );
 
     private final int floatsPerVertex;

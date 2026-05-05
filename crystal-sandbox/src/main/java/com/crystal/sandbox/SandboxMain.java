@@ -30,16 +30,16 @@ public class SandboxMain implements Game {
         logger.info("Game init");
 
         float[] vertices = new float[] {
-                // position              // color
-                -0.5f,  0.5f,  0.5f,     1.0f, 0.0f, 0.0f,
-                -0.5f, -0.5f,  0.5f,     0.0f, 1.0f, 0.0f,
-                0.5f, -0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
-                0.5f,  0.5f,  0.5f,     1.0f, 1.0f, 0.0f,
+                // position              // color           // uv
+                -0.5f,  0.5f,  0.5f,     1.0f, 0.0f, 0.0f,  0, 1,
+                -0.5f, -0.5f,  0.5f,     0.0f, 1.0f, 0.0f,  0, 0,
+                 0.5f, -0.5f,  0.5f,     0.0f, 0.0f, 1.0f,  1, 0,
+                 0.5f,  0.5f,  0.5f,     1.0f, 1.0f, 0.0f,  1, 1,
 
-                -0.5f,  0.5f, -0.5f,     1.0f, 0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,     0.0f, 1.0f, 1.0f,
-                0.5f, -0.5f, -0.5f,     1.0f, 1.0f, 1.0f,
-                0.5f,  0.5f, -0.5f,     0.5f, 0.5f, 0.5f,
+                -0.5f,  0.5f, -0.5f,     1.0f, 0.0f, 1.0f,  0, 1,
+                -0.5f, -0.5f, -0.5f,     0.0f, 1.0f, 1.0f,  0, 0,
+                 0.5f, -0.5f, -0.5f,     1.0f, 1.0f, 1.0f,  1, 0,
+                 0.5f,  0.5f, -0.5f,     0.5f, 0.5f, 0.5f,  1, 1,
         };
 
         int[] indices = new int[] {
@@ -72,7 +72,7 @@ public class SandboxMain implements Game {
                 PrimitiveType.TRIANGLES,
                 vertices,
                 indices,
-                VertexLayout.POSITION_COLOR
+                VertexLayout.POSITION_COLOR_UV
         );
 
         ShaderProgram shaderProgram = this.ctx.getResources()
