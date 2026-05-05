@@ -77,7 +77,11 @@ public class Window {
                 if (key == null)
                     return;
 
-                inputListener.onKey(key, action == GLFW_PRESS);
+                if (action == GLFW_PRESS) {
+                    inputListener.onKey(key, true);
+                } else if (action == GLFW_RELEASE) {
+                    inputListener.onKey(key, false);
+                }
             });
 
             glfwSetCursorPosCallback(handle, (window, x, y) -> {
@@ -95,7 +99,11 @@ public class Window {
                 if (btn == null)
                     return;
 
-                inputListener.onMouse(btn, action == GLFW_PRESS);
+                if (action == GLFW_PRESS) {
+                    inputListener.onMouse(btn, true);
+                } else if (action == GLFW_RELEASE) {
+                    inputListener.onMouse(btn, false);
+                }
             }));
         }
 

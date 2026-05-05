@@ -70,19 +70,22 @@ public class Engine implements WindowEventListener {
             double dt = (frameStart - lastTime) / 1_000_000_000.0;
             lastTime = frameStart;
 
-            // 1. POLL EVENTS FROM WINDOW
+            // 1. INPUT START
+            context.getInput().beginFrame();
+
+            // 2. POLL EVENTS FROM WINDOW
             window.pollEvents();
 
-            // 2 GAME LOGIC
+            // 3 GAME LOGIC
             game.update(dt);
 
-            // 3. INPUT REFRESH
-            context.getInput().update();
+            // 4. INPUT END
+            context.getInput().endFrame();
 
-            // 4. RENDERER RENDERS SCENE
+            // 5. RENDERER RENDERS SCENE
             renderer.render(context.getScene(), window.getAspectRatio());
 
-            // 5. PRESENT FRAME (WINDOW RESPONSIBILITY)
+            // 6. PRESENT FRAME (WINDOW RESPONSIBILITY)
             window.swapBuffers();
 
             throttle(frameStart);

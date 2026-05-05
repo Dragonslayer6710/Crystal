@@ -24,18 +24,20 @@ public class Input implements InputListener{
     private final EnumSet<MouseButton> btnsPressed = EnumSet.noneOf(MouseButton.class);
     private final EnumSet<MouseButton> btnsReleased = EnumSet.noneOf(MouseButton.class);
 
-    public void update() {
+    public void beginFrame() {
         keysPressed.clear();
         keysReleased.clear();
 
-        mouseDeltaX = mouseX - lastMouseX;
-        mouseDeltaY = mouseY - lastMouseY;
-
-        lastMouseX = mouseX;
-        lastMouseY = mouseY;
-
         btnsPressed.clear();
         btnsReleased.clear();
+
+        mouseDeltaX = 0.0;
+        mouseDeltaY = 0.0;
+    }
+
+    public void endFrame() {
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
     }
 
     public boolean isKeyDown(Key key) {
@@ -100,6 +102,12 @@ public class Input implements InputListener{
 
         mouseX = x;
         mouseY = y;
+
+        mouseDeltaX += mouseX - lastMouseX;
+        mouseDeltaY += mouseY - lastMouseY;
+
+        lastMouseX = mouseX;
+        lastMouseY = mouseY;
     }
 
     @Override
