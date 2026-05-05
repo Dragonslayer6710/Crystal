@@ -6,6 +6,7 @@ import com.crystal.engine.input.MouseButton;
 import com.crystal.engine.render.api.PrimitiveType;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
+import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.scene.Renderable;
 import com.crystal.engine.render.scene.Transform;
 import com.crystal.engine.render.shader.ShaderProgram;
@@ -28,11 +29,51 @@ public class SandboxMain implements Game {
         this.ctx = ctx;
         logger.info("Game init");
 
-        Mesh mesh = this.ctx.getResources().createMesh(PrimitiveType.TRIANGLES, new float[]{
-                0.0f, 0.5f, 0.0f,
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f
-        });
+        float[] vertices = new float[] {
+                // position              // color
+                -0.5f,  0.5f,  0.5f,     1.0f, 0.0f, 0.0f,
+                -0.5f, -0.5f,  0.5f,     0.0f, 1.0f, 0.0f,
+                0.5f, -0.5f,  0.5f,     0.0f, 0.0f, 1.0f,
+                0.5f,  0.5f,  0.5f,     1.0f, 1.0f, 0.0f,
+
+                -0.5f,  0.5f, -0.5f,     1.0f, 0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f,     0.0f, 1.0f, 1.0f,
+                0.5f, -0.5f, -0.5f,     1.0f, 1.0f, 1.0f,
+                0.5f,  0.5f, -0.5f,     0.5f, 0.5f, 0.5f,
+        };
+
+        int[] indices = new int[] {
+                // Front
+                0, 1, 2,
+                2, 3, 0,
+
+                // Right
+                3, 2, 6,
+                6, 7, 3,
+
+                // Back
+                7, 6, 5,
+                5, 4, 7,
+
+                // Left
+                4, 5, 1,
+                1, 0, 4,
+
+                // Top
+                4, 0, 3,
+                3, 7, 4,
+
+                // Bottom
+                1, 5, 6,
+                6, 2, 1
+        };
+
+        Mesh mesh = this.ctx.getResources().createMesh(
+                PrimitiveType.TRIANGLES,
+                vertices,
+                indices,
+                VertexLayout.POSITION_COLOR
+        );
 
         ShaderProgram shaderProgram = this.ctx.getResources()
                 .createShaderProgram("basic");

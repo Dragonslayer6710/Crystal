@@ -19,6 +19,10 @@ public class VertexArray {
         );
     }
 
+    public void setElementBuffer(ElementBuffer ebo) {
+        glVertexArrayElementBuffer(id, ebo.getId());
+    }
+
     public void setAttribute(int attribIndex, int bindingIndex, int size,
                              int type, boolean normalized, int relativeOffset) {
         glEnableVertexArrayAttrib(id, attribIndex);

@@ -42,11 +42,20 @@ public class DrawRenderableCommand implements RenderCommand {
                 camera.getProjectionMatrix(aspectRatio)
         );
 
-        glDrawArrays(
-                mesh.getPrimTypeValue(),
-                0,
-                mesh.getVertexCount()
-        );
+        if (mesh.isIndexed()) {
+            glDrawElements(
+                    mesh.getPrimTypeValue(),
+                    mesh.getIndexCount(),
+                    GL_UNSIGNED_INT,
+                    0
+            );
+        } else {
+            glDrawArrays(
+                    mesh.getPrimTypeValue(),
+                    0,
+                    mesh.getVertexCount()
+            );
+        }
 
         mesh.unbind();
     }

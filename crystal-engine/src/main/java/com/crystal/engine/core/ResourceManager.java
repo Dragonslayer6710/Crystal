@@ -2,6 +2,7 @@ package com.crystal.engine.core;
 
 import com.crystal.engine.render.api.PrimitiveType;
 import com.crystal.engine.render.mesh.Mesh;
+import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.shader.ShaderProgram;
 
 import java.io.IOException;
@@ -20,8 +21,16 @@ public class ResourceManager {
         return resource;
     }
 
+    public Mesh createMesh(PrimitiveType type, float[] vertices, int[] indices, VertexLayout layout) {
+        return register(new Mesh(type, vertices, indices, layout));
+    }
+
+    public Mesh createMesh(PrimitiveType type, float[] vertices, int[] indices) {
+        return register(new Mesh(type, vertices, indices));
+    }
+
     public Mesh createMesh(PrimitiveType type, float[] vertices) {
-        return register(new Mesh(type, vertices));
+        return createMesh(type, vertices, null);
     }
 
     public ShaderProgram createShaderProgram(String vName, String fName) {

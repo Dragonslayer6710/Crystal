@@ -5,9 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="Tweaks">
+      <change afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/gl/ElementBuffer.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/VertexAttribute.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/VertexLayout.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/Key.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/Key.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/MouseButton.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/input/MouseButton.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/ResourceManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/core/ResourceManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/commands/DrawRenderableCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/commands/DrawRenderableCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/gl/VertexArray.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/gl/VertexArray.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/Mesh.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/Mesh.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.frag" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.frag" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.vert" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.vert" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,9 +86,10 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Enum" />
-        <option value="Class" />
         <option value="Interface" />
+        <option value="Class" />
+        <option value="Record" />
+        <option value="Enum" />
       </list>
     </option>
   </component>
@@ -149,6 +158,7 @@
       <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-engine" />
     </key>
     <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.crystal.engine.render.gl" />
       <recent name="com.crystal.engine.input" />
     </key>
   </component>
@@ -385,7 +395,15 @@
       <option name="project" value="LOCAL" />
       <updated>1777979204860</updated>
     </task>
-    <option name="localTasksCounter" value="21" />
+    <task id="LOCAL-00021" summary="Tweaks">
+      <option name="closed" value="true" />
+      <created>1777987933887</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1777987933887</updated>
+    </task>
+    <option name="localTasksCounter" value="22" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -428,6 +446,16 @@
           <url>file://$PROJECT_DIR$/crystal-sandbox/src/main/java/org/example/Main.java</url>
           <line>13</line>
           <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/Mesh.java</url>
+          <line>42</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/Mesh.java</url>
+          <line>45</line>
+          <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

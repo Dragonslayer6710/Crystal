@@ -3,6 +3,7 @@ package com.crystal.engine.render.mesh;
 import com.crystal.engine.core.Disposable;
 import com.crystal.engine.render.api.PrimitiveType;
 import com.crystal.engine.render.gl.VertexArray;
+import com.crystal.engine.render.gl.ElementBuffer;
 import com.crystal.engine.render.gl.VertexBuffer;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -11,23 +12,55 @@ public class Mesh implements Disposable {
 
     private final VertexArray vao;
     private final VertexBuffer vbo;
+    private final ElementBuffer ebo;
 
     private final PrimitiveType type;
     private final int vertexCount;
 
-    public static final int FLOATS_PER_VERTEX = 3;
-    public static final int STRIDE = FLOATS_PER_VERTEX * Float.BYTES;
+    private final VertexLayout layout;
 
-    public Mesh(PrimitiveType type, float[] vertices) {
+    public Mesh(PrimitiveType type, float[] vertices, int[] indices, VertexLayout layout) {
         this.type = type;
-        vertexCount = vertices.length / FLOATS_PER_VERTEX;
+        this.layout = layout;
+        vertexCount = vertices.length / layout.getFloatsPerVertex();
 
         vao = new VertexArray();
         vbo = new VertexBuffer(vertices);
 
         // DSA-style setup
-        vao.bindVertexBuffer(0, vbo, 0, STRIDE);
-        vao.setAttribute(0, 0, 3, GL_FLOAT, false, 0);
+        vao.bindVertexBuffer(0, vbo, 0, layout.getStrideBytes());
+        for (VertexAttribute attribute : layout.getAttributes())
+            vao.setAttribute(
+                    attribute.index(),
+                    0,
+                    attribute.size(),
+                    GL_FLOAT,
+                    false,
+                    attribute.offsetBytes()
+            );
+
+        if (indices != null) {
+            ebo = new ElementBuffer(indices);
+            vao.setElementBuffer(ebo);
+        } else {
+            ebo = null;
+        }
+    }
+
+    public Mesh(PrimitiveType type, float[] vertices) {
+        this(type, vertices, null, VertexLayout.POSITION_COLOR);
+    }
+
+    public Mesh(PrimitiveType type, float[] vertices, int[] indices) {
+        this(type, vertices, null, VertexLayout.POSITION_COLOR);
+    }
+
+    public boolean isIndexed() {
+        return ebo != null;
+    }
+
+    public int getIndexCount() {
+        return ebo.getCount();
     }
 
     public int getPrimTypeValue() {
@@ -50,5 +83,8 @@ public class Mesh implements Disposable {
     public void dispose() {
        vao.delete();
        vbo.delete();
+
+       if (ebo != null)
+           ebo.delete();
     }
 }
