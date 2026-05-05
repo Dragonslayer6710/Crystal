@@ -2,8 +2,12 @@
 .gradle/
 build/
 
-# IntelliJ
-.idea/
+# IntelliJ - keep shared project setup, ignore local user state
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/shelf/
+.idea/libraries/
+.idea/httpRequests/
 *.iml
 out/
 
