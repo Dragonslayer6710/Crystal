@@ -95,7 +95,7 @@ public class Window {
                 if (btn == null)
                     return;
 
-                inputListener.onMouseButton(btn, action == GLFW_PRESS);
+                inputListener.onMouse(btn, action == GLFW_PRESS);
             }));
         }
 

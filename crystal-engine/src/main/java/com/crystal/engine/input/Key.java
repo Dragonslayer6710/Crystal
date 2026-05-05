@@ -13,9 +13,7 @@ public enum Key {
     LEFT_SHIFT(GLFW_KEY_LEFT_SHIFT),
     LEFT_CTRL(GLFW_KEY_LEFT_CONTROL),
 
-    ESCAPE(GLFW_KEY_ESCAPE),
-
-    MOUSE_LEFT(GLFW_MOUSE_BUTTON_1);
+    ESCAPE(GLFW_KEY_ESCAPE);
 
     private final int code;
 

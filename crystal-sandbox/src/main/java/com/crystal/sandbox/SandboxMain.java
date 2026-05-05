@@ -2,6 +2,7 @@ package com.crystal.sandbox;
 
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
+import com.crystal.engine.input.MouseButton;
 import com.crystal.engine.render.api.PrimitiveType;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
@@ -119,7 +120,7 @@ public class SandboxMain implements Game {
             window.setCursorCaptured(false);
         }
 
-        if (input.isKeyPressed(Key.MOUSE_LEFT)) {
+        if (input.isMousePressed(MouseButton.LMB)) {
             cursorCaptured = true;
             window.setCursorCaptured(true);
         }

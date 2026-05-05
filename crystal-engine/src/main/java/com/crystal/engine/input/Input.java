@@ -1,10 +1,6 @@
 package com.crystal.engine.input;
 
-import com.crystal.engine.window.Window;
-
 import java.util.EnumSet;
-
-import static org.lwjgl.glfw.GLFW.*;
 
 public class Input implements InputListener{
 
@@ -62,6 +58,18 @@ public class Input implements InputListener{
         return mouseDeltaY;
     }
 
+    public boolean isMouseDown(MouseButton btn) {
+        return btnsDown.contains(btn);
+    }
+
+    public boolean isMousePressed(MouseButton btn) {
+        return btnsPressed.contains(btn);
+    }
+
+    public boolean isMouseReleased(MouseButton btn) {
+        return btnsReleased.contains(btn);
+    }
+
     @Override
     public void onKey(Key key, boolean pressed) {
         if (pressed) {
@@ -95,7 +103,7 @@ public class Input implements InputListener{
     }
 
     @Override
-    public void onMouseButton(MouseButton btn, boolean pressed) {
+    public void onMouse(MouseButton btn, boolean pressed) {
         if (pressed) {
             if (!btnsDown.contains(btn)) {
                 btnsPressed.add(btn);
