@@ -1,5 +1,8 @@
 package com.crystal.engine.input;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 public enum MouseButton {
@@ -7,6 +10,14 @@ public enum MouseButton {
     LMB(GLFW_MOUSE_BUTTON_1),
     RMB(GLFW_MOUSE_BUTTON_2),
     MMB(GLFW_MOUSE_BUTTON_3);
+
+    private static final Map<Integer, MouseButton> LOOKUP = new HashMap<>();
+
+    static {
+        for (MouseButton btn : values()) {
+            LOOKUP.put(btn.code, btn);
+        }
+    }
 
     private final int code;
 
@@ -19,12 +30,6 @@ public enum MouseButton {
     }
 
     public static MouseButton fromCode(int code) {
-        for (MouseButton btn : values()) {
-            if (btn.code == code) {
-                return btn;
-            }
-        }
-
-        return null;
+        return LOOKUP.get(code);
     }
 }
