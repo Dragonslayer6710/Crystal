@@ -46,8 +46,8 @@ public class SandboxMain implements Game {
         cubeB = new SceneObject("Cube B", mesh, material, new Transform().setPosition( 0, 0, -2f));
         cubeC = new SceneObject("Cube C", mesh, material, new Transform().setPosition( 2, 0, -2f));
 
-        cubeB.getTransform().setParent(cubeA.getTransform());
-        cubeC.getTransform().setParent(cubeB.getTransform());
+        cubeA.addChild(cubeB);
+        cubeB.addChild(cubeC);
 
         this.ctx.getScene().add(cubeA);
         this.ctx.getScene().add(cubeB);
