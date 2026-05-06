@@ -1,28 +1,28 @@
 package com.crystal.engine.render.commands;
 
 import com.crystal.engine.render.RenderCommand;
-import com.crystal.engine.render.scene.Renderable;
+import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class DrawRenderableCommand implements RenderCommand {
+public class DrawSceneObjectCommand implements RenderCommand {
 
-    private final Renderable renderable;
+    private final SceneObject sceneObject;
     private final Scene scene;
     private final float aspectRatio;
 
-    public DrawRenderableCommand(Renderable renderable, Scene scene, float aspectRatio) {
-        this.renderable = renderable;
+    public DrawSceneObjectCommand(SceneObject sceneObject, Scene scene, float aspectRatio) {
+        this.sceneObject = sceneObject;
         this.scene = scene;
         this.aspectRatio = aspectRatio;
     }
 
     @Override
     public void execute() {
-        var material = renderable.getMaterial();
-        var mesh = renderable.getMesh();
-        var transform = renderable.getTransform();
+        var material = sceneObject.getMaterial();
+        var mesh = sceneObject.getMesh();
+        var transform = sceneObject.getTransform();
 
         material.bind();
         mesh.bind();

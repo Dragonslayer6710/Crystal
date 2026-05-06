@@ -3,13 +3,13 @@ package com.crystal.engine.render.scene;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 
-public class Renderable {
+public class SceneObject {
 
     private final Mesh mesh;
     private final Material material;
     private final Transform transform;
 
-    public Renderable(Mesh mesh, Material material, Transform transform) {
+    public SceneObject(Mesh mesh, Material material, Transform transform) {
         this.mesh = mesh;
         this.material = material;
         this.transform = transform;

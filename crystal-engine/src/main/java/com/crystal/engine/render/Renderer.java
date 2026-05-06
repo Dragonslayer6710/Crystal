@@ -1,7 +1,7 @@
 package com.crystal.engine.render;
 
-import com.crystal.engine.render.commands.DrawRenderableCommand;
-import com.crystal.engine.render.scene.Renderable;
+import com.crystal.engine.render.commands.DrawSceneObjectCommand;
+import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -35,9 +35,9 @@ public class Renderer {
 
     public void render(Scene scene, float aspectRatio) {
         beginFrame();
-        for (Renderable r : scene.getRenderables()) {
+        for (SceneObject r : scene.getRenderables()) {
             // later: use r.getTransform()
-            queue.submit(new DrawRenderableCommand(r, scene, aspectRatio));
+            queue.submit(new DrawSceneObjectCommand(r, scene, aspectRatio));
         }
         renderFrame();
     }

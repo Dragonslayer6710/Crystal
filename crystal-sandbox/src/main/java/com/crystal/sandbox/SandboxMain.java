@@ -1,16 +1,13 @@
 package com.crystal.sandbox;
 
 import com.crystal.engine.core.EngineContext;
-import com.crystal.engine.input.Key;
-import com.crystal.engine.input.MouseButton;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.MeshFactory;
-import com.crystal.engine.render.scene.Renderable;
+import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Transform;
 import com.crystal.engine.render.shader.ShaderProgram;
 import com.crystal.engine.render.texture.Texture;
-import org.joml.Vector3f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,9 +21,9 @@ public class SandboxMain implements Game {
 
     private EngineContext ctx;
 
-    private Renderable cubeA;
-    private Renderable cubeB;
-    private Renderable cubeC;
+    private SceneObject cubeA;
+    private SceneObject cubeB;
+    private SceneObject cubeC;
 
     private FlyCameraController cameraController;
 
@@ -45,9 +42,9 @@ public class SandboxMain implements Game {
         Texture texture = ctx.getResources().createTexture("test.png");
         material.setAlbedo(texture);
 
-        cubeA = new Renderable(mesh, material, new Transform().setPosition(-2, 0, -2f));
-        cubeB = new Renderable(mesh, material, new Transform().setPosition( 0, 0, -2f));
-        cubeC = new Renderable(mesh, material, new Transform().setPosition( 2, 0, -2f));
+        cubeA = new SceneObject(mesh, material, new Transform().setPosition(-2, 0, -2f));
+        cubeB = new SceneObject(mesh, material, new Transform().setPosition( 0, 0, -2f));
+        cubeC = new SceneObject(mesh, material, new Transform().setPosition( 2, 0, -2f));
 
         this.ctx.getScene().add(cubeA);
         this.ctx.getScene().add(cubeB);

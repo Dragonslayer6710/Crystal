@@ -5,16 +5,16 @@ import java.util.List;
 
 public class Scene {
 
-    private final List<Renderable> renderables = new ArrayList<>();
+    private final List<SceneObject> sceneObjects = new ArrayList<>();
     private final Camera camera = new Camera(0, 0, 0);
     private final DirectionalLight directionalLight = new DirectionalLight();
 
-    public void add(Renderable renderable) {
-        renderables.add(renderable);
+    public void add(SceneObject sceneObject) {
+        sceneObjects.add(sceneObject);
     }
 
-    public List<Renderable> getRenderables() {
-        return renderables;
+    public List<SceneObject> getRenderables() {
+        return sceneObjects;
     }
 
     public Camera getCamera() {
