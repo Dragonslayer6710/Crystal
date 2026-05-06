@@ -2,6 +2,7 @@ package com.crystal.engine.render;
 
 import com.crystal.engine.render.commands.DrawSceneObjectCommand;
 import com.crystal.engine.render.material.RenderState;
+import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 import org.slf4j.Logger;
@@ -16,6 +17,13 @@ import static org.lwjgl.opengl.GL46.*;
 public class Renderer {
 
     private static final Logger logger = LoggerFactory.getLogger(Renderer.class);
+
+    private static class RenderStats {
+        int active;
+        int hidden;
+        int culled;
+        int submitted;
+    }
 
     private final RenderQueue queue = new RenderQueue();
 
@@ -79,34 +87,57 @@ public class Renderer {
         }
     }
 
+    private int countSubtree(SceneObject object) {
+        int count = 1;
+
+        for (SceneObject child : object.getChildren())
+            count += countSubtree(child);
+
+        return count;
+    }
+
+    private void collectVisibleObjects(
+            SceneObject object,
+            List<SceneObject> visibleObjects,
+            Camera camera,
+            RenderStats stats
+    ) {
+        if (!object.isActive())
+            return;
+        stats.active++;
+
+        if (!object.isVisible()) {
+            stats.hidden += countSubtree(object);
+            return;
+        } else {
+            boolean visible = !frustumCullingEnabled || camera.canSee(
+                    object.getTransform().getWorldPosition(),
+                    object.getBoundingRadius()
+            );
+
+            if (visible) {
+                visibleObjects.add(object);
+            } else {
+                stats.culled++;
+            }
+        }
+
+        for (SceneObject child : object.getChildren())
+            collectVisibleObjects(child, visibleObjects, camera, stats);
+    }
+
     public void render(Scene scene, float aspectRatio) {
         beginFrame();
 
         var camera = scene.getCamera();
         camera.updateFrustum(aspectRatio);
 
-        int submitted = 0;
-        int culled = 0;
-        int hidden = 0;
+        RenderStats stats = new RenderStats();
 
         List<SceneObject> visibleObjects = new ArrayList<>();
 
-        for (SceneObject object : scene.getObjects()) {
-            if (!object.isVisible()) {
-                hidden++;
-                continue;
-            }
-
-            if (frustumCullingEnabled && !camera.canSee(
-                    object.getTransform().getWorldPosition(),
-                    object.getBoundingRadius()
-            )) {
-                culled++;
-                continue;
-            }
-
-            visibleObjects.add(object);
-        }
+        for (SceneObject root : scene.getRootObjects())
+            collectVisibleObjects(root, visibleObjects, camera, stats);
 
         visibleObjects.sort(Comparator.
                 comparingInt((SceneObject object) ->
@@ -121,17 +152,18 @@ public class Renderer {
             applyRenderState(object.getMaterial().getRenderState());
 
             queue.submit(new DrawSceneObjectCommand(object, scene, aspectRatio));
-            submitted++;
+            stats.submitted++;
         }
 
         renderFrame();
 
         if (logger.isDebugEnabled()) {
             logger.debug(
-                    "Render summary: submitted={}, culled={}, hidden={}",
-                    submitted,
-                    culled,
-                    hidden
+                    "Render summary: active={}, submitted={}, culled={}, hidden={}",
+                    stats.active,
+                    stats.submitted,
+                    stats.culled,
+                    stats.hidden
             );
         }
     }

@@ -54,8 +54,6 @@ public class SandboxMain implements Game {
         cubeB.addChild(cubeC);
 
         this.ctx.getScene().add(cubeA);
-        this.ctx.getScene().add(cubeB);
-        this.ctx.getScene().add(cubeC);
 
         cameraController = new FlyCameraController(ctx);
     }
