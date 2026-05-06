@@ -7,6 +7,7 @@ public class Scene {
 
     private final List<Renderable> renderables = new ArrayList<>();
     private final Camera camera = new Camera(0, 0, 0);
+    private final DirectionalLight directionalLight = new DirectionalLight();
 
     public void add(Renderable renderable) {
         renderables.add(renderable);
@@ -18,5 +19,9 @@ public class Scene {
 
     public Camera getCamera() {
         return camera;
+    }
+
+    public DirectionalLight getDirectionalLight() {
+        return directionalLight;
     }
 }

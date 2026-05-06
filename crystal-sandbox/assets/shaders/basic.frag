@@ -6,13 +6,32 @@ in vec3 v_Normal;
 
 uniform sampler2D albedoTexture;
 
+struct DirectionalLight {
+    vec3 direction;
+    vec3 color;
+    float intensity;
+};
+
+uniform DirectionalLight sun;
+
+uniform vec3 ambientColor;
+uniform float ambientIntensity;
+
 out vec4 color;
 
 void main() {
-    vec3 lightDir = normalize(vec3(1.0, 1.0, 0.5));
-    float diffuse = max(dot(normalize(v_Normal), lightDir), 0.0);
+    vec3 normal = normalize(v_Normal);
 
-    vec3 texColor = texture(albedoTexture, v_UV).rgb * v_Color;
+    vec3 lightDir = normalize(-sun.direction);
 
-    color = vec4(texColor * diffuse, 1.0);
+    float diffuseFactor = max(dot(normal, lightDir), 0.0);
+
+    vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color;
+
+    vec3 ambient = ambientColor * ambientIntensity;
+    vec3 diffuse = sun.color * sun.intensity * diffuseFactor;
+
+    vec3 finalColor = albedo * (ambient + diffuse);
+
+    color = vec4(finalColor, 1.0);
 }

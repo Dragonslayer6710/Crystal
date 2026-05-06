@@ -5,10 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="Updated cube to 24 vertices">
+      <change afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/MeshFactory.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/scene/DirectionalLight.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/VertexLayout.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/VertexLayout.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/Renderer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/commands/DrawRenderableCommand.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/commands/DrawRenderableCommand.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/scene/Scene.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/scene/Scene.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/scene/Transform.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/scene/Transform.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/shader/ShaderProgram.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/shader/ShaderProgram.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.frag" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.vert" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.vert" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -17,7 +22,7 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="54" />
+    <option name="cachedIndexableFilesCount" value="56" />
   </component>
   <component name="ExternalProjectsData">
     <projectState path="$PROJECT_DIR$">
@@ -120,32 +125,32 @@
   <component name="ProjectViewState">
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.Crystal [run].executor": "Run",
-    "Gradle.Crystal [wrapper].executor": "Coverage",
-    "Gradle.Crystal:crystal-sandbox [build].executor": "Run",
-    "Gradle.Crystal:crystal-sandbox [run].executor": "Run",
-    "Gradle.Download Sources.executor": "Run",
-    "Gradle.Upgrade Gradle wrapper.executor": "Run",
-    "RunOnceActivity.MCP Project settings loaded": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
-    "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/harri/IdeaProjects/Crystal/crystal-sandbox/assets/textures",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "onboarding.tips.debug.path": "C:/Users/harri/IdeaProjects/Crystal/crystal-sandbox/src/main/java/org/example/Main.java",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Crystal [run].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Crystal [wrapper].executor&quot;: &quot;Coverage&quot;,
+    &quot;Gradle.Crystal:crystal-sandbox [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Crystal:crystal-sandbox [run].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Upgrade Gradle wrapper.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/harri/IdeaProjects/Crystal/crystal-sandbox/assets/textures&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/harri/IdeaProjects/Crystal/crystal-sandbox/src/main/java/org/example/Main.java&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-sandbox\assets\textures" />

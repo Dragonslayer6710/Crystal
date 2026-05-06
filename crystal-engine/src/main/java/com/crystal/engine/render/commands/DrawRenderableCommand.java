@@ -1,20 +1,20 @@
 package com.crystal.engine.render.commands;
 
 import com.crystal.engine.render.RenderCommand;
-import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.Renderable;
+import com.crystal.engine.render.scene.Scene;
 
 import static org.lwjgl.opengl.GL46.*;
 
 public class DrawRenderableCommand implements RenderCommand {
 
     private final Renderable renderable;
-    private final Camera camera;
+    private final Scene scene;
     private final float aspectRatio;
 
-    public DrawRenderableCommand(Renderable renderable, Camera camera, float aspectRatio) {
+    public DrawRenderableCommand(Renderable renderable, Scene scene, float aspectRatio) {
         this.renderable = renderable;
-        this.camera = camera;
+        this.scene = scene;
         this.aspectRatio = aspectRatio;
     }
 
@@ -27,20 +27,42 @@ public class DrawRenderableCommand implements RenderCommand {
         material.bind();
         mesh.bind();
 
-        material.getShaderProgram().setMat4(
+        var shader = material.getShaderProgram();
+        var camera = scene.getCamera();
+
+        shader.setMat4(
                 "model",
                 transform.getModelMatrix()
         );
-
-        material.getShaderProgram().setMat4(
+        shader.setMat4(
                 "view",
                 camera.getViewMatrix()
         );
-
-        material.getShaderProgram().setMat4(
+        shader.setMat4(
                 "projection",
                 camera.getProjectionMatrix(aspectRatio)
         );
+
+        shader.setVec3("ambientColor", 1.0f, 1.0f, 1.0f);
+        shader.setFloat("ambientIntensity", 0.2f);
+
+        var light = scene.getDirectionalLight();
+
+        shader.setVec3(
+                "sun.direction",
+                light.getDirection().x,
+                light.getDirection().y,
+                light.getDirection().z
+        );
+
+        shader.setVec3(
+                "sun.color",
+                light.getColor().x,
+                light.getColor().y,
+                light.getColor().z
+        );
+
+        shader.setFloat("sun.intensity", light.getIntensity());
 
         if (mesh.isIndexed()) {
             glDrawElements(

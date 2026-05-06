@@ -6,6 +6,7 @@ import com.crystal.engine.input.MouseButton;
 import com.crystal.engine.render.api.PrimitiveType;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
+import com.crystal.engine.render.mesh.MeshFactory;
 import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.scene.Renderable;
 import com.crystal.engine.render.scene.Transform;
@@ -30,60 +31,7 @@ public class SandboxMain implements Game {
         this.ctx = ctx;
         logger.info("Game init");
 
-        float[] vertices = {
-                // FRONT (+Z)
-              // position              color    uv    normal
-                -0.5f,  0.5f,  0.5f,   1,0,0,   0,1,  0,0,1,
-                -0.5f, -0.5f,  0.5f,   1,0,0,   0,0,  0,0,1,
-                 0.5f, -0.5f,  0.5f,   1,0,0,   1,0,  0,0,1,
-                 0.5f,  0.5f,  0.5f,   1,0,0,   1,1,  0,0,1,
-
-                // RIGHT (+X)
-                 0.5f,  0.5f,  0.5f,   0,1,0,   0,1,  1,0,0,
-                 0.5f, -0.5f,  0.5f,   0,1,0,   0,0,  1,0,0,
-                 0.5f, -0.5f, -0.5f,   0,1,0,   1,0,  1,0,0,
-                 0.5f,  0.5f, -0.5f,   0,1,0,   1,1,  1,0,0,
-
-                // BACK (-Z)
-                 0.5f,  0.5f, -0.5f,   0,0,1,   0,1,  0,0,-1,
-                 0.5f, -0.5f, -0.5f,   0,0,1,   0,0,  0,0,-1,
-                -0.5f, -0.5f, -0.5f,   0,0,1,   1,0,  0,0,-1,
-                -0.5f,  0.5f, -0.5f,   0,0,1,   1,1,  0,0,-1,
-
-                // LEFT (-X)
-                -0.5f,  0.5f, -0.5f,   1,1,0,   0,1,  -1,0,0,
-                -0.5f, -0.5f, -0.5f,   1,1,0,   0,0,  -1,0,0,
-                -0.5f, -0.5f,  0.5f,   1,1,0,   1,0,  -1,0,0,
-                -0.5f,  0.5f,  0.5f,   1,1,0,   1,1,  -1,0,0,
-
-                // TOP (+Y)
-                -0.5f,  0.5f, -0.5f,   1,0,1,   0,1,  0,1,0,
-                -0.5f,  0.5f,  0.5f,   1,0,1,   0,0,  0,1,0,
-                 0.5f,  0.5f,  0.5f,   1,0,1,   1,0,  0,1,0,
-                 0.5f,  0.5f, -0.5f,   1,0,1,   1,1,  0,1,0,
-
-                // BOTTOM (-Y)
-                -0.5f, -0.5f,  0.5f,   0,1,1,   0,1,  0,-1,0,
-                -0.5f, -0.5f, -0.5f,   0,1,1,   0,0,  0,-1,0,
-                 0.5f, -0.5f, -0.5f,   0,1,1,   1,0,  0,-1,0,
-                 0.5f, -0.5f,  0.5f,   0,1,1,   1,1,  0,-1,0,
-        };
-
-        int[] indices = {
-                 0, 1, 2,  2, 3, 0,       // front
-                 4, 5, 6,  6, 7, 4,       // right
-                 8, 9,10, 10,11, 8,       // back
-                12,13,14, 14,15,12,       // left
-                16,17,18, 18,19,16,       // top
-                20,21,22, 22,23,20        // bottom
-        };
-
-        Mesh mesh = this.ctx.getResources().createMesh(
-                PrimitiveType.TRIANGLES,
-                vertices,
-                indices,
-                VertexLayout.POSITION_COLOR_UV_NORMAL
-        );
+        Mesh mesh = MeshFactory.createTexturedCube(ctx.getResources());
 
         ShaderProgram shaderProgram = this.ctx.getResources()
                 .createShaderProgram("basic");

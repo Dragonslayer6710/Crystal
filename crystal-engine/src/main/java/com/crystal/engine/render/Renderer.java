@@ -32,7 +32,7 @@ public class Renderer {
         beginFrame();
         for (Renderable r : scene.getRenderables()) {
             // later: use r.getTransform()
-            queue.submit(new DrawRenderableCommand(r, scene.getCamera(), aspectRatio));
+            queue.submit(new DrawRenderableCommand(r, scene, aspectRatio));
         }
         renderFrame();
     }

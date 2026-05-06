@@ -56,6 +56,10 @@ public class ShaderProgram implements Disposable {
         glUniform1i(getUniformLocation(name), value);
     }
 
+    public void setFloat(String name, float value) {
+        glUniform1f(getUniformLocation(name), value);
+    }
+
     public void setVec3(String name, float x, float y, float z) {
         glUniform3f(getUniformLocation(name), x, y, z);
     }

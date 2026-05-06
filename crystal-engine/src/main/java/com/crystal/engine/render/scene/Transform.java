@@ -41,8 +41,28 @@ public class Transform {
         return this;
     }
 
+    public Transform setScale(float value) {
+        scale.set(value, value, value);
+        return this;
+    }
+
     public Transform setRotation(float x, float y, float z) {
         rotation.set(x, y, z);
+        return this;
+    }
+
+    public Transform translate(float x, float y, float z) {
+        position.add(x, y, z);
+        return this;
+    }
+
+    public Transform rotate(float x, float y, float z) {
+        rotation.add(x, y, z);
+        return this;
+    }
+
+    public Transform scaleBy(float x, float y, float z) {
+        scale.mul(x, y, z);
         return this;
     }
 
