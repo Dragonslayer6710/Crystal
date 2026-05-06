@@ -20,6 +20,8 @@ public class Material {
 
     private final RenderState renderState = new RenderState();
 
+    private static int nextId = 1;
+    private final int id = nextId++;
 
     public Material(ShaderProgram shaderProgram) {
         this.shaderProgram = shaderProgram;
@@ -77,5 +79,9 @@ public class Material {
 
     public ShaderProgram getShaderProgram() {
         return shaderProgram;
+    }
+
+    public int getId() {
+        return id;
     }
 }

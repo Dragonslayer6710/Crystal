@@ -5,8 +5,6 @@ import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -15,15 +13,6 @@ import java.util.List;
 import static org.lwjgl.opengl.GL46.*;
 
 public class Renderer {
-
-    private static final Logger logger = LoggerFactory.getLogger(Renderer.class);
-
-    private static class RenderStats {
-        int active;
-        int hidden;
-        int culled;
-        int submitted;
-    }
 
     private final RenderQueue queue = new RenderQueue();
 
@@ -87,43 +76,30 @@ public class Renderer {
         }
     }
 
-    private int countSubtree(SceneObject object) {
-        int count = 1;
-
-        for (SceneObject child : object.getChildren())
-            count += countSubtree(child);
-
-        return count;
-    }
-
-    private void collectVisibleObjects(
-            SceneObject object,
-            List<SceneObject> visibleObjects,
-            Camera camera,
-            RenderStats stats
-    ) {
+    private void collectVisibleObjects(SceneObject object, List<SceneObject> visibleObjects, Camera camera) {
         if (!object.isActive())
             return;
-        stats.active++;
 
         if (!object.isVisible()) {
-            stats.hidden += countSubtree(object);
             return;
-        } else {
-            boolean visible = !frustumCullingEnabled || camera.canSee(
-                    object.getTransform().getWorldPosition(),
-                    object.getBoundingRadius()
-            );
-
-            if (visible) {
-                visibleObjects.add(object);
-            } else {
-                stats.culled++;
-            }
         }
 
+        if (!frustumCullingEnabled || camera.canSee(
+                object.getTransform().getWorldPosition(),
+                object.getBoundingRadius()
+        ))
+            visibleObjects.add(object);
+
         for (SceneObject child : object.getChildren())
-            collectVisibleObjects(child, visibleObjects, camera, stats);
+            collectVisibleObjects(child, visibleObjects, camera);
+    }
+
+    private void submitSceneObjects(List<SceneObject> visibleObjects, Scene scene, float aspectRatio) {
+        for (SceneObject object : visibleObjects) {
+            applyRenderState(object.getMaterial().getRenderState());
+
+            queue.submit(new DrawSceneObjectCommand(object, scene, aspectRatio));
+        }
     }
 
     public void render(Scene scene, float aspectRatio) {
@@ -132,40 +108,23 @@ public class Renderer {
         var camera = scene.getCamera();
         camera.updateFrustum(aspectRatio);
 
-        RenderStats stats = new RenderStats();
-
         List<SceneObject> visibleObjects = new ArrayList<>();
 
         for (SceneObject root : scene.getRootObjects())
-            collectVisibleObjects(root, visibleObjects, camera, stats);
+            collectVisibleObjects(root, visibleObjects, camera);
 
         visibleObjects.sort(Comparator.
                 comparingInt((SceneObject object) ->
-                        object.getMaterial().getRenderState().hashCode()
+                        object.getMaterial().getRenderState().getSortKey()
                 )
                 .thenComparingInt(object ->
-                        object.getMaterial().hashCode()
+                        object.getMaterial().getId()
                 )
         );
 
-        for (SceneObject object : visibleObjects) {
-            applyRenderState(object.getMaterial().getRenderState());
-
-            queue.submit(new DrawSceneObjectCommand(object, scene, aspectRatio));
-            stats.submitted++;
-        }
+        submitSceneObjects(visibleObjects, scene, aspectRatio);
 
         renderFrame();
-
-        if (logger.isDebugEnabled()) {
-            logger.debug(
-                    "Render summary: active={}, submitted={}, culled={}, hidden={}",
-                    stats.active,
-                    stats.submitted,
-                    stats.culled,
-                    stats.hidden
-            );
-        }
     }
 
     public void resizeViewport(int width, int height) {

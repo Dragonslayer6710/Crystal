@@ -32,4 +32,14 @@ public class RenderState {
         this.depthTest = depthTest;
         return this;
     }
+
+    public int getSortKey() {
+        int key = 0;
+
+        if (depthTest) key |= 1;
+        if (depthTest) key |= 1 << 1;
+        if (depthTest) key |= 1 << 2;
+
+        return key;
+    }
 }
