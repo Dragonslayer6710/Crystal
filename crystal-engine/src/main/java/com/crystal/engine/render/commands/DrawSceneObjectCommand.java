@@ -32,7 +32,7 @@ public class DrawSceneObjectCommand implements RenderCommand {
 
         shader.setMat4(
                 "model",
-                transform.getModelMatrix()
+                transform.getWorldMatrix()
         );
         shader.setMat4(
                 "view",

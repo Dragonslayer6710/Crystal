@@ -42,9 +42,12 @@ public class SandboxMain implements Game {
         Texture texture = ctx.getResources().createTexture("test.png");
         material.setAlbedo(texture);
 
-        cubeA = new SceneObject(mesh, material, new Transform().setPosition(-2, 0, -2f));
-        cubeB = new SceneObject(mesh, material, new Transform().setPosition( 0, 0, -2f));
-        cubeC = new SceneObject(mesh, material, new Transform().setPosition( 2, 0, -2f));
+        cubeA = new SceneObject("Cube A", mesh, material, new Transform().setPosition(-2, 0, -2f));
+        cubeB = new SceneObject("Cube B", mesh, material, new Transform().setPosition( 0, 0, -2f));
+        cubeC = new SceneObject("Cube C", mesh, material, new Transform().setPosition( 2, 0, -2f));
+
+        cubeB.getTransform().setParent(cubeA.getTransform());
+        cubeC.getTransform().setParent(cubeB.getTransform());
 
         this.ctx.getScene().add(cubeA);
         this.ctx.getScene().add(cubeB);

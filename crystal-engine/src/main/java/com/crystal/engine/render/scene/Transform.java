@@ -5,11 +5,14 @@ import org.joml.Vector3f;
 
 public class Transform {
 
+    private Transform parent;
+
     private final Vector3f position = new Vector3f(0, 0, 0);
     private final Vector3f rotation = new Vector3f(0, 0, 0); // Euler for now
     private final Vector3f scale    = new Vector3f(1, 1, 1);
 
-    private final Matrix4f modelMatrix = new Matrix4f();
+    private final Matrix4f localMatrix = new Matrix4f();
+    private final Matrix4f worldMatrix = new Matrix4f();
 
     public Transform() {
 
@@ -17,6 +20,10 @@ public class Transform {
 
     public Transform(float xPos, float yPos, float zPos) {
         this.position.set(xPos, yPos, zPos);
+    }
+
+    public Transform getParent() {
+        return parent;
     }
 
     public Vector3f getPosition() {
@@ -29,6 +36,11 @@ public class Transform {
 
     public Vector3f getScale() {
         return scale;
+    }
+
+    public Transform setParent(Transform parent) {
+        this.parent = parent;
+        return this;
     }
 
     public Transform setPosition(float x, float y, float z) {
@@ -66,14 +78,21 @@ public class Transform {
         return this;
     }
 
-    public Matrix4f getModelMatrix() {
-        modelMatrix.identity()
+    public Matrix4f getLocalMatrix() {
+        localMatrix.identity()
                 .translate(position)
                 .rotateX(rotation.x)
                 .rotateY(rotation.y)
                 .rotateZ(rotation.z)
                 .scale(scale);
 
-        return modelMatrix;
+        return localMatrix;
+    }
+
+    public Matrix4f getWorldMatrix() {
+        if (parent == null)
+            return worldMatrix.set(getLocalMatrix());
+
+        return parent.getWorldMatrix().mul(getLocalMatrix(), worldMatrix);
     }
 }
