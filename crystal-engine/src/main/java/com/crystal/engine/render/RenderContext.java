@@ -122,7 +122,6 @@ public class RenderContext {
             return;
 
         var camera = scene.getCamera();
-
         shader.setMat4(
                 "view",
                 camera.getViewMatrix()
@@ -132,25 +131,28 @@ public class RenderContext {
                 camera.getProjectionMatrix(aspectRatio)
         );
 
-        shader.setVec3("ambientColor", 1.0f, 1.0f, 1.0f);
-        shader.setFloat("ambientIntensity", 0.2f);
+        var ambientColor = scene.getAmbientColor();
+        shader.setVec3(
+                "ambientColour",
+                ambientColor.x,
+                ambientColor.y,
+                ambientColor.z
+        );
+        shader.setFloat("ambientIntensity", scene.getAmbientIntensity());
 
         var light = scene.getDirectionalLight();
-
         shader.setVec3(
                 "sun.direction",
                 light.getDirection().x,
                 light.getDirection().y,
                 light.getDirection().z
         );
-
         shader.setVec3(
                 "sun.color",
                 light.getColor().x,
                 light.getColor().y,
                 light.getColor().z
         );
-
         shader.setFloat("sun.intensity", light.getIntensity());
 
         currentSceneShaderId = shaderId;
