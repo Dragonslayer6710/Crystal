@@ -37,8 +37,8 @@ public class RenderState {
         int key = 0;
 
         if (depthTest) key |= 1;
-        if (depthTest) key |= 1 << 1;
-        if (depthTest) key |= 1 << 2;
+        if (cullFace) key |= 1 << 1;
+        if (wireframe) key |= 1 << 2;
 
         return key;
     }

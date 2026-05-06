@@ -74,6 +74,10 @@ public class ShaderProgram implements Disposable {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
     public void bind() {
         glUseProgram(id);
     }

@@ -22,6 +22,8 @@ public class Renderer {
     private boolean currentCullFace = true;
     private boolean currentWireframe = false;
 
+    private int currentShaderId = 0;
+
     public void init(int width, int height) {
         resizeViewport(width, height);
 
@@ -119,6 +121,8 @@ public class Renderer {
                 )
                 .thenComparingInt(object ->
                         object.getMaterial().getId()
+                ).thenComparingInt(object ->
+                        object.getMaterial().getShaderProgram().getId()
                 )
         );
 
