@@ -19,6 +19,8 @@ public class SceneObject {
     private boolean active = true;
     private boolean visible = true;
 
+    private float boundingRadius = 1.0f;
+
     public SceneObject(String name, Mesh mesh, Material material, Transform transform) {
         this.name = name;
         this.mesh = mesh;
@@ -118,6 +120,15 @@ public class SceneObject {
 
     public SceneObject setVisible(boolean visible) {
         this.visible = visible;
+        return this;
+    }
+
+    public float getBoundingRadius() {
+        return boundingRadius;
+    }
+
+    public SceneObject setBoundingRadius(float boundingRadius) {
+        this.boundingRadius = boundingRadius;
         return this;
     }
 }

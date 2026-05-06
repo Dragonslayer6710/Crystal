@@ -11,6 +11,8 @@ public enum Key {
     S(GLFW_KEY_S),
     D(GLFW_KEY_D),
 
+    F(GLFW_KEY_F),
+
     SPACE(GLFW_KEY_SPACE),
     LEFT_SHIFT(GLFW_KEY_LEFT_SHIFT),
     LEFT_CTRL(GLFW_KEY_LEFT_CONTROL),

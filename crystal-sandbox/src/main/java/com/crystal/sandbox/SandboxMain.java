@@ -1,6 +1,7 @@
 package com.crystal.sandbox;
 
 import com.crystal.engine.core.EngineContext;
+import com.crystal.engine.input.Key;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.MeshFactory;
@@ -38,7 +39,9 @@ public class SandboxMain implements Game {
                 .createShaderProgram("basic");
 
         Material material = new Material(shaderProgram);
-        material.setWireframe(true);
+        material.getRenderState()
+                .setWireframe(true)
+                .setCullFace(false);
 
         Texture texture = ctx.getResources().createTexture("test.png");
         material.setAlbedo(texture);
@@ -60,6 +63,11 @@ public class SandboxMain implements Game {
     @Override
     public void update(double dt) {
         cameraController.update(dt);
+
+        if (ctx.getInput().isKeyPressed(Key.F)) {
+            var renderer = ctx.getRenderer();
+            renderer.setFrustumCullingEnabled(!renderer.isFrustumCullingEnabled());
+        }
 
         cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
         cubeB.getTransform().rotate((float) dt, 0.0f, 0.0f);

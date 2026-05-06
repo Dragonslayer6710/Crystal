@@ -95,4 +95,8 @@ public class Transform {
 
         return parent.getWorldMatrix().mul(getLocalMatrix(), worldMatrix);
     }
+
+    public Vector3f getWorldPosition() {
+        return getWorldMatrix().getTranslation(new Vector3f());
+    }
 }

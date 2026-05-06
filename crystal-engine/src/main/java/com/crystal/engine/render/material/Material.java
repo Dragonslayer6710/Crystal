@@ -18,7 +18,8 @@ public class Material {
 
     private final Vector3f tint = new Vector3f(1.0f);
 
-    private boolean wireframe = false;
+    private final RenderState renderState = new RenderState();
+
 
     public Material(ShaderProgram shaderProgram) {
         this.shaderProgram = shaderProgram;
@@ -30,8 +31,8 @@ public class Material {
         return tint;
     }
 
-    public boolean isWireframe() {
-        return wireframe;
+    public RenderState getRenderState() {
+        return renderState;
     }
 
     // ---------- SETTERS (explicit, no collections) ----------
@@ -50,11 +51,6 @@ public class Material {
 
     public Material setTint(float r, float g, float b) {
         tint.set(r, g, b);
-        return this;
-    }
-
-    public Material setWireframe(boolean wireframe) {
-        this.wireframe = wireframe;
         return this;
     }
 

@@ -21,15 +21,21 @@ public class DrawSceneObjectCommand implements RenderCommand {
     @Override
     public void execute() {
         var material = object.getMaterial();
+        var state = material.getRenderState();
+
         var mesh = object.getMesh();
         var transform = object.getTransform();
 
-        if (material.isWireframe()) {
+        if (state.isWireframe()) {
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            glDisable(GL_CULL_FACE);
         } else {
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        }
+
+        if (state.isCullFace()) {
             glEnable(GL_CULL_FACE);
+        } else {
+            glDisable(GL_CULL_FACE);
         }
 
         material.bind();

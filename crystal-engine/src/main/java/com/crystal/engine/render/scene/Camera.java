@@ -13,6 +13,8 @@ public class Camera {
     private final Matrix4f viewMatrix = new Matrix4f();
     private final Matrix4f projectionMatrix = new Matrix4f();
 
+    private final Frustum frustum = new Frustum();
+    private final Matrix4f viewProjectionMatrix = new Matrix4f();
 
     public Camera(float xPos, float yPos, float zPos) {
         transform.setPosition(xPos, yPos, zPos);
@@ -82,5 +84,17 @@ public class Camera {
                 0.0f,
                 (float) -Math.sin(yaw)
         ).normalize();
+    }
+
+    public void updateFrustum(float aspectRatio) {
+        viewProjectionMatrix
+                .set(getProjectionMatrix(aspectRatio))
+                .mul(getViewMatrix());
+
+        frustum.update(viewProjectionMatrix);
+    }
+
+    public boolean canSee(Vector3f center, float radius) {
+       return frustum.containsSphere(center, radius);
     }
 }
