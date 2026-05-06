@@ -65,6 +65,18 @@ public class SceneObject {
         return false;
     }
 
+    public SceneObject removeChild(SceneObject child) {
+        if (child == null)
+            return this;
+
+        if (children.remove(child)) {
+            child.parent = null;
+            child.getTransform().setParent(null);
+        }
+
+        return this;
+    }
+
     public SceneObject addChild(SceneObject child) {
         if (child == null)
             throw new IllegalArgumentException("Child cannot be null");
@@ -75,8 +87,11 @@ public class SceneObject {
         if (child.isAncestorOf(this))
             throw new IllegalArgumentException("Cannot create circular scene hierarchy");
 
+        if (children.contains(child))
+            return this;
+
         if (child.parent != null)
-            child.parent.children.remove(child);
+            child.parent.removeChild(child);
 
         child.parent = this;
         child.getTransform().setParent(this.transform);
