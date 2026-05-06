@@ -23,47 +23,14 @@ public class DrawSceneObjectCommand implements RenderCommand {
         var material = object.getMaterial();
         var mesh = object.getMesh();
         var transform = object.getTransform();
+        var shader = material.getShaderProgram();
 
         context.applyRenderState(material.getRenderState());
         context.bindMaterial(material);
+        context.bindScene(shader, scene, aspectRatio);
         context.bindMesh(mesh);
 
-        var shader = material.getShaderProgram();
-        var camera = scene.getCamera();
-
-        shader.setMat4(
-                "model",
-                transform.getWorldMatrix()
-        );
-        shader.setMat4(
-                "view",
-                camera.getViewMatrix()
-        );
-        shader.setMat4(
-                "projection",
-                camera.getProjectionMatrix(aspectRatio)
-        );
-
-        shader.setVec3("ambientColor", 1.0f, 1.0f, 1.0f);
-        shader.setFloat("ambientIntensity", 0.2f);
-
-        var light = scene.getDirectionalLight();
-
-        shader.setVec3(
-                "sun.direction",
-                light.getDirection().x,
-                light.getDirection().y,
-                light.getDirection().z
-        );
-
-        shader.setVec3(
-                "sun.color",
-                light.getColor().x,
-                light.getColor().y,
-                light.getColor().z
-        );
-
-        shader.setFloat("sun.intensity", light.getIntensity());
+        shader.setMat4("model", transform.getWorldMatrix());
 
         if (mesh.isIndexed()) {
             glDrawElements(

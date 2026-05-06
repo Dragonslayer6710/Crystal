@@ -3,6 +3,8 @@ package com.crystal.engine.render;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.mesh.Mesh;
+import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.render.shader.ShaderProgram;
 import com.crystal.engine.render.texture.Texture;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -18,6 +20,8 @@ public class RenderContext {
     private int currentNormalMapTextureId = 0;
     private int currentMaterialId = 0;
 
+    private int currentSceneShaderId = 0;
+
     private int currentMeshId = 0;
 
     public void beginFrame() {
@@ -25,6 +29,8 @@ public class RenderContext {
         currentAlbedoTextureId = 0;
         currentNormalMapTextureId = 0;
         currentMaterialId = 0;
+
+        currentSceneShaderId = 0;
 
         currentMeshId = 0;
     }
@@ -107,5 +113,46 @@ public class RenderContext {
             mesh.bind();
             currentMeshId = mesh.getId();
         }
+    }
+
+    public void bindScene(ShaderProgram shader, Scene scene, float aspectRatio) {
+        int shaderId = shader.getId();
+
+        if (currentSceneShaderId == shaderId)
+            return;
+
+        var camera = scene.getCamera();
+
+        shader.setMat4(
+                "view",
+                camera.getViewMatrix()
+        );
+        shader.setMat4(
+                "projection",
+                camera.getProjectionMatrix(aspectRatio)
+        );
+
+        shader.setVec3("ambientColor", 1.0f, 1.0f, 1.0f);
+        shader.setFloat("ambientIntensity", 0.2f);
+
+        var light = scene.getDirectionalLight();
+
+        shader.setVec3(
+                "sun.direction",
+                light.getDirection().x,
+                light.getDirection().y,
+                light.getDirection().z
+        );
+
+        shader.setVec3(
+                "sun.color",
+                light.getColor().x,
+                light.getColor().y,
+                light.getColor().z
+        );
+
+        shader.setFloat("sun.intensity", light.getIntensity());
+
+        currentSceneShaderId = shaderId;
     }
 }
