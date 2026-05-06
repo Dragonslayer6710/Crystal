@@ -38,4 +38,3 @@ nbdist/
 .DS_Store
 hs_err_pid*.log
 /.idea/.gitignore
-/.idea/compiler.xml
