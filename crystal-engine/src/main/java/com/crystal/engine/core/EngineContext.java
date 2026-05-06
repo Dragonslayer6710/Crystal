@@ -43,8 +43,4 @@ public class EngineContext {
     public Scene getScene() {
         return scene;
     }
-
-    public Camera getSceneCamera() {
-        return getScene().getCamera();
-    }
 }
