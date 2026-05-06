@@ -1,7 +1,6 @@
 package com.crystal.engine.render.commands;
 
 import com.crystal.engine.render.RenderContext;
-import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 
@@ -19,25 +18,6 @@ public class DrawSceneObjectCommand implements RenderCommand {
         this.aspectRatio = aspectRatio;
     }
 
-    private void applyRenderState(RenderState state) {
-        if (state.isDepthTest()) {
-            glEnable(GL_DEPTH_TEST);
-        } else {
-            glDisable(GL_DEPTH_TEST);
-        }
-
-        if (state.isCullFace()) {
-            glEnable(GL_CULL_FACE);
-        } else {
-            glDisable(GL_CULL_FACE);
-        }
-
-        glPolygonMode(
-                GL_FRONT_AND_BACK,
-                state.isWireframe() ? GL_LINE : GL_FILL
-        );
-    }
-
     @Override
     public void execute(RenderContext context) {
         var material = object.getMaterial();
@@ -46,8 +26,7 @@ public class DrawSceneObjectCommand implements RenderCommand {
 
         context.applyRenderState(material.getRenderState());
         context.bindMaterial(material);
-
-        mesh.bind();
+        context.bindMesh(mesh);
 
         var shader = material.getShaderProgram();
         var camera = scene.getCamera();
@@ -100,7 +79,5 @@ public class DrawSceneObjectCommand implements RenderCommand {
                     mesh.getVertexCount()
             );
         }
-
-        mesh.unbind();
     }
 }

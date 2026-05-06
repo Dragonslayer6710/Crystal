@@ -40,8 +40,8 @@ public class SandboxMain implements Game {
 
         Material material = new Material(shaderProgram);
         material.getRenderState()
-                .setWireframe(true)
-                .setCullFace(false);
+                .setWireframe(false)
+                .setCullFace(true);
 
         Texture texture = ctx.getResources().createTexture("test.png");
         material.setAlbedo(texture);

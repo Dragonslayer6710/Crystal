@@ -12,6 +12,10 @@ public class Texture implements Disposable {
         this.id = id;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public void bind(int texture, int target) {
         glActiveTexture(texture);
         glBindTexture(target, id);

@@ -2,7 +2,6 @@ package com.crystal.engine.render;
 
 import com.crystal.engine.render.commands.ClearCommand;
 import com.crystal.engine.render.commands.DrawSceneObjectCommand;
-import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
@@ -83,6 +82,9 @@ public class Renderer {
                 )
                 .thenComparingInt(object ->
                         object.getMaterial().getId()
+                )
+                .thenComparingInt(object ->
+                        object.getMesh().getId()
                 )
         );
 

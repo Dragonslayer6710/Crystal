@@ -2,6 +2,8 @@ package com.crystal.engine.render;
 
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.material.RenderState;
+import com.crystal.engine.render.mesh.Mesh;
+import com.crystal.engine.render.texture.Texture;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -12,11 +14,19 @@ public class RenderContext {
     private boolean currentWireframe = false;
 
     private int currentShaderId = 0;
+    private int currentAlbedoTextureId = 0;
+    private int currentNormalMapTextureId = 0;
     private int currentMaterialId = 0;
+
+    private int currentMeshId = 0;
 
     public void beginFrame() {
         currentShaderId = 0;
+        currentAlbedoTextureId = 0;
+        currentNormalMapTextureId = 0;
         currentMaterialId = 0;
+
+        currentMeshId = 0;
     }
 
     public void applyRenderState(RenderState state) {
@@ -50,6 +60,31 @@ public class RenderContext {
         }
     }
 
+    private void bindTextureIfNeeded(Texture texture, int textureUnit, int target, boolean albedoSlot) {
+        int textureId = texture != null ? texture.getId() : 0;
+
+        if (albedoSlot) {
+            if (textureId == currentAlbedoTextureId) {
+                return;
+            }
+
+            currentAlbedoTextureId = textureId;
+        } else {
+            if (textureId == currentNormalMapTextureId) {
+                return;
+            }
+
+            currentNormalMapTextureId = textureId;
+        }
+
+        if (texture != null) {
+            texture.bind(textureUnit, target);
+        } else {
+            glActiveTexture(textureUnit);
+            glBindTexture(target, 0);
+        }
+    }
+
     public void bindMaterial(Material material) {
         int shaderId = material.getShaderProgram().getId();
 
@@ -61,6 +96,16 @@ public class RenderContext {
         if (material.getId() != currentMaterialId) {
             material.bindProperties();
             currentMaterialId = material.getId();
+        }
+
+        bindTextureIfNeeded(material.getAlbedo(), GL_TEXTURE0, GL_TEXTURE_2D, true);
+        bindTextureIfNeeded(material.getAlbedo(), GL_TEXTURE1, GL_TEXTURE_2D, false);
+    }
+
+    public void bindMesh(Mesh mesh) {
+        if (mesh.getId() != currentMeshId) {
+            mesh.bind();
+            currentMeshId = mesh.getId();
         }
     }
 }

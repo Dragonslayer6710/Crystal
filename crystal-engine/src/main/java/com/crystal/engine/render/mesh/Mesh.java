@@ -19,6 +19,9 @@ public class Mesh implements Disposable {
 
     private final VertexLayout layout;
 
+    private static int nextId = 1;
+    private final int id = nextId++;
+
     public Mesh(PrimitiveType type, float[] vertices, int[] indices, VertexLayout layout) {
         this.type = type;
         this.layout = layout;
@@ -69,6 +72,10 @@ public class Mesh implements Disposable {
 
     public int getVertexCount() {
         return vertexCount;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public void bind() {

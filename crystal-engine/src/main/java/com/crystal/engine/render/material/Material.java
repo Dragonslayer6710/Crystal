@@ -60,15 +60,10 @@ public class Material {
 
     public void bindProperties() {
         shaderProgram.setInt("albedoTexture", 0);
+//        shaderProgram.setInt("normalMap", 1);
+
         shaderProgram.setVec3("materialTint", tint.x, tint.y, tint.z);
 
-        if (albedo != null) {
-            albedo.bind(GL_TEXTURE0, GL_TEXTURE_2D);
-        }
-
-        if (normalMap != null) {
-            normalMap.bind(GL_TEXTURE1, GL_TEXTURE_2D);
-        }
 
         if (materialUBO != null) {
              materialUBO.bind();
@@ -77,6 +72,14 @@ public class Material {
 
     public ShaderProgram getShaderProgram() {
         return shaderProgram;
+    }
+
+    public Texture getAlbedo() {
+        return albedo;
+    }
+
+    public Texture getNormalMap() {
+        return normalMap;
     }
 
     public int getId() {
