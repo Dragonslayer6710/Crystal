@@ -1,10 +1,15 @@
 package com.crystal.engine.render;
 
 import com.crystal.engine.render.commands.DrawSceneObjectCommand;
+import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -15,6 +20,10 @@ public class Renderer {
     private final RenderQueue queue = new RenderQueue();
 
     private boolean frustumCullingEnabled = true;
+
+    private boolean currentDepthTest = true;
+    private boolean currentCullFace = true;
+    private boolean currentWireframe = false;
 
     public void init(int width, int height) {
         resizeViewport(width, height);
@@ -39,6 +48,37 @@ public class Renderer {
         queue.execute();
     }
 
+    public void applyRenderState(RenderState state) {
+        if (state.isDepthTest() != currentDepthTest) {
+            currentDepthTest = state.isDepthTest();
+
+            if (currentDepthTest) {
+                glEnable(GL_DEPTH_TEST);
+            } else {
+                glDisable(GL_DEPTH_TEST);
+            }
+        }
+
+        if (state.isCullFace() != currentCullFace) {
+            currentCullFace = state.isCullFace();
+
+            if (currentCullFace) {
+                glEnable(GL_CULL_FACE);
+            } else {
+                glDisable(GL_CULL_FACE);
+            }
+        }
+
+        if (state.isWireframe() != currentWireframe) {
+            currentWireframe = state.isWireframe();
+
+            glPolygonMode(
+                    GL_FRONT_AND_BACK,
+                    currentWireframe ? GL_LINE : GL_FILL
+            );
+        }
+    }
+
     public void render(Scene scene, float aspectRatio) {
         beginFrame();
 
@@ -48,6 +88,8 @@ public class Renderer {
         int submitted = 0;
         int culled = 0;
         int hidden = 0;
+
+        List<SceneObject> visibleObjects = new ArrayList<>();
 
         for (SceneObject object : scene.getRenderables()) {
             if (!object.isVisible()) {
@@ -63,9 +105,25 @@ public class Renderer {
                 continue;
             }
 
+            visibleObjects.add(object);
+        }
+
+        visibleObjects.sort(Comparator.
+                comparingInt((SceneObject object) ->
+                        object.getMaterial().getRenderState().hashCode()
+                )
+                .thenComparingInt(object ->
+                        object.getMaterial().hashCode()
+                )
+        );
+
+        for (SceneObject object : visibleObjects) {
+            applyRenderState(object.getMaterial().getRenderState());
+
             queue.submit(new DrawSceneObjectCommand(object, scene, aspectRatio));
             submitted++;
         }
+
         renderFrame();
 
         if (logger.isDebugEnabled()) {
