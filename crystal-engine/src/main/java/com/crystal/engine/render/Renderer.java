@@ -1,5 +1,6 @@
 package com.crystal.engine.render;
 
+import com.crystal.engine.render.commands.ClearCommand;
 import com.crystal.engine.render.commands.DrawSceneObjectCommand;
 import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.scene.Camera;
@@ -14,15 +15,11 @@ import static org.lwjgl.opengl.GL46.*;
 
 public class Renderer {
 
+    private final RenderContext context = new RenderContext();
+
     private final RenderQueue queue = new RenderQueue();
 
     private boolean frustumCullingEnabled = true;
-
-    private boolean currentDepthTest = true;
-    private boolean currentCullFace = true;
-    private boolean currentWireframe = false;
-
-    private int currentShaderId = 0;
 
     public void init(int width, int height) {
         resizeViewport(width, height);
@@ -38,44 +35,14 @@ public class Renderer {
     // Called at start of frame
     public void beginFrame() {
         queue.clear();
-        glClearColor(0.1f, 0.1f, 0.15f, 1f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        context.beginFrame();
+
+        queue.submit(new ClearCommand(0.1f, 0.1f, 0.15f, 1.0f));
     }
 
     // Called at end of frame
     public void renderFrame() {
-        queue.execute();
-    }
-
-    public void applyRenderState(RenderState state) {
-        if (state.isDepthTest() != currentDepthTest) {
-            currentDepthTest = state.isDepthTest();
-
-            if (currentDepthTest) {
-                glEnable(GL_DEPTH_TEST);
-            } else {
-                glDisable(GL_DEPTH_TEST);
-            }
-        }
-
-        if (state.isCullFace() != currentCullFace) {
-            currentCullFace = state.isCullFace();
-
-            if (currentCullFace) {
-                glEnable(GL_CULL_FACE);
-            } else {
-                glDisable(GL_CULL_FACE);
-            }
-        }
-
-        if (state.isWireframe() != currentWireframe) {
-            currentWireframe = state.isWireframe();
-
-            glPolygonMode(
-                    GL_FRONT_AND_BACK,
-                    currentWireframe ? GL_LINE : GL_FILL
-            );
-        }
+        queue.execute(context);
     }
 
     private void collectVisibleObjects(SceneObject object, List<SceneObject> visibleObjects, Camera camera) {
@@ -96,14 +63,6 @@ public class Renderer {
             collectVisibleObjects(child, visibleObjects, camera);
     }
 
-    private void submitSceneObjects(List<SceneObject> visibleObjects, Scene scene, float aspectRatio) {
-        for (SceneObject object : visibleObjects) {
-            applyRenderState(object.getMaterial().getRenderState());
-
-            queue.submit(new DrawSceneObjectCommand(object, scene, aspectRatio));
-        }
-    }
-
     public void render(Scene scene, float aspectRatio) {
         beginFrame();
 
@@ -120,13 +79,15 @@ public class Renderer {
                         object.getMaterial().getRenderState().getSortKey()
                 )
                 .thenComparingInt(object ->
-                        object.getMaterial().getId()
-                ).thenComparingInt(object ->
                         object.getMaterial().getShaderProgram().getId()
+                )
+                .thenComparingInt(object ->
+                        object.getMaterial().getId()
                 )
         );
 
-        submitSceneObjects(visibleObjects, scene, aspectRatio);
+        for (SceneObject object : visibleObjects)
+            queue.submit(new DrawSceneObjectCommand(object, scene, aspectRatio));
 
         renderFrame();
     }

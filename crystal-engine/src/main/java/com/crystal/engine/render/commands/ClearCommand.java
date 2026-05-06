@@ -1,6 +1,6 @@
 package com.crystal.engine.render.commands;
 
-import com.crystal.engine.render.RenderCommand;
+import com.crystal.engine.render.RenderContext;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -16,7 +16,7 @@ public class ClearCommand implements RenderCommand {
     }
 
     @Override
-    public void execute() {
+    public void execute(RenderContext context) {
         glClearColor(r, g, b, a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }

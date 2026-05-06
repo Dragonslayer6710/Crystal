@@ -58,9 +58,7 @@ public class Material {
 
     // ---------- BIND ----------
 
-    public void bind() {
-        shaderProgram.bind();
-
+    public void bindProperties() {
         shaderProgram.setInt("albedoTexture", 0);
         shaderProgram.setVec3("materialTint", tint.x, tint.y, tint.z);
 
