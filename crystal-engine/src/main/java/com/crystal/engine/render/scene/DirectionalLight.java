@@ -26,8 +26,8 @@ public class DirectionalLight {
         return this;
     }
 
-    public DirectionalLight setColor(float x, float y, float z) {
-        color.set(x, y, z);
+    public DirectionalLight setColor(float r, float g, float b) {
+        color.set(r, g, b);
         return this;
     }
 

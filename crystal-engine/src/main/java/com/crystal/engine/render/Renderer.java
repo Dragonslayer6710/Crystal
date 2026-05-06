@@ -35,9 +35,11 @@ public class Renderer {
 
     public void render(Scene scene, float aspectRatio) {
         beginFrame();
-        for (SceneObject r : scene.getRenderables()) {
-            // later: use r.getTransform()
-            queue.submit(new DrawSceneObjectCommand(r, scene, aspectRatio));
+        for (SceneObject object : scene.getRenderables()) {
+            if (!object.isVisible())
+                continue;
+
+            queue.submit(new DrawSceneObjectCommand(object, scene, aspectRatio));
         }
         renderFrame();
     }

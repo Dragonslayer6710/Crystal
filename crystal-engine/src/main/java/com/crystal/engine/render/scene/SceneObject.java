@@ -16,6 +16,9 @@ public class SceneObject {
     private SceneObject parent;
     private final List<SceneObject> children = new ArrayList<>();
 
+    private boolean active = true;
+    private boolean visible = true;
+
     public SceneObject(String name, Mesh mesh, Material material, Transform transform) {
         this.name = name;
         this.mesh = mesh;
@@ -97,6 +100,24 @@ public class SceneObject {
         child.getTransform().setParent(this.transform);
         children.add(child);
 
+        return this;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public SceneObject setActive(boolean active) {
+        this.active = active;
+        return this;
+    }
+
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public SceneObject setVisible(boolean visible) {
+        this.visible = visible;
         return this;
     }
 }

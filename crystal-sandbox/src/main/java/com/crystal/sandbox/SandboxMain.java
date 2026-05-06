@@ -38,6 +38,7 @@ public class SandboxMain implements Game {
                 .createShaderProgram("basic");
 
         Material material = new Material(shaderProgram);
+        material.setWireframe(true);
 
         Texture texture = ctx.getResources().createTexture("test.png");
         material.setAlbedo(texture);

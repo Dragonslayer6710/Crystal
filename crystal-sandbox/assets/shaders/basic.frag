@@ -17,6 +17,8 @@ uniform DirectionalLight sun;
 uniform vec3 ambientColor;
 uniform float ambientIntensity;
 
+uniform vec3 materialTint;
+
 out vec4 color;
 
 void main() {
@@ -26,7 +28,7 @@ void main() {
 
     float diffuseFactor = max(dot(normal, lightDir), 0.0);
 
-    vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color;
+    vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
 
     vec3 ambient = ambientColor * ambientIntensity;
     vec3 diffuse = sun.color * sun.intensity * diffuseFactor;

@@ -8,21 +8,29 @@ import static org.lwjgl.opengl.GL46.*;
 
 public class DrawSceneObjectCommand implements RenderCommand {
 
-    private final SceneObject sceneObject;
+    private final SceneObject object;
     private final Scene scene;
     private final float aspectRatio;
 
-    public DrawSceneObjectCommand(SceneObject sceneObject, Scene scene, float aspectRatio) {
-        this.sceneObject = sceneObject;
+    public DrawSceneObjectCommand(SceneObject object, Scene scene, float aspectRatio) {
+        this.object = object;
         this.scene = scene;
         this.aspectRatio = aspectRatio;
     }
 
     @Override
     public void execute() {
-        var material = sceneObject.getMaterial();
-        var mesh = sceneObject.getMesh();
-        var transform = sceneObject.getTransform();
+        var material = object.getMaterial();
+        var mesh = object.getMesh();
+        var transform = object.getTransform();
+
+        if (material.isWireframe()) {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+            glDisable(GL_CULL_FACE);
+        } else {
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+            glEnable(GL_CULL_FACE);
+        }
 
         material.bind();
         mesh.bind();
