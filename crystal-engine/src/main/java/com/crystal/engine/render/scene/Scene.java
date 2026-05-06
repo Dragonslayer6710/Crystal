@@ -13,7 +13,7 @@ public class Scene {
         objects.add(object);
     }
 
-    public List<SceneObject> getRenderables() {
+    public List<SceneObject> getObjects() {
         return objects;
     }
 

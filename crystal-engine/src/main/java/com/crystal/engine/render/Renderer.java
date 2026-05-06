@@ -91,7 +91,7 @@ public class Renderer {
 
         List<SceneObject> visibleObjects = new ArrayList<>();
 
-        for (SceneObject object : scene.getRenderables()) {
+        for (SceneObject object : scene.getObjects()) {
             if (!object.isVisible()) {
                 hidden++;
                 continue;

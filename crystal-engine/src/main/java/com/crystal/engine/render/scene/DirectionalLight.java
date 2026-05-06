@@ -22,7 +22,7 @@ public class DirectionalLight {
     }
 
     public DirectionalLight setDirection(float x, float y, float z) {
-        direction.set(x, y, z);
+        direction.set(x, y, z).normalize();
         return this;
     }
 

@@ -52,7 +52,7 @@ public class Mesh implements Disposable {
     }
 
     public Mesh(PrimitiveType type, float[] vertices, int[] indices) {
-        this(type, vertices, null, VertexLayout.POSITION_COLOR);
+        this(type, vertices, indices, VertexLayout.POSITION_COLOR);
     }
 
     public boolean isIndexed() {

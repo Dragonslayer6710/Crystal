@@ -6,6 +6,8 @@ import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.shader.ShaderProgram;
 import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.texture.TextureLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResourceManager {
+
+    private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
+
     private final List<Disposable> resources = new ArrayList<>();
     private final Path assetRoot = Path.of("assets");
 
@@ -54,7 +59,7 @@ public class ResourceManager {
             try {
                 r.dispose();
             } catch (Exception e) {
-                e.printStackTrace(); // replace with logger later
+                logger.error(e.getMessage());
             }
         }
         resources.clear();
