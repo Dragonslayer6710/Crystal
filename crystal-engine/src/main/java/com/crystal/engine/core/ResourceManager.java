@@ -30,7 +30,15 @@ public class ResourceManager {
     private final Map<String, Texture> textureCache = new HashMap<>();
     private final Map<String, Shader> shaderCache = new HashMap<>();
 
+    private boolean disposed;
+
     public <T extends Disposable> T register(T resource) {
+        if (disposed) throw new IllegalStateException("ResourceManager has already been disposed");
+
+        if (resource == null)
+            throw new IllegalArgumentException("Resource cannot be null");
+
+
         resources.add(resource);
         return resource;
     }
@@ -90,6 +98,9 @@ public class ResourceManager {
     }
 
     public void disposeAll() {
+        if (disposed) return;
+        disposed = true;
+
         for (Disposable r : resources) {
             try {
                 r.dispose();
@@ -97,7 +108,10 @@ public class ResourceManager {
                 logger.error(e.getMessage());
             }
         }
+
         resources.clear();
+        textureCache.clear();
+        shaderCache.clear();
     }
 
     private String loadAssetAsString(String path) {
