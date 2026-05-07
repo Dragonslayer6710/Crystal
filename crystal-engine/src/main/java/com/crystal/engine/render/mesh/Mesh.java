@@ -25,9 +25,39 @@ public class Mesh implements Disposable {
     private boolean disposed;
 
     public Mesh(PrimitiveType type, float[] vertices, int[] indices, VertexLayout layout) {
+        if (type == null)
+            throw new IllegalArgumentException("PrimitiveType cannot be null");
+
+        if (vertices == null)
+            throw new IllegalArgumentException("Vertex data cannot be null");
+
+        if (layout == null)
+            throw new IllegalArgumentException("VertexLayout cannot be null");
+
+        if (vertices.length == 0)
+            throw new IllegalArgumentException("Vertex data cannot be empty");
+
+        if (vertices.length % layout.getFloatsPerVertex() != 0)
+            throw new IllegalArgumentException("Vertex data length must be divisible by layout floats-per-vertex");
+
+        if (indices != null && indices.length == 0)
+            throw new IllegalArgumentException("Index data cannot be empty");
+
+        layout.validate();
+
         this.type = type;
         this.layout = layout;
         vertexCount = vertices.length / layout.getFloatsPerVertex();
+
+        if (indices != null) {
+            for (int index : indices) {
+                if (index < 0 || index >= vertexCount) {
+                    throw new IllegalArgumentException(
+                            "Index " + index + " is outside vertex range 0.." + (vertexCount - 1)
+                    );
+                }
+            }
+        }
 
         vao = new VertexArray();
         vbo = new VertexBuffer(vertices);

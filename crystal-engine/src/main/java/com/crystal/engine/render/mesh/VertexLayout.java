@@ -48,4 +48,22 @@ public enum VertexLayout {
     public VertexAttribute[] getAttributes() {
         return attributes;
     }
+
+    public void validate() {
+        if (floatsPerVertex <= 0)
+            throw new IllegalStateException("VertexLayout floatsPerVertex must be greater than 0");
+
+        if (attributes == null || attributes.length == 0)
+            throw new IllegalStateException("VertexLayout must contain at least one attribute");
+
+        int strideBytes = getStrideBytes();
+
+        for (VertexAttribute attribute : attributes) {
+            if (attribute == null)
+                throw new IllegalStateException("VertexLayout cannot contain null attributes");
+
+            if (attribute.offsetBytes() >= strideBytes)
+                throw new IllegalStateException("Vertex attribute offset must be inside the vertex stride");
+        }
+    }
 }
