@@ -11,6 +11,22 @@ public final class Time {
     private long lastFpsUpdateTime = System.currentTimeMillis();
     private int fpsCounter;
 
+    private double updateTimeMs;
+    private double renderTimeMs;
+    private double frameTimeMs;
+
+    void setUpdateTimeNanos(long nanos) {
+        updateTimeMs = nanos / 1_000_000.0;
+    }
+
+    void setRenderTimeNanos(long nanos) {
+        renderTimeMs = nanos / 1_000_000.0;
+    }
+
+    void setFrameTimeNanos(long nanos) {
+        frameTimeMs = nanos / 1_000_000.0;
+    }
+
     void update(long frameStartNanos, long lastFrameNanos, double maxDeltaTime) {
         deltaTime = (frameStartNanos - lastFrameNanos) / 1_000_000_000.0;
 
@@ -47,4 +63,17 @@ public final class Time {
     public int getFrameCount() {
         return frameCount;
     }
+
+    public double getUpdateTimeMs() {
+        return updateTimeMs;
+    }
+
+    public double getRenderTimeMs() {
+        return renderTimeMs;
+    }
+
+    public double getFrameTimeMs() {
+        return frameTimeMs;
+    }
+
 }

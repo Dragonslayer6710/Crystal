@@ -148,6 +148,11 @@ public class Window {
         return aspectRatio;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+        glfwSetWindowTitle(handle, title);
+    }
+
     public void destroy() {
         if (destroyed)
             return;

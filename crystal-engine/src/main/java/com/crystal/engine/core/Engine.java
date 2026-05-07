@@ -30,6 +30,8 @@ public class Engine implements WindowEventListener, Application {
 
     private EngineState state = EngineState.CREATED;
 
+    private double statsTitleTimer;
+
     public Engine(Game game, EngineConfig config) {
         if (game == null) throw new IllegalArgumentException("Game cannot be null");
         if (config == null) throw new IllegalArgumentException("EngineConfig cannot be null");
@@ -104,13 +106,17 @@ public class Engine implements WindowEventListener, Application {
                 window.pollEvents();
 
                 // 3 GAME LOGIC
+                long updateStart = System.nanoTime();
                 game.update(time.getDeltaTime());
+                time.setUpdateTimeNanos(System.nanoTime() - updateStart);
 
                 // 4. INPUT END
                 context.getInput().endFrame();
 
                 // 5. RENDERER RENDERS SCENE
+                long renderStart = System.nanoTime();
                 renderer.render(context.getScene(), window.getAspectRatio());
+                time.setRenderTimeNanos(System.nanoTime() - renderStart);
 
                 // 6. PRESENT FRAME (WINDOW RESPONSIBILITY)
                 window.swapBuffers();
@@ -118,6 +124,23 @@ public class Engine implements WindowEventListener, Application {
                 // 7. THROTTLE FPS IF config.targetFPS > 0
                 if (config.getTargetFPS() > 0)
                     throttle(frameStart);
+
+                time.setFrameTimeNanos(System.nanoTime() - frameStart);
+
+                statsTitleTimer += time.getDeltaTime();
+
+                if (statsTitleTimer >= 0.25) {
+                    statsTitleTimer = 0.0;
+
+                    window.setTitle(String.format(
+                            "%s |  FPS: %d | Frame: %.2fms | Update: %.2fms | Render: %.2fms",
+                            config.getWindowConfig().getTitle(),
+                            time.getFps(),
+                            time.getFrameTimeMs(),
+                            time.getUpdateTimeMs(),
+                            time.getRenderTimeMs()
+                    ));
+                }
             }
         } finally {
             shutdown();
