@@ -13,6 +13,7 @@ public class Window {
 
     private long handle;
 
+    private final WindowConfig config;
     private int width;
     private int height;
     private String title;
@@ -22,10 +23,13 @@ public class Window {
     private WindowEventListener windowEventListener;
     private InputListener inputListener;
 
-    public Window(int width, int height, String title) {
-        this.width = width;
-        this.height = height;
-        this.title = title;
+    public Window(WindowConfig config) {
+        if (config == null) throw new IllegalArgumentException("WindowConfig cannot be null");
+
+        this.config = config;
+        this.width = config.getWidth();
+        this.height = config.getHeight();
+        this.title = config.getTitle();
 
         this.aspectRatio = (float) width / (float) height;
     }
@@ -45,8 +49,9 @@ public class Window {
             throw new IllegalStateException("Unable to initialize GLFW");
         }
 
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_VISIBLE, config.isVisible() ? GLFW_TRUE : GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, config.isResizable() ? GLFW_TRUE : GLFW_FALSE);
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, config.isDebugContext() ? GLFW_TRUE : GLFW_FALSE);
 
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
@@ -113,8 +118,9 @@ public class Window {
 
         glfwMakeContextCurrent(handle);
 
-        glfwSwapInterval(0); // vsync
-        glfwShowWindow(handle);
+        glfwSwapInterval(config.isVSync() ? 1 : 0);
+
+        if (config.isVisible()) glfwShowWindow(handle);
     }
 
     public boolean shouldClose() {

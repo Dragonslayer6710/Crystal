@@ -13,9 +13,8 @@ public class Engine implements WindowEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(Engine.class);
 
-    private final EngineConfig config;
-
     private final Game game;
+    private final EngineConfig config;
 
     private Window window;
     private Input input;
@@ -27,16 +26,12 @@ public class Engine implements WindowEventListener {
 
     private boolean running;
 
-    private final long targetFrameTime;
-
     public Engine(Game game, EngineConfig config) {
         if (game == null) throw new IllegalArgumentException("Game cannot be null");
         if (config == null) throw new IllegalArgumentException("EngineConfig cannot be null");
 
         this.game = game;
         this.config = config;
-
-        targetFrameTime = 1_000_000_000 / config.getTargetFPS();
     }
 
     public Engine(Game game) {
@@ -48,7 +43,9 @@ public class Engine implements WindowEventListener {
 
         input = new Input();
 
-        window = new Window(config.getWidth(), config.getHeight(), config.getTitle());
+        var windowConfig = config.getWindowConfig();
+
+        window = new Window(windowConfig);
         window.create();
 
         window.setWindowEventListener(this);
@@ -57,7 +54,7 @@ public class Engine implements WindowEventListener {
         GL.createCapabilities();
 
         renderer = new Renderer();
-        renderer.init(config.getWidth(), config.getHeight());
+        renderer.init(windowConfig.getWidth(), windowConfig.getHeight());
 
         resourceManager = new ResourceManager();
 
@@ -98,7 +95,9 @@ public class Engine implements WindowEventListener {
             // 6. PRESENT FRAME (WINDOW RESPONSIBILITY)
             window.swapBuffers();
 
-            throttle(frameStart);
+            // 7. THROTTLE FPS IF config.targetFPS > 0
+            if (config.getTargetFPS() > 0)
+                throttle(frameStart);
         }
 
         shutdown();
@@ -106,7 +105,7 @@ public class Engine implements WindowEventListener {
 
     private void throttle(long frameStart) {
         long elapsed = System.nanoTime() - frameStart;
-        long sleepNanos = targetFrameTime - elapsed;
+        long sleepNanos = config.getTargetFrameTimeNanos() - elapsed;
 
         if (sleepNanos > 0) {
             try {
