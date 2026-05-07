@@ -43,7 +43,7 @@ public class SandboxMain implements Game {
                 .setWireframe(false)
                 .setCullFace(true);
 
-        Texture texture = ctx.getResources().createTexture("test.png");
+        Texture texture = ctx.getResources().createTexture("bricks_albedo.png");
         material.setAlbedo(texture);
 
         cubeA = new SceneObject("Cube A", mesh, material, new Transform().setPosition(-2, 0, -2f));
