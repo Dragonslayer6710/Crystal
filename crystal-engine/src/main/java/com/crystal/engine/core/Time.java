@@ -13,6 +13,7 @@ public final class Time {
 
     private double updateTimeMs;
     private double renderTimeMs;
+    private double workFrameTimeMs;
     private double frameTimeMs;
 
     void setUpdateTimeNanos(long nanos) {
@@ -23,6 +24,9 @@ public final class Time {
         renderTimeMs = nanos / 1_000_000.0;
     }
 
+    void setWorkFrameTimeNanos(long nanos) {
+        workFrameTimeMs = nanos / 1_000_000.0;
+    }
     void setFrameTimeNanos(long nanos) {
         frameTimeMs = nanos / 1_000_000.0;
     }
@@ -70,6 +74,10 @@ public final class Time {
 
     public double getRenderTimeMs() {
         return renderTimeMs;
+    }
+
+    public double getWorkFrameTimeMs() {
+        return workFrameTimeMs;
     }
 
     public double getFrameTimeMs() {

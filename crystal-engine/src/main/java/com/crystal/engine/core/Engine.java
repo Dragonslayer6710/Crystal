@@ -121,6 +121,8 @@ public class Engine implements WindowEventListener, Application {
                 // 6. PRESENT FRAME (WINDOW RESPONSIBILITY)
                 window.swapBuffers();
 
+                time.setWorkFrameTimeNanos(System.nanoTime() - frameStart);
+
                 // 7. THROTTLE FPS IF config.targetFPS > 0
                 if (config.getTargetFPS() > 0)
                     throttle(frameStart);
@@ -133,11 +135,12 @@ public class Engine implements WindowEventListener, Application {
                     statsTitleTimer = 0.0;
 
                     window.setTitle(String.format(
-                            "%s |  FPS: %d | Frame: %.2fms | Update: %.2fms | Render: %.2fms",
+                            "%s | FPS: %d | Frame: %.2fms | Update: %.2fms | Work: %.2fms | Render: %.2fms",
                             config.getWindowConfig().getTitle(),
                             time.getFps(),
                             time.getFrameTimeMs(),
                             time.getUpdateTimeMs(),
+                            time.getWorkFrameTimeMs(),
                             time.getRenderTimeMs()
                     ));
                 }
