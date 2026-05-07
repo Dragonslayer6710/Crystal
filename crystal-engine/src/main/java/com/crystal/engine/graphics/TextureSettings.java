@@ -45,4 +45,29 @@ public final class TextureSettings {
         this.generateMipmaps = generateMipmaps;
         return this;
     }
+
+    public static TextureSettings defaultAlbedo() {
+        return new TextureSettings()
+                .setFormat(TextureFormat.SRGBA8)
+                .setGenerateMipmaps(true)
+                .setMinFilter(TextureFilter.LINEAR_MIPMAP_LINEAR)
+                .setMagFilter(TextureFilter.LINEAR);
+    }
+
+    public static TextureSettings defaultData() {
+        return new TextureSettings()
+                .setFormat(TextureFormat.RGBA8)
+                .setGenerateMipmaps(false)
+                .setMinFilter(TextureFilter.LINEAR)
+                .setMagFilter(TextureFilter.LINEAR);
+    }
+
+    public static TextureSettings forType(TextureType type) {
+        if (type == null) throw new IllegalArgumentException("TextureType cannot be null");
+
+        return switch (type) {
+            case ALBEDO -> defaultAlbedo();
+            case NORMAL, DATA -> defaultData();
+        };
+    }
 }

@@ -1,6 +1,8 @@
 package com.crystal.engine.core;
 
 import com.crystal.engine.graphics.PrimitiveType;
+import com.crystal.engine.graphics.TextureSettings;
+import com.crystal.engine.graphics.TextureType;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.shader.Shader;
@@ -50,8 +52,23 @@ public class ResourceManager {
         return  createShaderProgram(name, name);
     }
 
+    public Texture createTexture(String path, TextureSettings settings) {
+        return register(TextureLoader.load(
+                assetRoot.resolve("textures/" + path),
+                settings
+        ));
+    }
+
+    public Texture createTexture(String path, TextureType type) {
+        return createTexture(path, TextureSettings.forType(type));
+    }
+
+    public Texture createDataTexture(String path) {
+        return createTexture(path, TextureSettings.defaultData());
+    }
+
     public Texture createTexture(String path) {
-        return register(TextureLoader.load(assetRoot.resolve("textures/" + path)));
+        return createTexture(path, TextureSettings.defaultAlbedo());
     }
 
     public void disposeAll() {

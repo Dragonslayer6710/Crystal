@@ -68,6 +68,9 @@ public class TextureLoader {
             glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, settings.getWrapS().glValue);
             glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, settings.getWrapT().glValue);
 
+            if (settings.isGenerateMipmaps())
+                glGenerateTextureMipmap(textureId);
+
             stbi_image_free(pixels);
 
             return new Texture(textureId);
