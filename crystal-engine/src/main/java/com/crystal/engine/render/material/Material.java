@@ -88,7 +88,7 @@ public class Material {
 
         shader.setVec3(Shader.Uniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
         shader.setFloat(Shader.Uniforms.MATERIAL_ROUGHNESS, roughness);
-        shader.setFloat(Shader.Uniforms.MATERIAL_METALLIC, roughness);
+        shader.setFloat(Shader.Uniforms.MATERIAL_METALLIC, metallic);
 
         if (materialUBO != null) {
              materialUBO.bind();
