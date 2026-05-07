@@ -39,7 +39,7 @@ public class Renderer {
 
     public void init(int width, int height) {
         defaultWhiteTexture = Texture.create1x1("default-white",255, 255, 255, 255);
-        defaultWhiteTexture = Texture.create1x1("default-normal",128, 128, 128, 128);
+        defaultNormalTexture = Texture.create1x1("default-normal",128, 128, 128, 128);
 
         context.setDefaultTextures(defaultWhiteTexture, defaultNormalTexture);
 
