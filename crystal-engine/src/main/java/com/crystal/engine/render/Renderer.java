@@ -67,6 +67,7 @@ public class Renderer {
 
         var camera = scene.getCamera();
         camera.updateFrustum(aspectRatio);
+        context.bindScene(scene, aspectRatio);
 
         List<SceneObject> visibleObjects = new ArrayList<>();
 

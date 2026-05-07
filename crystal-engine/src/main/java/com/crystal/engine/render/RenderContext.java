@@ -115,12 +115,7 @@ public class RenderContext {
         }
     }
 
-    public void bindScene(Shader shader, Scene scene, float aspectRatio) {
-        int shaderId = shader.getId();
-
-        if (currentSceneShaderId == shaderId)
-            return;
-
+    public void bindScene(Scene scene, float aspectRatio) {
         float[] data = new float[48];
 
         var camera = scene.getCamera();
@@ -149,7 +144,5 @@ public class RenderContext {
         var sceneUBO = scene.getSceneUBO();
         sceneUBO.setData(0, data);
         sceneUBO.bind();
-
-        currentSceneShaderId = shaderId;
     }
 }
