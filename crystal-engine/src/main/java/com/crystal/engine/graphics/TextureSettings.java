@@ -70,4 +70,16 @@ public final class TextureSettings {
             case NORMAL, DATA -> defaultData();
         };
     }
+
+    public void validate() {
+        if (minFilter.usesMipmaps() && !generateMipmaps) throw new IllegalStateException(
+                "Min filter requires mipmaps but generateMipmaps is false"
+        );
+
+        if (magFilter.usesMipmaps()) {
+            throw new IllegalStateException(
+                    "Magnification filter cannot use mipmaps"
+            );
+        }
+    }
 }

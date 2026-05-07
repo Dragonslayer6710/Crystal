@@ -23,6 +23,8 @@ public class TextureLoader {
     public static Texture load(Path path, TextureSettings settings) {
         if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
 
+        settings.validate();
+
         stbi_set_flip_vertically_on_load(true);
 
         try (MemoryStack stack = MemoryStack.stackPush()) {
@@ -73,7 +75,7 @@ public class TextureLoader {
 
             stbi_image_free(pixels);
 
-            return new Texture(textureId);
+            return new Texture(textureId, width.get(0), height.get(0));
         }
     }
 
