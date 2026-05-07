@@ -54,6 +54,8 @@ public final class MeshFactory {
 
 
     public static Mesh createTexturedCube(ResourceManager resources) {
+        if (resources == null) throw new IllegalArgumentException("ResourceManager cannot be null");
+
         return resources.createMesh(
                 PrimitiveType.TRIANGLES,
                 CUBE_VERTICES,
@@ -61,4 +63,5 @@ public final class MeshFactory {
                 VertexLayout.POSITION_COLOR_UV_NORMAL
         );
     }
+
 }
