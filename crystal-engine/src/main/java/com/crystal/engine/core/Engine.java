@@ -18,8 +18,9 @@ public class Engine implements WindowEventListener {
     private final Game game;
     private final EngineConfig config;
 
-    private Window window;
+    private Time time;
     private Input input;
+    private Window window;
     private Renderer renderer;
     private ResourceManager resourceManager;
     private Scene scene;
@@ -43,6 +44,8 @@ public class Engine implements WindowEventListener {
     private void init() {
         logger.info("Engine initialising");
 
+        time = new Time();
+
         input = new Input();
 
         var windowConfig = config.getWindowConfig();
@@ -64,7 +67,7 @@ public class Engine implements WindowEventListener {
 
         scene = new Scene();
 
-        context = new EngineContext(window, input, renderer, resourceManager, scene);
+        context = new EngineContext(time, input, window, renderer, resourceManager, scene);
 
         game.init(context);
 
@@ -79,7 +82,8 @@ public class Engine implements WindowEventListener {
 
             while (running && !window.shouldClose()) {
                 long frameStart = System.nanoTime();
-                double dt = (frameStart - lastTime) / 1_000_000_000.0;
+
+                time.update(frameStart, lastTime);
                 lastTime = frameStart;
 
                 // 1. INPUT START
@@ -89,7 +93,7 @@ public class Engine implements WindowEventListener {
                 window.pollEvents();
 
                 // 3 GAME LOGIC
-                game.update(dt);
+                game.update(time.getDeltaTime());
 
                 // 4. INPUT END
                 context.getInput().endFrame();
