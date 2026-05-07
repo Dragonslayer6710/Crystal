@@ -15,6 +15,8 @@ public class Material {
     private UniformBuffer materialUBO;
 
     private final Vector3f tint = new Vector3f(1.0f);
+    private float roughness = 0.5f;
+    private float metallic = 0.0f;
 
     private final RenderState renderState = new RenderState();
 
@@ -29,6 +31,14 @@ public class Material {
 
     public Vector3f getTint() {
         return tint;
+    }
+
+    public float getRoughness() {
+        return roughness;
+    }
+
+    public float getMetallic() {
+        return metallic;
     }
 
     public RenderState getRenderState() {
@@ -54,6 +64,22 @@ public class Material {
         return this;
     }
 
+    public Material setRoughness(float roughness) {
+        if (roughness < 0.0f || roughness > 1.0f)
+            throw new IllegalArgumentException("Roughness must be between 0 and 1");
+
+        this.roughness = roughness;
+        return this;
+    }
+
+    public Material setMetallic(float metallic) {
+        if (metallic < 0.0f || metallic > 1.0f)
+            throw new IllegalArgumentException("Metallic must be between 0 and 1");
+
+        this.metallic = metallic;
+        return this;
+    }
+
     // ---------- BIND ----------
 
     public void bindProperties() {
@@ -61,7 +87,8 @@ public class Material {
         shader.setInt(Shader.Uniforms.NORMAL_MAP, 1);
 
         shader.setVec3(Shader.Uniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
-
+        shader.setFloat(Shader.Uniforms.MATERIAL_ROUGHNESS, roughness);
+        shader.setFloat(Shader.Uniforms.MATERIAL_METALLIC, roughness);
 
         if (materialUBO != null) {
              materialUBO.bind();

@@ -13,23 +13,19 @@ import static org.lwjgl.opengl.GL46.*;
 public class Shader implements Disposable {
 
     public static final class Uniforms {
-        private Uniforms() {}
+        private Uniforms() {
+        }
 
         public static final String MODEL = "model";
-        public static final String VIEW = "view";
-        public static final String PROJECTION = "projection";
 
         public static final String ALBEDO_TEXTURE = "albedoTexture";
         public static final String NORMAL_MAP = "normalMap";
+
         public static final String MATERIAL_TINT = "materialTint";
-
-        public static final String AMBIENT_COLOR = "ambientColor";
-        public static final String AMBIENT_INTENSITY = "ambientIntensity";
-
-        public static final String SUN_DIRECTION = "sun.direction";
-        public static final String SUN_COLOR = "sun.color";
-        public static final String SUN_INTENSITY = "sun.intensity";
+        public static final String MATERIAL_ROUGHNESS = "materialRoughness";
+        public static final String MATERIAL_METALLIC = "materialMetallic";
     }
+
 
     private final String vertexSourcePath;
     private final String fragmentSourcePath;
