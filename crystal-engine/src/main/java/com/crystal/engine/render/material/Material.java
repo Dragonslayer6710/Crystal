@@ -57,10 +57,10 @@ public class Material {
     // ---------- BIND ----------
 
     public void bindProperties() {
-        shader.setInt("albedoTexture", 0);
-//        shader.setInt("normalMap", 1);
+        shader.setInt(Shader.Uniforms.ALBEDO_TEXTURE, 0);
+        shader.setInt(Shader.Uniforms.NORMAL_MAP, 1);
 
-        shader.setVec3("materialTint", tint.x, tint.y, tint.z);
+        shader.setVec3(Shader.Uniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
 
 
         if (materialUBO != null) {

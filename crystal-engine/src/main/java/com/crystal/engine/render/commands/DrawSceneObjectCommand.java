@@ -3,6 +3,7 @@ package com.crystal.engine.render.commands;
 import com.crystal.engine.render.RenderContext;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.render.shader.Shader;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -23,14 +24,14 @@ public class DrawSceneObjectCommand implements RenderCommand {
         var material = object.getMaterial();
         var mesh = object.getMesh();
         var transform = object.getTransform();
-        var shader = material.getShaderProgram();
+        Shader shader = material.getShaderProgram();
 
         context.applyRenderState(material.getRenderState());
         context.bindMaterial(material);
         context.bindScene(shader, scene, aspectRatio);
         context.bindMesh(mesh);
 
-        shader.setMat4("model", transform.getWorldMatrix());
+        shader.setMat4(Shader.Uniforms.AMBIENT_INTENSITY, transform.getWorldMatrix());
 
         if (mesh.isIndexed()) {
             glDrawElements(

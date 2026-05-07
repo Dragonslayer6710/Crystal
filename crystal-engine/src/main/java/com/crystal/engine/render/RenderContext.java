@@ -105,7 +105,7 @@ public class RenderContext {
         }
 
         bindTextureIfNeeded(material.getAlbedo(), GL_TEXTURE0, GL_TEXTURE_2D, true);
-        bindTextureIfNeeded(material.getAlbedo(), GL_TEXTURE1, GL_TEXTURE_2D, false);
+        bindTextureIfNeeded(material.getNormalMap(), GL_TEXTURE1, GL_TEXTURE_2D, false);
     }
 
     public void bindMesh(Mesh mesh) {
@@ -123,37 +123,37 @@ public class RenderContext {
 
         var camera = scene.getCamera();
         shader.setMat4(
-                "view",
+                Shader.Uniforms.VIEW,
                 camera.getViewMatrix()
         );
         shader.setMat4(
-                "projection",
+                Shader.Uniforms.PROJECTION,
                 camera.getProjectionMatrix(aspectRatio)
         );
 
         var ambientColor = scene.getAmbientColor();
         shader.setVec3(
-                "ambientColor",
+                Shader.Uniforms.AMBIENT_COLOR,
                 ambientColor.x,
                 ambientColor.y,
                 ambientColor.z
         );
-        shader.setFloat("ambientIntensity", scene.getAmbientIntensity());
+        shader.setFloat(Shader.Uniforms.AMBIENT_INTENSITY, scene.getAmbientIntensity());
 
         var light = scene.getDirectionalLight();
         shader.setVec3(
-                "sun.direction",
+                Shader.Uniforms.SUN_DIRECTION,
                 light.getDirection().x,
                 light.getDirection().y,
                 light.getDirection().z
         );
         shader.setVec3(
-                "sun.color",
+                Shader.Uniforms.SUN_COLOR,
                 light.getColor().x,
                 light.getColor().y,
                 light.getColor().z
         );
-        shader.setFloat("sun.intensity", light.getIntensity());
+        shader.setFloat(Shader.Uniforms.SUN_INTENSITY, light.getIntensity());
 
         currentSceneShaderId = shaderId;
     }
