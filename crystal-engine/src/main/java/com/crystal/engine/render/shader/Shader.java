@@ -1,6 +1,7 @@
 package com.crystal.engine.render.shader;
 
 import com.crystal.engine.core.Disposable;
+import com.crystal.engine.render.GLObjectLabel;
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
 
@@ -95,6 +96,10 @@ public class Shader implements Disposable {
 
     public int getId() {
         return id;
+    }
+
+    public void setDebugLabel(String label) {
+        GLObjectLabel.labelProgram(id, label);
     }
 
     public void bind() {

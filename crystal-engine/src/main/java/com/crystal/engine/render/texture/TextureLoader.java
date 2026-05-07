@@ -2,6 +2,7 @@ package com.crystal.engine.render.texture;
 
 import com.crystal.engine.graphics.TextureFormat;
 import com.crystal.engine.graphics.TextureSettings;
+import com.crystal.engine.render.GLObjectLabel;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
@@ -44,6 +45,7 @@ public class TextureLoader {
                 throw new RuntimeException("Failed to load texture: " + path + "\n" + stbi_failure_reason());
 
             int textureId = glCreateTextures(GL_TEXTURE_2D);
+            GLObjectLabel.labelTexture(textureId, path.toString());
 
             glTextureStorage2D(
                     textureId,
