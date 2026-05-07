@@ -55,8 +55,10 @@ public class ResourceManager {
 
             String vs = loadAssetAsString(paths[0]);
             String fs = loadAssetAsString(paths[1]);
-            Shader shader = new Shader(vs, fs);
+
+            Shader shader = new Shader(vs, fs, paths[0], paths[1]);
             shader.setDebugLabel(cacheKey);
+
             return register(shader);
         });
     }

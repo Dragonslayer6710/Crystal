@@ -31,11 +31,17 @@ public class Shader implements Disposable {
         public static final String SUN_INTENSITY = "sun.intensity";
     }
 
+    private final String vertexSourcePath;
+    private final String fragmentSourcePath;
+
     private final int id;
     private final Map<String, Integer> uniformMap = new HashMap<>();
 
 
-    public Shader(String vertexSrc, String fragmentSrc) {
+    public Shader(String vertexSrc, String fragmentSrc, String vertexSourcePath, String fragmentSourcePath) {
+        this.vertexSourcePath = vertexSourcePath;
+        this.fragmentSourcePath = fragmentSourcePath;
+
         int vs = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vs, vertexSrc);
         glCompileShader(vs);
@@ -57,6 +63,10 @@ public class Shader implements Disposable {
 
         glDeleteShader(vs);
         glDeleteShader(fs);
+    }
+
+    public Shader(String vertexSrc, String fragmentSrc) {
+        this(vertexSrc, fragmentSrc, null, null);
     }
 
     private void checkCompile(int shaderId) {
@@ -94,12 +104,20 @@ public class Shader implements Disposable {
         }
     }
 
+    public void setDebugLabel(String label) {
+        GLObjectLabel.labelProgram(id, label);
+    }
+
     public int getId() {
         return id;
     }
 
-    public void setDebugLabel(String label) {
-        GLObjectLabel.labelProgram(id, label);
+    public String getVertexSourcePath() {
+        return vertexSourcePath;
+    }
+
+    public String getFragmentSourcePath() {
+        return fragmentSourcePath;
     }
 
     public void bind() {
