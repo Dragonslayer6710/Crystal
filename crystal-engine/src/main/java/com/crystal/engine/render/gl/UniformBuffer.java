@@ -1,21 +1,17 @@
 package com.crystal.engine.render.gl;
 
-import com.crystal.engine.core.Disposable;
 import com.crystal.engine.graphics.BufferUsage;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class UniformBuffer implements Disposable {
+public class UniformBuffer extends GLObject {
 
-    private final int id;
     private final int bindingPoint;
 
-    private boolean disposed;
-
     public UniformBuffer(int bindingPoint, int sizeBytes, BufferUsage usage) {
-        this.bindingPoint = bindingPoint;
+        super(glCreateBuffers());
 
-        id = glCreateBuffers();
+        this.bindingPoint = bindingPoint;
         glNamedBufferData(id, sizeBytes, usage.glValue);
     }
 
@@ -32,10 +28,7 @@ public class UniformBuffer implements Disposable {
     }
 
     @Override
-    public void dispose() {
-        if (disposed) return;
-
+    public void disposeInternal() {
         glDeleteBuffers(id);
-        disposed = true;
     }
 }
