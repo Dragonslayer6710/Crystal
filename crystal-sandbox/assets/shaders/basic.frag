@@ -35,7 +35,7 @@ void main() {
     mat3 TBN = mat3(T, B, N);
 
     vec3 sampledNormal = texture(normalMap, v_UV).xyz * 2.0 - 1.0;
-    N = normalize(sampledNormal);
+    N = normalize(TBN * sampledNormal);
 
     vec3 L = normalize(-sunDirection.xyz);
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);

@@ -35,7 +35,7 @@ void main() {
     mat3 normalMatrix = mat3(transpose(inverse(model)));
 
     v_Normal = normalMatrix * a_Normal;
-    v_Normal = normalMatrix * a_Tangent;
+    v_Tangent = normalMatrix * a_Tangent;
 
     gl_Position = projection * view * worldPosition;
 }
