@@ -22,6 +22,8 @@ public class Mesh implements Disposable {
     private static int nextId = 1;
     private final int id = nextId++;
 
+    private boolean disposed;
+
     public Mesh(PrimitiveType type, float[] vertices, int[] indices, VertexLayout layout) {
         this.type = type;
         this.layout = layout;
@@ -88,10 +90,14 @@ public class Mesh implements Disposable {
 
     @Override
     public void dispose() {
+        if (disposed) return;
+
        vao.delete();
        vbo.delete();
 
        if (ebo != null)
            ebo.delete();
+
+       disposed = true;
     }
 }
