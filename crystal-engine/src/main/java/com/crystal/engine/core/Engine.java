@@ -28,8 +28,7 @@ public class Engine implements WindowEventListener, Application {
 
     private EngineContext context;
 
-    private boolean running;
-    private boolean shutdown;
+    private EngineState state = EngineState.CREATED;
 
     public Engine(Game game, EngineConfig config) {
         if (game == null) throw new IllegalArgumentException("Game cannot be null");
@@ -44,6 +43,8 @@ public class Engine implements WindowEventListener, Application {
     }
 
     private void init() {
+        state = EngineState.INITIALISING;
+
         logger.info("Engine initialising");
 
         time = new Time();
@@ -81,7 +82,7 @@ public class Engine implements WindowEventListener, Application {
 
         game.init(context);
 
-        running = true;
+        state = EngineState.RUNNING;
     }
 
     public void run() {
@@ -90,7 +91,7 @@ public class Engine implements WindowEventListener, Application {
 
             long lastTime = System.nanoTime();
 
-            while (running && !window.shouldClose()) {
+            while (state == EngineState.RUNNING && !window.shouldClose()) {
                 long frameStart = System.nanoTime();
 
                 time.update(frameStart, lastTime, config.getMaxDeltaTime());
@@ -137,11 +138,10 @@ public class Engine implements WindowEventListener, Application {
     }
 
     private void shutdown() {
-        if (shutdown)
+        if (state == EngineState.SHUTDOWN)
             return;
 
-        shutdown = true;
-        running = false;
+        state = EngineState.STOPPING;
 
         logger.info("Engine shutting down");
 
@@ -158,6 +158,8 @@ public class Engine implements WindowEventListener, Application {
         GLDebug.dispose();
 
         if (window != null) window.destroy();
+
+        state = EngineState.SHUTDOWN;
     }
 
     @Override
@@ -167,6 +169,6 @@ public class Engine implements WindowEventListener, Application {
 
     @Override
     public void stop() {
-        running = false;
+        if (state == EngineState.RUNNING) state = EngineState.STOPPING;
     }
 }

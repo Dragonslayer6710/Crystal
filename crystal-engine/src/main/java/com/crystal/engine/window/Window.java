@@ -23,6 +23,8 @@ public class Window {
     private WindowEventListener windowEventListener;
     private InputListener inputListener;
 
+    private boolean destroyed;
+
     public Window(WindowConfig config) {
         if (config == null) throw new IllegalArgumentException("WindowConfig cannot be null");
 
@@ -147,8 +149,17 @@ public class Window {
     }
 
     public void destroy() {
-        Callbacks.glfwFreeCallbacks(handle);
-        glfwDestroyWindow(handle);
+        if (destroyed)
+            return;
+
+        destroyed = true;
+
+        if (handle != NULL) {
+            Callbacks.glfwFreeCallbacks(handle);
+            glfwDestroyWindow(handle);
+            handle = NULL;
+        }
+
         glfwTerminate();
     }
 }
