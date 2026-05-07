@@ -4,15 +4,12 @@ import com.crystal.engine.graphics.BufferUsage;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class ElementBuffer {
+public class ElementBuffer extends GLObject {
 
-    private final int id;
     private final int count;
 
-    private boolean deleted;
-
     public ElementBuffer(int[] indices, BufferUsage usage) {
-        id = glCreateBuffers();
+        super(glCreateBuffers());
         this.count = indices.length;
 
         glNamedBufferData(id, indices, usage.glValue);
@@ -22,18 +19,12 @@ public class ElementBuffer {
         this(indices, BufferUsage.STATIC);
     }
 
-    public int getId() {
-        return id;
-    }
-
     public int getCount() {
         return count;
     }
 
-    public void delete() {
-        if (deleted) return;
-
+    @Override
+    public void disposeInternal() {
         glDeleteBuffers(id);
-        deleted = true;
     }
 }

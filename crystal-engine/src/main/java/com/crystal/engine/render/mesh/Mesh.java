@@ -92,11 +92,11 @@ public class Mesh implements Disposable {
     public void dispose() {
         if (disposed) return;
 
-       vao.delete();
-       vbo.delete();
+       vao.dispose();
+       vbo.dispose();
 
        if (ebo != null)
-           ebo.delete();
+           ebo.dispose();
 
        disposed = true;
     }

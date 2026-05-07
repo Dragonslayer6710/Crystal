@@ -2,13 +2,9 @@ package com.crystal.engine.render.gl;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class VertexArray {
-    private final int id;
-
-    private boolean deleted;
-
+public class VertexArray extends GLObject{
     public VertexArray() {
-        id = glCreateVertexArrays();
+       super(glCreateVertexArrays());
     }
 
     public void bindVertexBuffer(int bindingIndex, VertexBuffer vbo, long offset, int stride) {
@@ -52,10 +48,8 @@ public class VertexArray {
         glBindVertexArray(0);
     }
 
-    public void delete() {
-        if (deleted) return;
-
+    @Override
+    public void disposeInternal() {
         glDeleteVertexArrays(id);
-        deleted = true;
     }
 }
