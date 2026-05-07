@@ -3,13 +3,14 @@ package com.crystal.engine.core;
 import com.crystal.engine.input.Input;
 import com.crystal.engine.render.GLDebug;
 import com.crystal.engine.render.Renderer;
-import com.crystal.engine.render.RendererConfig;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.window.Window;
 import com.crystal.engine.window.WindowEventListener;
 import org.lwjgl.opengl.GL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.locks.LockSupport;
 
 public class Engine implements WindowEventListener, Application {
 
@@ -28,6 +29,7 @@ public class Engine implements WindowEventListener, Application {
     private EngineContext context;
 
     private boolean running;
+    private boolean shutdown;
 
     public Engine(Game game, EngineConfig config) {
         if (game == null) throw new IllegalArgumentException("Game cannot be null");
@@ -125,14 +127,22 @@ public class Engine implements WindowEventListener, Application {
         long elapsed = System.nanoTime() - frameStart;
         long sleepNanos = config.getTargetFrameTimeNanos() - elapsed;
 
-        if (sleepNanos > 0) {
-            try {
-                Thread.sleep(sleepNanos / 1_000_000);
-            } catch (InterruptedException ignored) {}
-        }
+        if (sleepNanos <= 0)
+            return;
+
+        LockSupport.parkNanos(sleepNanos);
+
+        if (Thread.interrupted())
+            Thread.currentThread().interrupt();
     }
 
     private void shutdown() {
+        if (shutdown)
+            return;
+
+        shutdown = true;
+        running = false;
+
         logger.info("Engine shutting down");
 
         try {
