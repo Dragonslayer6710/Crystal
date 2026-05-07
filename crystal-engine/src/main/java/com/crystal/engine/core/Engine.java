@@ -13,6 +13,8 @@ public class Engine implements WindowEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(Engine.class);
 
+    private final EngineConfig config;
+
     private final Game game;
 
     private Window window;
@@ -25,12 +27,20 @@ public class Engine implements WindowEventListener {
 
     private boolean running;
 
-    private static final int TARGET_FPS = 144;
-    private static final long TARGET_FRAME_TIME = 1_000_000_000 / TARGET_FPS;
+    private final long targetFrameTime;
+
+    public Engine(Game game, EngineConfig config) {
+        if (game == null) throw new IllegalArgumentException("Game cannot be null");
+        if (config == null) throw new IllegalArgumentException("EngineConfig cannot be null");
+
+        this.game = game;
+        this.config = config;
+
+        targetFrameTime = 1_000_000_000 / config.getTargetFPS();
+    }
 
     public Engine(Game game) {
-        if (game == null) throw new IllegalArgumentException("Game cannot be null");
-        this.game = game;
+        this(game, new EngineConfig());
     }
 
     private void init() {
@@ -38,7 +48,7 @@ public class Engine implements WindowEventListener {
 
         input = new Input();
 
-        window = new Window(1280, 720, "Crystal Engine");
+        window = new Window(config.getWidth(), config.getHeight(), config.getTitle());
         window.create();
 
         window.setWindowEventListener(this);
@@ -47,7 +57,7 @@ public class Engine implements WindowEventListener {
         GL.createCapabilities();
 
         renderer = new Renderer();
-        renderer.init(1280, 720);
+        renderer.init(config.getWidth(), config.getHeight());
 
         resourceManager = new ResourceManager();
 
@@ -96,7 +106,7 @@ public class Engine implements WindowEventListener {
 
     private void throttle(long frameStart) {
         long elapsed = System.nanoTime() - frameStart;
-        long sleepNanos = TARGET_FRAME_TIME - elapsed;
+        long sleepNanos = targetFrameTime - elapsed;
 
         if (sleepNanos > 0) {
             try {
@@ -109,6 +119,7 @@ public class Engine implements WindowEventListener {
         logger.info("Engine shutting down");
 
         game.shutdown();
+        scene.dispose();
         resourceManager.disposeAll();
         window.destroy();
     }

@@ -4,7 +4,6 @@ import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Scene;
-import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -20,8 +19,6 @@ public class RenderContext {
     private int currentNormalMapTextureId = 0;
     private int currentMaterialId = 0;
 
-    private int currentSceneShaderId = 0;
-
     private int currentMeshId = 0;
 
     public void beginFrame() {
@@ -29,8 +26,6 @@ public class RenderContext {
         currentAlbedoTextureId = 0;
         currentNormalMapTextureId = 0;
         currentMaterialId = 0;
-
-        currentSceneShaderId = 0;
 
         currentMeshId = 0;
     }

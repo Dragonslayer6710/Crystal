@@ -1,12 +1,13 @@
 package com.crystal.engine.render.scene;
 
+import com.crystal.engine.core.Disposable;
 import com.crystal.engine.render.gl.UniformBuffer;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Scene {
+public class Scene implements Disposable {
 
     private final List<SceneObject> rootObjects = new ArrayList<>();
     private final Camera camera = new Camera(0, 0, 0);
@@ -61,5 +62,10 @@ public class Scene {
 
     public UniformBuffer getSceneUBO() {
         return sceneUBO;
+    }
+
+    @Override
+    public void dispose() {
+        sceneUBO.dispose();
     }
 }
