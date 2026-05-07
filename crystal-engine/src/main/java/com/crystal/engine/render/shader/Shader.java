@@ -26,13 +26,13 @@ public class Shader implements Disposable {
         public static final String MATERIAL_METALLIC = "materialMetallic";
     }
 
-
     private final String vertexSourcePath;
     private final String fragmentSourcePath;
 
     private final int id;
     private final Map<String, Integer> uniformMap = new HashMap<>();
 
+    private boolean disposed;
 
     public Shader(String vertexSrc, String fragmentSrc, String vertexSourcePath, String fragmentSourcePath) {
         this.vertexSourcePath = vertexSourcePath;
@@ -122,7 +122,10 @@ public class Shader implements Disposable {
 
     @Override
     public void dispose() {
+        if (disposed) return;
+
         glDeleteProgram(id);
+        disposed = true;
     }
 
 }

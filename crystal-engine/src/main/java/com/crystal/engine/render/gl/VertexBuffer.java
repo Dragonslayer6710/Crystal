@@ -7,6 +7,8 @@ import static org.lwjgl.opengl.GL46.*;
 public class VertexBuffer {
     private final int id;
 
+    private boolean deleted;
+
     public VertexBuffer(float[] data, BufferUsage usage) {
         id = glCreateBuffers();
 
@@ -22,6 +24,9 @@ public class VertexBuffer {
     }
 
     public void delete() {
+        if (deleted) return;
+
         glDeleteBuffers(id);
+        deleted = true;
     }
 }

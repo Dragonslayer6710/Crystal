@@ -9,6 +9,8 @@ public class ElementBuffer {
     private final int id;
     private final int count;
 
+    private boolean deleted;
+
     public ElementBuffer(int[] indices, BufferUsage usage) {
         id = glCreateBuffers();
         this.count = indices.length;
@@ -29,6 +31,9 @@ public class ElementBuffer {
     }
 
     public void delete() {
+        if (deleted) return;
+
         glDeleteBuffers(id);
+        deleted = true;
     }
 }

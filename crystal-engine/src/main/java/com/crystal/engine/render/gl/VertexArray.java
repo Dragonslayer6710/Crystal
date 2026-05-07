@@ -5,6 +5,8 @@ import static org.lwjgl.opengl.GL46.*;
 public class VertexArray {
     private final int id;
 
+    private boolean deleted;
+
     public VertexArray() {
         id = glCreateVertexArrays();
     }
@@ -51,6 +53,9 @@ public class VertexArray {
     }
 
     public void delete() {
+        if (deleted) return;
+
         glDeleteVertexArrays(id);
+        deleted = true;
     }
 }

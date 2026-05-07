@@ -15,6 +15,8 @@ public class Texture implements Disposable {
     private final int height;
     private final String sourcePath;
 
+    private boolean disposed;
+
     public Texture(int id, int width, int height, String sourcePath) {
         this.id = id;
         this.width = width;
@@ -83,6 +85,9 @@ public class Texture implements Disposable {
 
     @Override
     public void dispose() {
-         glDeleteTextures(id);
+        if (disposed) return;
+
+        glDeleteTextures(id);
+        disposed = true;
     }
 }

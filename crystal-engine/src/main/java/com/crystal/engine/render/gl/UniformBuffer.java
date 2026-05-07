@@ -10,6 +10,8 @@ public class UniformBuffer implements Disposable {
     private final int id;
     private final int bindingPoint;
 
+    private boolean disposed;
+
     public UniformBuffer(int bindingPoint, int sizeBytes, BufferUsage usage) {
         this.bindingPoint = bindingPoint;
 
@@ -31,6 +33,9 @@ public class UniformBuffer implements Disposable {
 
     @Override
     public void dispose() {
+        if (disposed) return;
+
         glDeleteBuffers(id);
+        disposed = true;
     }
 }
