@@ -16,7 +16,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ResourceManager {
 
@@ -24,6 +26,9 @@ public class ResourceManager {
 
     private final List<Disposable> resources = new ArrayList<>();
     private final Path assetRoot = Path.of("assets");
+
+    private final Map<String, Texture> textureCache = new HashMap<>();
+    private final Map<String, Shader> shaderCache = new HashMap<>();
 
     public <T extends Disposable> T register(T resource) {
         resources.add(resource);
@@ -43,9 +48,15 @@ public class ResourceManager {
     }
 
     public Shader createShaderProgram(String vName, String fName) {
-        String vs = loadAssetAsString("shaders/" + vName + ".vert");
-        String fs = loadAssetAsString("shaders/" + fName + ".frag");
-        return register(new Shader(vs, fs));
+        String cacheKey = "shaders/" + vName + ".vert|shaders/" + fName + ".frag";
+
+        return shaderCache.computeIfAbsent(cacheKey, key -> {
+            String[] paths = cacheKey.split("\\|");
+
+            String vs = loadAssetAsString(paths[0]);
+            String fs = loadAssetAsString(paths[1]);
+            return register(new Shader(vs, fs));
+        });
     }
 
     public Shader createShaderProgram(String name) {
@@ -53,9 +64,12 @@ public class ResourceManager {
     }
 
     public Texture createTexture(String path, TextureSettings settings) {
-        return register(TextureLoader.load(
-                assetRoot.resolve("textures/" + path),
-                settings
+        if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
+
+        String cacheKey = "textures/" + path + "|" + settings.cacheKey();
+
+        return textureCache.computeIfAbsent(cacheKey, key -> register(TextureLoader.load(
+                assetRoot.resolve("textures/" + path), settings)
         ));
     }
 

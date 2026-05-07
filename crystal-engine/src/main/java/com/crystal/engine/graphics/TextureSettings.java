@@ -82,4 +82,13 @@ public final class TextureSettings {
             );
         }
     }
+
+    public String cacheKey() {
+        return format + ":" +
+                minFilter + ":" +
+                magFilter + ":" +
+                wrapS + ":" +
+                wrapT + ":" +
+                generateMipmaps;
+    }
 }
