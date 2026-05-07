@@ -41,7 +41,7 @@ void main() {
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
     vec3 H = normalize(L + V);
 
-    vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
+    vec3 albedo = texture(albedoTexture, v_UV).rgb * materialTint;
 
     float diffuse = max(dot(N, L), 0.0);
 
