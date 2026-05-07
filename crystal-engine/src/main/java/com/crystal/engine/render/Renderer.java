@@ -5,6 +5,7 @@ import com.crystal.engine.render.commands.DrawSceneObjectCommand;
 import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.render.texture.Texture;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -22,6 +23,9 @@ public class Renderer {
 
     private boolean frustumCullingEnabled;
 
+    private Texture defaultWhiteTexture;
+    private Texture defaultNormalTexture;
+
     public Renderer(RendererConfig config) {
         if (config == null) throw new IllegalArgumentException("RendererConfig cannot be null");
 
@@ -34,6 +38,11 @@ public class Renderer {
     }
 
     public void init(int width, int height) {
+        defaultWhiteTexture = Texture.create1x1("default-white",255, 255, 255, 255);
+        defaultWhiteTexture = Texture.create1x1("default-normal",128, 128, 128, 128);
+
+        context.setDefaultTextures(defaultWhiteTexture, defaultNormalTexture);
+
         resizeViewport(width, height);
 
         if (config.isDepthTest()) {
@@ -120,11 +129,31 @@ public class Renderer {
         glViewport(0, 0, width, height);
     }
 
+    public void setFrustumCullingEnabled(boolean enabled) {
+        frustumCullingEnabled = enabled;
+    }
+
     public boolean isFrustumCullingEnabled() {
         return frustumCullingEnabled;
     }
 
-    public void setFrustumCullingEnabled(boolean enabled) {
-        frustumCullingEnabled = enabled;
+    public Texture getDefaultWhiteTexture() {
+        return defaultWhiteTexture;
+    }
+
+    public Texture getDefaultNormalTexture() {
+        return defaultNormalTexture;
+    }
+
+    public void dispose() {
+        if (defaultWhiteTexture != null) {
+            defaultWhiteTexture.dispose();
+            defaultWhiteTexture = null;
+        }
+
+        if (defaultNormalTexture != null) {
+            defaultNormalTexture.dispose();
+            defaultNormalTexture = null;
+        }
     }
 }

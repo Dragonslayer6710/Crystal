@@ -21,6 +21,9 @@ public class RenderContext {
 
     private int currentMeshId = 0;
 
+    private Texture defaultWhiteTexture;
+    private Texture defaultNormalTexture;
+
     public void beginFrame() {
         currentShaderId = 0;
         currentAlbedoTextureId = 0;
@@ -99,8 +102,16 @@ public class RenderContext {
             currentMaterialId = material.getId();
         }
 
-        bindTextureIfNeeded(material.getAlbedo(), GL_TEXTURE0, GL_TEXTURE_2D, true);
-        bindTextureIfNeeded(material.getNormalMap(), GL_TEXTURE1, GL_TEXTURE_2D, false);
+        Texture albedo = material.getAlbedo() != null
+                ? material.getAlbedo()
+                : defaultWhiteTexture;
+
+        Texture normalMap = material.getNormalMap() != null
+                ? material.getNormalMap()
+                : defaultNormalTexture;
+
+        bindTextureIfNeeded(albedo, GL_TEXTURE0, GL_TEXTURE_2D, true);
+        bindTextureIfNeeded(normalMap, GL_TEXTURE1, GL_TEXTURE_2D, false);
     }
 
     public void bindMesh(Mesh mesh) {
@@ -139,5 +150,10 @@ public class RenderContext {
         var sceneUBO = scene.getSceneUBO();
         sceneUBO.setData(0, data);
         sceneUBO.bind();
+    }
+
+    public void setDefaultTextures(Texture white, Texture normal) {
+        this.defaultWhiteTexture = white;
+        this.defaultNormalTexture = normal;
     }
 }
