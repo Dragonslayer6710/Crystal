@@ -1,6 +1,5 @@
 package com.crystal.engine.graphics;
 
-
 import static org.lwjgl.opengl.GL11.*;
 
 public enum PrimitiveType {
