@@ -1,14 +1,18 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.render.RendererConfig;
 import com.crystal.engine.window.WindowConfig;
 
 public final class EngineConfig {
 
     private final WindowConfig windowConfig = new WindowConfig();
+    private final RendererConfig rendererConfig = new RendererConfig();
+
 
     private int targetFPS = 144;
 
     public WindowConfig getWindowConfig() { return windowConfig; }
+    public RendererConfig getRendererConfig() { return rendererConfig; }
     public int getTargetFPS() { return targetFPS; }
 
     public EngineConfig setTargetFPS(int targetFPS) {

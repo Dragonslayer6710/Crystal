@@ -14,21 +14,42 @@ import static org.lwjgl.opengl.GL46.*;
 
 public class Renderer {
 
+    private final RendererConfig config;
+
     private final RenderContext context = new RenderContext();
 
     private final RenderQueue queue = new RenderQueue();
 
-    private boolean frustumCullingEnabled = true;
+    private boolean frustumCullingEnabled;
+
+    public Renderer(RendererConfig config) {
+        if (config == null) throw new IllegalArgumentException("RendererConfig cannot be null");
+
+        this.config = config;
+        this.frustumCullingEnabled = config.isFrustumCulling();
+    }
+
+    public Renderer() {
+        this(new RendererConfig());
+    }
 
     public void init(int width, int height) {
         resizeViewport(width, height);
 
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_LESS);
+        if (config.isDepthTest()) {
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LESS);
+        } else {
+            glDisable(GL_DEPTH_TEST);
+        }
 
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        glFrontFace(GL_CCW);
+        if (config.isFaceCulling()) {
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+            glFrontFace(GL_CCW);
+        } else {
+            glDisable(GL_CULL_FACE);
+        }
     }
 
     // Called at start of frame

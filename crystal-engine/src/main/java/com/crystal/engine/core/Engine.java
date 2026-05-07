@@ -1,7 +1,9 @@
 package com.crystal.engine.core;
 
 import com.crystal.engine.input.Input;
+import com.crystal.engine.render.GLDebug;
 import com.crystal.engine.render.Renderer;
+import com.crystal.engine.render.RendererConfig;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.window.Window;
 import com.crystal.engine.window.WindowEventListener;
@@ -52,8 +54,10 @@ public class Engine implements WindowEventListener {
         window.setInputListener(input);
 
         GL.createCapabilities();
+        if (windowConfig.isDebugContext())
+            GLDebug.init();
 
-        renderer = new Renderer();
+        renderer = new Renderer(config.getRendererConfig());
         renderer.init(windowConfig.getWidth(), windowConfig.getHeight());
 
         resourceManager = new ResourceManager();
@@ -68,39 +72,41 @@ public class Engine implements WindowEventListener {
     }
 
     public void run() {
-        init();
+        try {
+            init();
 
-        long lastTime = System.nanoTime();
+            long lastTime = System.nanoTime();
 
-        while (running && !window.shouldClose()) {
-            long frameStart = System.nanoTime();
-            double dt = (frameStart - lastTime) / 1_000_000_000.0;
-            lastTime = frameStart;
+            while (running && !window.shouldClose()) {
+                long frameStart = System.nanoTime();
+                double dt = (frameStart - lastTime) / 1_000_000_000.0;
+                lastTime = frameStart;
 
-            // 1. INPUT START
-            context.getInput().beginFrame();
+                // 1. INPUT START
+                context.getInput().beginFrame();
 
-            // 2. POLL EVENTS FROM WINDOW
-            window.pollEvents();
+                // 2. POLL EVENTS FROM WINDOW
+                window.pollEvents();
 
-            // 3 GAME LOGIC
-            game.update(dt);
+                // 3 GAME LOGIC
+                game.update(dt);
 
-            // 4. INPUT END
-            context.getInput().endFrame();
+                // 4. INPUT END
+                context.getInput().endFrame();
 
-            // 5. RENDERER RENDERS SCENE
-            renderer.render(context.getScene(), window.getAspectRatio());
+                // 5. RENDERER RENDERS SCENE
+                renderer.render(context.getScene(), window.getAspectRatio());
 
-            // 6. PRESENT FRAME (WINDOW RESPONSIBILITY)
-            window.swapBuffers();
+                // 6. PRESENT FRAME (WINDOW RESPONSIBILITY)
+                window.swapBuffers();
 
-            // 7. THROTTLE FPS IF config.targetFPS > 0
-            if (config.getTargetFPS() > 0)
-                throttle(frameStart);
+                // 7. THROTTLE FPS IF config.targetFPS > 0
+                if (config.getTargetFPS() > 0)
+                    throttle(frameStart);
+            }
+        } finally {
+            shutdown();
         }
-
-        shutdown();
     }
 
     private void throttle(long frameStart) {
@@ -117,10 +123,19 @@ public class Engine implements WindowEventListener {
     private void shutdown() {
         logger.info("Engine shutting down");
 
-        game.shutdown();
-        scene.dispose();
-        resourceManager.disposeAll();
-        window.destroy();
+        try {
+            game.shutdown();
+        } catch (Exception e) {
+            logger.error("Game Shutdown failed", e);
+        }
+
+        if (scene != null) scene.dispose();
+
+        if (resourceManager != null) resourceManager.disposeAll();
+
+        GLDebug.dispose();
+
+        if (window != null) window.destroy();
     }
 
     @Override
