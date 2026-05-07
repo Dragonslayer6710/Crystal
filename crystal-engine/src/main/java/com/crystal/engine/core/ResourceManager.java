@@ -1,6 +1,6 @@
 package com.crystal.engine.core;
 
-import com.crystal.engine.render.api.PrimitiveType;
+import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.shader.Shader;

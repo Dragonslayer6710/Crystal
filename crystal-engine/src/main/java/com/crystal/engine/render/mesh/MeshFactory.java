@@ -1,7 +1,7 @@
 package com.crystal.engine.render.mesh;
 
 import com.crystal.engine.core.ResourceManager;
-import com.crystal.engine.render.api.PrimitiveType;
+import com.crystal.engine.graphics.PrimitiveType;
 
 public final class MeshFactory {
     private static final float[] CUBE_VERTICES = {
