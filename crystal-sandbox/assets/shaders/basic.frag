@@ -1,5 +1,6 @@
 #version 460 core
 
+in vec3 v_WorldPosition;
 in vec3 v_Color;
 in vec2 v_UV;
 in vec3 v_Normal;
@@ -9,27 +10,38 @@ uniform sampler2D albedoTexture;
 layout (std140, binding = 0) uniform SceneData {
     mat4 view;
     mat4 projection;
-    vec4 ambient;
-    vec4 sunDirection;
-    vec4 sunColor;
+
+    vec4 ambient;        // rgb = color, a = intensity
+    vec4 cameraPosition; // xyz = world position
+
+    vec4 sunDirection;   // xyz = direction
+    vec4 sunColor;       // rgb = color, a = intensity
 };
 
 uniform vec3 materialTint;
+uniform float materialRoughness;
+uniform float materialMetallic;
 
 out vec4 color;
 
 void main() {
-    vec3 normal = normalize(v_Normal);
-
-    vec3 lightDir = normalize(-sunDirection.xyz);
-    float diffuseFactor = max(dot(normal, lightDir), 0.0);
+    vec3 N = normalize(v_Normal);
+    vec3 L = normalize(-sunDirection.xyz);
+    vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
+    vec3 H = normalize(L + V);
 
     vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
 
-    vec3 ambient = ambient.rgb * ambient.a;
-    vec3 diffuse = sunColor.rgb * sunColor.a * diffuseFactor;
+    float diffuse = max(dot(N, L), 0.0);
 
-    vec3 finalColor = albedo * (ambient + diffuse);
+    float shininess = mix(128.0, 8.0, materialRoughness);
+    float specular = pow(max(dot(N, H), 0.0), shininess) * (1.0 - materialRoughness);
+
+    vec3 ambientLight = ambient.rgb * ambient.a;
+    vec3 diffuseLight = sunColor.rgb * sunColor.a * diffuse;
+    vec3 specularLight = sunColor.rgb * sunColor.a * specular;
+
+    vec3 finalColor = albedo * (ambientLight + diffuseLight) + specularLight;
 
     color = vec4(finalColor, 1.0);
 }

@@ -135,17 +135,23 @@ public class RenderContext {
         data[34] = ambientColor.z;
         data[35] = scene.getAmbientIntensity();
 
-        var lightDirection = scene.getDirectionalLight().getDirection();
-        data[36] = lightDirection.x;
-        data[37] = lightDirection.y;
-        data[38] = lightDirection.z;
+        var cameraPosition = camera.getTransform().getWorldPosition();
+        data[36] = cameraPosition.x;
+        data[37] = cameraPosition.y;
+        data[38] = cameraPosition.z;
         data[39] = 0.0f;
 
+        var lightDirection = scene.getDirectionalLight().getDirection();
+        data[40] = lightDirection.x;
+        data[41] = lightDirection.y;
+        data[42] = lightDirection.z;
+        data[43] = 0.0f;
+
         var lightColor = scene.getDirectionalLight().getColor();
-        data[40] = lightColor.x;
-        data[41] = lightColor.y;
-        data[42] = lightColor.z;
-        data[43] = scene.getDirectionalLight().getIntensity();
+        data[44] = lightColor.x;
+        data[45] = lightColor.y;
+        data[46] = lightColor.z;
+        data[47] = scene.getDirectionalLight().getIntensity();
 
         var sceneUBO = scene.getSceneUBO();
         sceneUBO.setData(0, data);
