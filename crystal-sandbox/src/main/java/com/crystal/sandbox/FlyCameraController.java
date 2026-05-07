@@ -31,8 +31,12 @@ public class FlyCameraController {
 
         // toggle capture
         if (input.isKeyPressed(Key.ESCAPE)) {
-            cursorCaptured = false;
-            window.setCursorCaptured(false);
+            if (cursorCaptured) {
+                cursorCaptured = false;
+                window.setCursorCaptured(false);
+            } else {
+                ctx.getApplication().stop();
+            }
         }
 
         if (input.isMousePressed(MouseButton.LMB)) {

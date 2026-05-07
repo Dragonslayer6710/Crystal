@@ -11,7 +11,7 @@ import org.lwjgl.opengl.GL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Engine implements WindowEventListener {
+public class Engine implements WindowEventListener, Application {
 
     private static final Logger logger = LoggerFactory.getLogger(Engine.class);
 
@@ -67,7 +67,15 @@ public class Engine implements WindowEventListener {
 
         scene = new Scene();
 
-        context = new EngineContext(time, input, window, renderer, resourceManager, scene);
+        context = new EngineContext(
+                this,
+                time,
+                input,
+                window,
+                renderer,
+                resourceManager,
+                scene
+        );
 
         game.init(context);
 
@@ -145,5 +153,10 @@ public class Engine implements WindowEventListener {
     @Override
     public void onFrameBufferResize(int width, int height) {
         renderer.resizeViewport(width, height);
+    }
+
+    @Override
+    public void stop() {
+        running = false;
     }
 }
