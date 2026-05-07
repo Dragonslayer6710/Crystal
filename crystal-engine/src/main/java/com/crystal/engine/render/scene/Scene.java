@@ -1,5 +1,6 @@
 package com.crystal.engine.render.scene;
 
+import com.crystal.engine.render.gl.UniformBuffer;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
@@ -9,9 +10,16 @@ public class Scene {
 
     private final List<SceneObject> rootObjects = new ArrayList<>();
     private final Camera camera = new Camera(0, 0, 0);
+
     private final DirectionalLight directionalLight = new DirectionalLight();
+
     private final Vector3f ambientColor = new Vector3f(1.0f);
     private float ambientIntensity = 0.2f;
+
+    private static final int SCENE_UBO_BINDING_POINT = 0;
+    private static final int SCENE_UBO_SIZE_BYTES = 192;
+
+    private final UniformBuffer sceneUBO = new UniformBuffer(SCENE_UBO_BINDING_POINT, SCENE_UBO_SIZE_BYTES);
 
     public void add(SceneObject object) {
         if (object.getParent() != null) {
@@ -49,5 +57,9 @@ public class Scene {
     public Scene setAmbientIntensity(float ambientIntensity) {
         this.ambientIntensity = ambientIntensity;
         return this;
+    }
+
+    public UniformBuffer getSceneUBO() {
+        return sceneUBO;
     }
 }

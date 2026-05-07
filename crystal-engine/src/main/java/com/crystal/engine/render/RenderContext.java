@@ -121,39 +121,34 @@ public class RenderContext {
         if (currentSceneShaderId == shaderId)
             return;
 
+        float[] data = new float[48];
+
         var camera = scene.getCamera();
-        shader.setMat4(
-                Shader.Uniforms.VIEW,
-                camera.getViewMatrix()
-        );
-        shader.setMat4(
-                Shader.Uniforms.PROJECTION,
-                camera.getProjectionMatrix(aspectRatio)
-        );
+
+        camera.getViewMatrix().get(data, 0);
+        camera.getProjectionMatrix(aspectRatio).get(data, 16);
 
         var ambientColor = scene.getAmbientColor();
-        shader.setVec3(
-                Shader.Uniforms.AMBIENT_COLOR,
-                ambientColor.x,
-                ambientColor.y,
-                ambientColor.z
-        );
-        shader.setFloat(Shader.Uniforms.AMBIENT_INTENSITY, scene.getAmbientIntensity());
+        data[32] = ambientColor.x;
+        data[33] = ambientColor.y;
+        data[34] = ambientColor.z;
+        data[35] = scene.getAmbientIntensity();
 
-        var light = scene.getDirectionalLight();
-        shader.setVec3(
-                Shader.Uniforms.SUN_DIRECTION,
-                light.getDirection().x,
-                light.getDirection().y,
-                light.getDirection().z
-        );
-        shader.setVec3(
-                Shader.Uniforms.SUN_COLOR,
-                light.getColor().x,
-                light.getColor().y,
-                light.getColor().z
-        );
-        shader.setFloat(Shader.Uniforms.SUN_INTENSITY, light.getIntensity());
+        var lightDirection = scene.getDirectionalLight().getDirection();
+        data[36] = lightDirection.x;
+        data[37] = lightDirection.y;
+        data[38] = lightDirection.z;
+        data[39] = 0.0f;
+
+        var lightColor = scene.getDirectionalLight().getColor();
+        data[40] = lightColor.x;
+        data[41] = lightColor.y;
+        data[42] = lightColor.z;
+        data[43] = scene.getDirectionalLight().getIntensity();
+
+        var sceneUBO = scene.getSceneUBO();
+        sceneUBO.setData(0, data);
+        sceneUBO.bind();
 
         currentSceneShaderId = shaderId;
     }

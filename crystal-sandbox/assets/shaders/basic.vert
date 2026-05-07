@@ -6,8 +6,14 @@ layout (location = 2) in vec2 a_TexCoord;
 layout (location = 3) in vec3 a_Normal;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+
+layout (std140, binding = 0) uniform SceneData {
+    mat4 view;
+    mat4 projection;
+    vec4 ambient;
+    vec4 sunDirection;
+    vec4 sunColor;
+};
 
 out vec3 v_Color;
 out vec2 v_UV;

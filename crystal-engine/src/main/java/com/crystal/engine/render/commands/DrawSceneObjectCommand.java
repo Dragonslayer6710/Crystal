@@ -31,7 +31,7 @@ public class DrawSceneObjectCommand implements RenderCommand {
         context.bindScene(shader, scene, aspectRatio);
         context.bindMesh(mesh);
 
-        shader.setMat4(Shader.Uniforms.AMBIENT_INTENSITY, transform.getWorldMatrix());
+        shader.setMat4(Shader.Uniforms.MODEL, transform.getWorldMatrix());
 
         if (mesh.isIndexed()) {
             glDrawElements(

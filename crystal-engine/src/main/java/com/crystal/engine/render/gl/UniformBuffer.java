@@ -9,7 +9,7 @@ public class UniformBuffer implements Disposable {
     private final int id;
     private final int bindingPoint;
 
-    public UniformBuffer(int sizeBytes, int bindingPoint) {
+    public UniformBuffer(int bindingPoint, int sizeBytes) {
         this.bindingPoint = bindingPoint;
 
         id = glCreateBuffers();
