@@ -133,7 +133,7 @@ public class RenderContext {
 
         var ambientColor = scene.getAmbientColor();
         shader.setVec3(
-                "ambientColour",
+                "ambientColor",
                 ambientColor.x,
                 ambientColor.y,
                 ambientColor.z

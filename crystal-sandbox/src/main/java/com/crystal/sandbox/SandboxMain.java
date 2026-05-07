@@ -70,6 +70,7 @@ public class SandboxMain implements Game {
         cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
         cubeB.getTransform().rotate((float) dt, 0.0f, 0.0f);
         cubeC.getTransform().rotate(0.0f, 0.0f, (float) dt);
+
     }
 
     @Override
