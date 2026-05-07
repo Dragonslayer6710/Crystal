@@ -9,13 +9,13 @@ import java.util.Map;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class ShaderProgram implements Disposable {
+public class Shader implements Disposable {
 
     private final int id;
     private final Map<String, Integer> uniformMap = new HashMap<>();
 
 
-    public ShaderProgram(String vertexSrc, String fragmentSrc) {
+    public Shader(String vertexSrc, String fragmentSrc) {
         int vs = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vs, vertexSrc);
         glCompileShader(vs);

@@ -4,7 +4,7 @@ import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Scene;
-import com.crystal.engine.render.shader.ShaderProgram;
+import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -115,7 +115,7 @@ public class RenderContext {
         }
     }
 
-    public void bindScene(ShaderProgram shader, Scene scene, float aspectRatio) {
+    public void bindScene(Shader shader, Scene scene, float aspectRatio) {
         int shaderId = shader.getId();
 
         if (currentSceneShaderId == shaderId)

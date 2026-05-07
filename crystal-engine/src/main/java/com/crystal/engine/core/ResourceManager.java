@@ -3,7 +3,7 @@ package com.crystal.engine.core;
 import com.crystal.engine.render.api.PrimitiveType;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.VertexLayout;
-import com.crystal.engine.render.shader.ShaderProgram;
+import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.texture.TextureLoader;
 import org.slf4j.Logger;
@@ -40,13 +40,13 @@ public class ResourceManager {
         return createMesh(type, vertices, null);
     }
 
-    public ShaderProgram createShaderProgram(String vName, String fName) {
+    public Shader createShaderProgram(String vName, String fName) {
         String vs = loadAssetAsString("shaders/" + vName + ".vert");
         String fs = loadAssetAsString("shaders/" + fName + ".frag");
-        return register(new ShaderProgram(vs, fs));
+        return register(new Shader(vs, fs));
     }
 
-    public ShaderProgram createShaderProgram(String name) {
+    public Shader createShaderProgram(String name) {
         return  createShaderProgram(name, name);
     }
 

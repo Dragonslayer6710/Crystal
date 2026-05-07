@@ -2,14 +2,12 @@ package com.crystal.engine.render.material;
 
 import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.gl.UniformBuffer;
-import com.crystal.engine.render.shader.ShaderProgram;
+import com.crystal.engine.render.shader.Shader;
 import org.joml.Vector3f;
-
-import static org.lwjgl.opengl.GL46.*;
 
 public class Material {
 
-    private final ShaderProgram shaderProgram;
+    private final Shader shader;
 
     private Texture albedo;
     private Texture normalMap;
@@ -23,8 +21,8 @@ public class Material {
     private static int nextId = 1;
     private final int id = nextId++;
 
-    public Material(ShaderProgram shaderProgram) {
-        this.shaderProgram = shaderProgram;
+    public Material(Shader shader) {
+        this.shader = shader;
     }
 
     // ---------- GETTERS ----------
@@ -59,10 +57,10 @@ public class Material {
     // ---------- BIND ----------
 
     public void bindProperties() {
-        shaderProgram.setInt("albedoTexture", 0);
-//        shaderProgram.setInt("normalMap", 1);
+        shader.setInt("albedoTexture", 0);
+//        shader.setInt("normalMap", 1);
 
-        shaderProgram.setVec3("materialTint", tint.x, tint.y, tint.z);
+        shader.setVec3("materialTint", tint.x, tint.y, tint.z);
 
 
         if (materialUBO != null) {
@@ -70,8 +68,8 @@ public class Material {
         }
     }
 
-    public ShaderProgram getShaderProgram() {
-        return shaderProgram;
+    public Shader getShaderProgram() {
+        return shader;
     }
 
     public Texture getAlbedo() {

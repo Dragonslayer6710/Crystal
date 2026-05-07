@@ -7,7 +7,7 @@ import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.MeshFactory;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Transform;
-import com.crystal.engine.render.shader.ShaderProgram;
+import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,10 +35,10 @@ public class SandboxMain implements Game {
 
         Mesh mesh = MeshFactory.createTexturedCube(ctx.getResources());
 
-        ShaderProgram shaderProgram = this.ctx.getResources()
+        Shader shader = this.ctx.getResources()
                 .createShaderProgram("basic");
 
-        Material material = new Material(shaderProgram);
+        Material material = new Material(shader);
         material.getRenderState()
                 .setWireframe(false)
                 .setCullFace(true);
