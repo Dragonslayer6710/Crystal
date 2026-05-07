@@ -9,11 +9,13 @@ public class Texture implements Disposable {
     private final int id;
     private final int width;
     private final int height;
+    private final String sourcePath;
 
-    public Texture(int id, int width, int height) {
+    public Texture(int id, int width, int height, String sourcePath) {
         this.id = id;
         this.width = width;
         this.height = height;
+        this.sourcePath = sourcePath;
     }
 
     public int getId() {
@@ -26,6 +28,10 @@ public class Texture implements Disposable {
 
     public int getHeight() {
         return height;
+    }
+
+    public String getSourcePath() {
+        return sourcePath;
     }
 
     public void bind(int texture, int target) {

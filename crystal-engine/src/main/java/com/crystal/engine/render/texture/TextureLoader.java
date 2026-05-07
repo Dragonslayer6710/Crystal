@@ -75,7 +75,7 @@ public class TextureLoader {
 
             stbi_image_free(pixels);
 
-            return new Texture(textureId, width.get(0), height.get(0));
+            return new Texture(textureId, width.get(0), height.get(0), path.toString());
         }
     }
 
