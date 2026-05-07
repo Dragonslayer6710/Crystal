@@ -4,8 +4,10 @@ in vec3 v_WorldPosition;
 in vec3 v_Color;
 in vec2 v_UV;
 in vec3 v_Normal;
+in vec3 v_Tangent;
 
 uniform sampler2D albedoTexture;
+uniform sampler2D normalMap;
 
 layout (std140, binding = 0) uniform SceneData {
     mat4 view;
@@ -26,6 +28,15 @@ out vec4 color;
 
 void main() {
     vec3 N = normalize(v_Normal);
+    vec3 T = normalize(v_Tangent);
+    T = normalize(T - dot(T, N) * N);
+    vec3 B = normalize(cross(N, T));
+
+    mat3 TBN = mat3(T, B, N);
+
+    vec3 sampledNormal = texture(normalMap, v_UV).xyz * 2.0 - 1.0;
+    N = normalize(sampledNormal);
+
     vec3 L = normalize(-sunDirection.xyz);
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
     vec3 H = normalize(L + V);

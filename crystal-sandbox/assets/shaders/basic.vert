@@ -4,6 +4,7 @@ layout (location = 0) in vec3 a_Position;
 layout (location = 1) in vec3 a_Color;
 layout (location = 2) in vec2 a_TexCoord;
 layout (location = 3) in vec3 a_Normal;
+layout (location = 4) in vec3 a_Tangent;
 
 uniform mat4 model;
 
@@ -22,6 +23,7 @@ out vec3 v_WorldPosition;
 out vec3 v_Color;
 out vec2 v_UV;
 out vec3 v_Normal;
+out vec3 v_Tangent;
 
 void main() {
     vec4 worldPosition = model * vec4(a_Position, 1.0);
@@ -29,7 +31,11 @@ void main() {
     v_WorldPosition = worldPosition.xyz;
     v_Color = a_Color;
     v_UV = a_TexCoord;
-    v_Normal = mat3(transpose(inverse(model))) * a_Normal;
+
+    mat3 normalMatrix = mat3(transpose(inverse(model)));
+
+    v_Normal = normalMatrix * a_Normal;
+    v_Normal = normalMatrix * a_Tangent;
 
     gl_Position = projection * view * worldPosition;
 }
