@@ -1,6 +1,5 @@
 package com.crystal.engine.render;
 
-import com.crystal.engine.core.Disposable;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GLDebugMessageCallback;
 import org.slf4j.Logger;

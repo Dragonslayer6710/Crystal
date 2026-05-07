@@ -91,7 +91,7 @@ public class Engine implements WindowEventListener, Application {
             while (running && !window.shouldClose()) {
                 long frameStart = System.nanoTime();
 
-                time.update(frameStart, lastTime);
+                time.update(frameStart, lastTime, config.getMaxDeltaTime());
                 lastTime = frameStart;
 
                 // 1. INPUT START
@@ -152,7 +152,7 @@ public class Engine implements WindowEventListener, Application {
 
     @Override
     public void onFrameBufferResize(int width, int height) {
-        renderer.resizeViewport(width, height);
+        if (renderer != null) renderer.resizeViewport(width, height);
     }
 
     @Override

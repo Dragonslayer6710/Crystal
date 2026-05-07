@@ -8,11 +8,14 @@ public final class Time {
     private int fps;
     private int frameCount;
 
-    private long lastFpsUpdateTime;
+    private long lastFpsUpdateTime = System.currentTimeMillis();
     private int fpsCounter;
 
-    void update(long frameStartNanos, long lastFrameNanos) {
+    void update(long frameStartNanos, long lastFrameNanos, double maxDeltaTime) {
         deltaTime = (frameStartNanos - lastFrameNanos) / 1_000_000_000.0;
+
+        if (deltaTime > maxDeltaTime)
+            deltaTime = maxDeltaTime;
 
         elapsedTime += deltaTime;
 
