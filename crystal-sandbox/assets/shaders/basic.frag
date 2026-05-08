@@ -9,6 +9,7 @@ in vec3 v_Tangent;
 uniform sampler2D albedoTexture;
 uniform sampler2D normalMap;
 uniform sampler2D metallicRoughnessMap;
+uniform sampler2D ambientOcclusionMap;
 
 layout (std140, binding = 0) uniform SceneData {
     mat4 view;
@@ -58,7 +59,9 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
     float shininess = mix(128.0, 8.0, roughness);
     float specular = pow(max(dot(N, H), 0.0), shininess) * (1.0 - roughness);
 
-    vec3 ambientLight = ambient.rgb * ambient.a;
+    float ao = texture(ambientOcclusionMap, v_UV).r;
+
+    vec3 ambientLight = ambient.rgb * ambient.a * ao;
     vec3 diffuseLight = sunColor.rgb * sunColor.a * diffuse;
     vec3 specularLight = sunColor.rgb * sunColor.a * specular;
 

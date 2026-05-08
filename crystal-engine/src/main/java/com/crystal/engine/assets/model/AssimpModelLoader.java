@@ -236,6 +236,30 @@ public final class AssimpModelLoader {
         if (metallicRoughness != null)
             material.setMetallicRoughnessMap(metallicRoughness);
 
+        Texture ambientOcclusion = loadMaterialTexture(
+                scene,
+                aiMaterial,
+                modelPath,
+                resources,
+                aiTextureType_AMBIENT_OCCLUSION,
+                TextureSettings.defaultData()
+        );
+
+        // Some Assets store Ambient Occlusion maps as aiTextureType_LIGHTMAP so also fallback:
+        if (ambientOcclusion == null) {
+            ambientOcclusion = loadMaterialTexture(
+                    scene,
+                    aiMaterial,
+                    modelPath,
+                    resources,
+                    aiTextureType_LIGHTMAP,
+                    TextureSettings.defaultData()
+            );
+        }
+
+        if (ambientOcclusion != null)
+            material.setMetallicRoughnessMap(ambientOcclusion);
+
         return material;
     }
 

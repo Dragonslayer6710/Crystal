@@ -12,8 +12,9 @@ public class Material {
     private Texture albedo;
     private Texture normalMap;
     private Texture metallicRoughnessMap;
+    private Texture ambientOcclusionMap;
 
-    private UniformBuffer materialUBO;
+    private UniformBuffer ubo;
 
     private final Vector3f tint = new Vector3f(1.0f);
     private float roughness = 0.5f;
@@ -46,6 +47,10 @@ public class Material {
         return metallicRoughnessMap;
     }
 
+    public Texture getAmbientOcclusionMap() {
+        return ambientOcclusionMap;
+    }
+
     public Vector3f getTint() {
         return tint;
     }
@@ -70,19 +75,23 @@ public class Material {
     // ---------- SETTERS (explicit, no collections) ----------
 
     public void setAlbedo(Texture texture) {
-        this.albedo = texture;
+        albedo = texture;
     }
 
     public void setNormalMap(Texture texture) {
-        this.normalMap = texture;
+        normalMap = texture;
     }
 
     public void setMetallicRoughnessMap(Texture texture) {
-        this.metallicRoughnessMap = texture;
+        metallicRoughnessMap = texture;
     }
 
-    public void setMaterialUBO(UniformBuffer ubo) {
-        this.materialUBO = ubo;
+    public void setAmbientOcclusionMap(Texture texture) {
+        ambientOcclusionMap = texture;
+    }
+
+    public void setUBO(UniformBuffer ubo) {
+        this.ubo = ubo;
     }
 
     public Material setTint(float r, float g, float b) {
@@ -112,13 +121,14 @@ public class Material {
         shader.setInt(Shader.Uniforms.ALBEDO_TEXTURE, 0);
         shader.setInt(Shader.Uniforms.NORMAL_MAP, 1);
         shader.setInt(Shader.Uniforms.METALLIC_ROUGHNESS_MAP, 2);
+        shader.setInt(Shader.Uniforms.AMBIENT_OCCLUSION_MAP, 3);
 
         shader.setVec3(Shader.Uniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
         shader.setFloat(Shader.Uniforms.MATERIAL_ROUGHNESS, roughness);
         shader.setFloat(Shader.Uniforms.MATERIAL_METALLIC, metallic);
 
-        if (materialUBO != null) {
-             materialUBO.bind();
+        if (ubo != null) {
+             ubo.bind();
         }
     }
 }
