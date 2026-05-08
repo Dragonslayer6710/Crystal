@@ -252,7 +252,7 @@ public final class AssimpModelLoader {
 
                 if (embedded.mHeight() != 0)
                     throw new UnsupportedOperationException(
-                            "Ucompressed embedded Assimp textures are not supported yet");
+                            "Uncompressed embedded Assimp textures are not supported yet");
 
                 ByteBuffer encoded = MemoryUtil.memByteBuffer(
                         embedded.pcData().address(),

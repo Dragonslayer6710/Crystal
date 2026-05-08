@@ -72,8 +72,13 @@ public class SandboxMain implements Game {
         for (SceneObject object : model.getRootObjects()) {
             ctx.getScene().add(object);
 
-            object.getTransform().setPosition(0, 0, -2f);
-            object.getTransform().rotate(90.0f, 0.0f, 0.0f);
+            object.getTransform()
+                    .setPosition(0.75f, 0.0f, -2.5f)
+                    .setRotation(
+                            (float) Math.toRadians(90.0),
+                            0.0f,
+                            (float) Math.toRadians(-15.0)
+                    );
         }
 
 //        addCubes(shader);
