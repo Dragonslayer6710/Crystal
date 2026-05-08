@@ -59,8 +59,14 @@ void main() {
     vec3 specularLight = sunColor.rgb * sunColor.a * specular;
 
     vec3 finalColor =
-            albedo * (ambientLight + diffuseLight) * (1.0 - metallic)
+            albedo * (ambientLight + diffuseLight) * mix(1.0, 0.35, metallic)
             + specularLight;
 
-    color = vec4(finalColor, 1.0);
+    // Simple Reinhard tone mapping
+    vec3 mapped = finalColor / (finalColor + vec3(1.0));
+
+    // Gamma correction
+    mapped = pow(mapped, vec3(1.0 / 2.2));
+
+    color = vec4(mapped, 1.0);
 }

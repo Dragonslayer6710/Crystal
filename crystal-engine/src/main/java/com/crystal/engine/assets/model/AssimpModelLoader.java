@@ -162,7 +162,9 @@ public final class AssimpModelLoader {
 
     private static Material createMaterial(AIScene scene, AIMesh aiMesh, Path modelPath,
                                            ResourceManager resources, ModelLoadOptions options) {
-        Material material = new Material(options.getShader());
+        Material material = new Material(options.getShader())
+                .setRoughness(1.0f)
+                .setMetallic(1.0f);
 
         PointerBuffer materials = scene.mMaterials();
         if (materials == null)
@@ -209,6 +211,30 @@ public final class AssimpModelLoader {
 
         if (normal != null)
             material.setNormalMap(normal);
+
+        Texture metallicRoughness = loadMaterialTexture(
+                scene,
+                aiMaterial,
+                modelPath,
+                resources,
+                aiTextureType_METALNESS,
+                TextureSettings.defaultData()
+        );
+
+        // Some Assets store Metallic Roughness maps as aiTextureType_DIFFUSE_ROUGHNESS so also fallback:
+        if (metallicRoughness == null) {
+            metallicRoughness = loadMaterialTexture(
+                    scene,
+                    aiMaterial,
+                    modelPath,
+                    resources,
+                    aiTextureType_DIFFUSE_ROUGHNESS,
+                    TextureSettings.defaultData()
+            );
+        }
+
+        if (metallicRoughness != null)
+            material.setMetallicRoughnessMap(metallicRoughness);
 
         return material;
     }
