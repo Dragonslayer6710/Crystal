@@ -40,7 +40,13 @@ public class Shader implements Disposable {
 
         glLinkProgram(id);
         if (glGetProgrami(id, GL_LINK_STATUS) == GL_FALSE) {
-            throw new RuntimeException(glGetProgramInfoLog(id));
+            throw new ShaderException(
+                    "\nShader program link failed" +
+                            "\nVertex: " + vertexSourcePath +
+                            "\nFragment: " + fragmentSourcePath +
+                            "\n\n--- OpenGL Log ---\n" +
+                            glGetProgramInfoLog(id)
+            );
         }
 
         glDeleteShader(vs);

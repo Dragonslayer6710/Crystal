@@ -4,6 +4,7 @@ import com.crystal.engine.input.Input;
 import com.crystal.engine.render.GLDebug;
 import com.crystal.engine.render.Renderer;
 import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.render.shader.ShaderException;
 import com.crystal.engine.window.Window;
 import com.crystal.engine.window.WindowEventListener;
 import org.lwjgl.opengl.GL;
@@ -140,6 +141,8 @@ public class Engine implements WindowEventListener, Application {
                     ));
                 }
             }
+        } catch (ShaderException e) {
+            logger.error(e.getMessage());
         } finally {
             shutdown();
         }
