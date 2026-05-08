@@ -27,6 +27,8 @@ public class Renderer {
 
     private boolean frustumCullingEnabled;
 
+    private float exposure = 1.0f;
+
     private Texture defaultWhiteTexture;
     private Texture defaultNormalTexture;
 
@@ -72,6 +74,7 @@ public class Renderer {
         queue.clear();
         context.beginFrame();
         context.setDebugViewMode(debugViewMode);
+        context.setExposure(exposure);
 
         queue.submit(new ClearCommand(0.1f, 0.1f, 0.15f, 1.0f));
     }
@@ -140,6 +143,12 @@ public class Renderer {
         frustumCullingEnabled = enabled;
     }
 
+    public void setExposure(float exposure) {
+        if (exposure <= 0.0f) throw new IllegalArgumentException("Exposure must be greater than 0");
+
+        this.exposure = exposure;
+    }
+
     public void setDebugViewMode(int debugViewMode) {
         if (debugViewMode < 0 || debugViewMode > 6)
             throw new IllegalArgumentException("Debug view mode must be between 0 and 6");
@@ -158,6 +167,10 @@ public class Renderer {
 
     public boolean isFrustumCullingEnabled() {
         return frustumCullingEnabled;
+    }
+
+    public float getExposure() {
+        return exposure;
     }
 
     public Texture getDefaultWhiteTexture() {

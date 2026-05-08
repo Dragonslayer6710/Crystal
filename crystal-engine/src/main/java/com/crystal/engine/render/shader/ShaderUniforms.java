@@ -16,5 +16,7 @@ public final class ShaderUniforms {
     public static final String MATERIAL_METALLIC = "materialMetallic";
     public static final String MATERIAL_EMISSIVE = "materialEmissive";
 
+    public static final String EXPOSURE = "exposure";
+
     private ShaderUniforms() {}
 }

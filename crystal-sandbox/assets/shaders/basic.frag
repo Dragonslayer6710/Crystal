@@ -31,6 +31,8 @@ uniform float materialRoughness;
 uniform float materialMetallic;
 uniform vec3 materialEmissive;
 
+uniform float exposure;
+
 out vec4 color;
 
 const float PI = 3.14159265358979;
@@ -148,7 +150,7 @@ void main() {
             vec3 finalColor = calculateLighting(albedo, N, metallic, roughness, ao);
             finalColor += emissive;
 
-            vec3 mapped = toneMapReinhard(finalColor);
+            vec3 mapped = toneMapReinhard(finalColor * exposure);
             mapped = gammaCorrect(mapped);
 
             color = vec4(mapped, 1.0);

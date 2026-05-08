@@ -4,6 +4,7 @@ import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.render.shader.ShaderUniforms;
 import com.crystal.engine.render.texture.Texture;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -23,6 +24,8 @@ public class RenderContext {
     private int currentAmbientOcclusionTextureId = 0;
     private int currentEmissiveMapId = 0;
     private int currentMaterialId = 0;
+
+    private float exposure = 1.0f;
 
     private int currentMeshId = 0;
 
@@ -114,6 +117,9 @@ public class RenderContext {
 
         if (shaderId != currentShaderId) {
             material.getShaderProgram().bind();
+
+            material.getShaderProgram().setFloat(ShaderUniforms.EXPOSURE, exposure);
+
             currentShaderId = shaderId;
         }
 
@@ -191,6 +197,10 @@ public class RenderContext {
         var sceneUBO = scene.getSceneUBO();
         sceneUBO.setData(0, data);
         sceneUBO.bind();
+    }
+
+    public void setExposure(float exposure) {
+        this.exposure = exposure;
     }
 
     public void setDefaultTextures(Texture white, Texture normal) {
