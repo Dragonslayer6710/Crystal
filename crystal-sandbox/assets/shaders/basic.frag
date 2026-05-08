@@ -26,7 +26,7 @@ layout (std140, binding = 0) uniform SceneData {
 uniform vec3 materialTint;
 uniform float materialRoughness;
 uniform float materialMetallic;
-uniform float materialEmissive;
+uniform vec3 materialEmissive;
 
 out vec4 color;
 
