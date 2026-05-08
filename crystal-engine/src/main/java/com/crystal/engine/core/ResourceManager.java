@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -129,5 +130,28 @@ public class ResourceManager {
 
     public Model loadModel(String path, ModelLoadOptions options) {
         return AssimpModelLoader.load(assetRoot.resolve("models/" + path), this, options);
+    }
+
+    public Texture loadTexture(Path path, TextureSettings settings) {
+        if (path == null) throw new IllegalArgumentException("Path cannot be null");
+        if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
+
+        String cacheKey = path.toAbsolutePath().normalize() + "|" + settings.cacheKey();
+
+        return textureCache.computeIfAbsent(cacheKey, key ->
+                register(TextureLoader.load(path, settings))
+        );
+    }
+
+    public Texture loadEmbeddedTexture(String key, ByteBuffer encodedImage, TextureSettings settings) {
+        if (key == null || key.isBlank()) throw new IllegalArgumentException("Path cannot be null or blank");
+        if (encodedImage == null) throw new IllegalArgumentException("Encoded image cannot be null");
+        if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
+
+        String cacheKey = "embedded:" + key + "|" + settings.cacheKey();
+
+        return textureCache.computeIfAbsent(cacheKey, ignored ->
+                register(TextureLoader.loadFromMemory(encodedImage, settings, cacheKey))
+        );
     }
 }

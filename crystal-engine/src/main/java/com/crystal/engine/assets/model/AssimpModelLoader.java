@@ -2,23 +2,27 @@ package com.crystal.engine.assets.model;
 
 import com.crystal.engine.core.ResourceManager;
 import com.crystal.engine.graphics.PrimitiveType;
+import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Transform;
+import com.crystal.engine.render.texture.Texture;
 import org.lwjgl.PointerBuffer;
-import org.lwjgl.assimp.AIFace;
-import org.lwjgl.assimp.AIMesh;
-import org.lwjgl.assimp.AIScene;
+import org.lwjgl.assimp.*;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.MemoryUtil;
 
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.nio.file.Path;
 
 import static org.lwjgl.assimp.Assimp.*;
 
 public final class AssimpModelLoader {
-    private AssimpModelLoader() {}
+    private AssimpModelLoader() {
+    }
 
     public static Model load(Path path, ResourceManager resources, ModelLoadOptions options) {
         if (path == null) throw new IllegalArgumentException("Path cannot be null");
@@ -29,10 +33,10 @@ public final class AssimpModelLoader {
         AIScene scene = aiImportFile(
                 path.toString(),
                 aiProcess_Triangulate |
-                aiProcess_JoinIdenticalVertices |
-                aiProcess_GenSmoothNormals |
-                aiProcess_CalcTangentSpace |
-                aiProcess_FlipUVs
+                        aiProcess_JoinIdenticalVertices |
+                        aiProcess_GenSmoothNormals |
+                        aiProcess_CalcTangentSpace |
+                        aiProcess_FlipUVs
         );
 
         if (scene == null) throw new RuntimeException("Failed to load model: " + path + "\n" + aiGetErrorString());
@@ -48,7 +52,7 @@ public final class AssimpModelLoader {
                 AIMesh aiMesh = AIMesh.create(meshes.get(i));
 
                 Mesh mesh = createMesh(aiMesh, resources);
-                Material material = new Material(options.getShader());
+                Material material = createMaterial(scene, aiMesh, path, resources, options);
 
                 SceneObject object = new SceneObject(
                         aiMesh.mName().dataString().isBlank()
@@ -152,5 +156,94 @@ public final class AssimpModelLoader {
         }
 
         return indices;
+    }
+
+    private static Material createMaterial(AIScene scene, AIMesh aiMesh, Path modelPath,
+                                           ResourceManager resources, ModelLoadOptions options) {
+        Material material = new Material(options.getShader());
+
+        PointerBuffer materials = scene.mMaterials();
+        if (materials == null)
+            return material;
+
+        int materialIndex = aiMesh.mMaterialIndex();
+        if (materialIndex < 0 || materialIndex >= scene.mNumMaterials())
+            return material;
+
+        AIMaterial aiMaterial = AIMaterial.create(materials.get(materialIndex));
+
+        Texture albedo = loadMaterialTexture(
+                scene,
+                aiMaterial,
+                modelPath,
+                resources,
+                aiTextureType_DIFFUSE,
+                TextureSettings.defaultAlbedo()
+        );
+
+        if (albedo != null)
+            material.setAlbedo(albedo);
+
+        return material;
+    }
+
+    private static Texture loadMaterialTexture(AIScene scene, AIMaterial material, Path modelPath,
+                                               ResourceManager resources, int textureType, TextureSettings settings) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            AIString texturePath = AIString.calloc(stack);
+
+            var mapping = stack.mallocInt(1);
+            var uvIndex = stack.mallocInt(1);
+            var blend = stack.mallocFloat(1);
+            var op = stack.mallocInt(1);
+            var mapMode = stack.mallocInt(3);
+            var flags = stack.mallocInt(1);
+
+            int result = aiGetMaterialTexture(
+                    material,
+                    textureType,
+                    0,
+                    texturePath,
+                    mapping,
+                    uvIndex,
+                    blend,
+                    op,
+                    mapMode,
+                    flags
+            );
+
+            if (result != aiReturn_SUCCESS)
+                return null;
+
+            String textureRef = texturePath.dataString();
+
+            if (textureRef.startsWith("*")) {
+                int embeddedIndex = Integer.parseInt(textureRef.substring(1));
+
+                PointerBuffer textures = scene.mTextures();
+                if (textures == null || embeddedIndex >= scene.mNumTextures())
+                    return null;
+
+                AITexture embedded = AITexture.create(textures.get(embeddedIndex));
+
+                if (embedded.mHeight() != 0)
+                    throw new UnsupportedOperationException(
+                            "Ucompressed embedded Assimp textures are not supported yet");
+
+                ByteBuffer encoded = MemoryUtil.memByteBuffer(
+                        embedded.pcData().address(),
+                        embedded.mWidth()
+                );
+
+                return resources.loadEmbeddedTexture(
+                        modelPath.getFileName() + ":" + textureRef,
+                        encoded,
+                        settings
+                );
+            }
+
+            Path resolved = modelPath.getParent().resolve(textureRef).normalize();
+            return resources.loadTexture(resolved, settings);
+        }
     }
 }
