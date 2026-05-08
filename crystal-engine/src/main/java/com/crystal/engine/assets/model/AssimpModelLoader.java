@@ -35,8 +35,7 @@ public final class AssimpModelLoader {
                 aiProcess_Triangulate |
                         aiProcess_JoinIdenticalVertices |
                         aiProcess_GenSmoothNormals |
-                        aiProcess_CalcTangentSpace |
-                        aiProcess_FlipUVs
+                        aiProcess_CalcTangentSpace
         );
 
         if (scene == null) throw new RuntimeException("Failed to load model: " + path + "\n" + aiGetErrorString());

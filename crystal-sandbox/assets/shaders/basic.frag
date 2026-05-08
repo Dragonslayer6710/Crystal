@@ -42,12 +42,12 @@ void main() {
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
     vec3 H = normalize(L + V);
 
-    vec3 albedo = texture(albedoTexture, v_UV).rgb * materialTint;
+    vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
 
     vec4 mrSample = texture(metallicRoughnessMap, v_UV);
 
     float roughness = materialRoughness * mrSample.g;
-    float metallic = materialRoughness * mrSample.b;
+    float metallic = materialMetallic * mrSample.b;
 
     float diffuse = max(dot(N, L), 0.0);
 
