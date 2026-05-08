@@ -1,6 +1,8 @@
 package com.crystal.engine.render.shader;
 
 public final class ShaderUniforms {
+    public static final String DEBUG_VIEW_MODE = "debugViewMode";
+
     public static final String MODEL = "model";
 
     public static final String ALBEDO_TEXTURE = "albedoTexture";

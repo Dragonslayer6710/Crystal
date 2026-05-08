@@ -6,6 +6,8 @@ in vec2 v_UV;
 in vec3 v_Normal;
 in vec3 v_Tangent;
 
+uniform int debugViewMode;
+
 uniform sampler2D albedoTexture;
 uniform sampler2D normalMap;
 uniform sampler2D metallicRoughnessMap;
@@ -51,7 +53,7 @@ vec2 getMetallicRoughness() {
     return vec2(metallic, roughness);
 }
 
-vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness) {
+vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness, float ao) {
     vec3 L = normalize(-sunDirection.xyz);
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
     vec3 H = normalize(L + V);
@@ -60,8 +62,6 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
 
     float shininess = mix(128.0, 8.0, roughness);
     float specular = pow(max(dot(normal, H), 0.0), shininess) * (1.0 - roughness);
-
-    float ao = texture(ambientOcclusionMap, v_UV).r;
 
     vec3 ambientLight = ambient.rgb * ambient.a * ao;
     vec3 diffuseLight = sunColor.rgb * sunColor.a * diffuse;
@@ -76,17 +76,39 @@ void main() {
     vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
 
     vec2 mr = getMetallicRoughness();
+    float metallic = mr.x;
+    float roughness = mr.y;
 
-    vec3 finalColor = calculateLighting(albedo, N, mr.x, mr.y);
-
+    float ao = texture(ambientOcclusionMap, v_UV).r;
     vec3 emissive = texture(emissiveMap, v_UV).rgb * materialEmissive;
-    finalColor += emissive;
 
-    // Simple Reinhard tone mapping
-    vec3 mapped = finalColor / (finalColor + vec3(1.0));
+    switch (debugViewMode) {
+        case 0:
+            vec3 finalColor = calculateLighting(albedo, N, metallic, roughness, ao);
+            finalColor += emissive;
 
-    // Gamma correction
-    mapped = pow(mapped, vec3(1.0 / 2.2));
+            vec3 mapped = finalColor / (finalColor + vec3(1.0));
+            mapped = pow(mapped, vec3(1.0 / 2.2));
 
-    color = vec4(mapped, 1.0);
+            color = vec4(mapped, 1.0);
+            break;
+        case 1:
+            color = vec4(albedo, 1.0);
+            break;
+        case 2:
+            color = vec4(N * 0.5 + 0.5, 1.0);
+            break;
+        case 3:
+            color = vec4(vec3(metallic), 1.0);
+            break;
+        case 4:
+            color = vec4(vec3(roughness), 1.0);
+            break;
+        case 5:
+            color = vec4(vec3(ao), 1.0);
+            break;
+        case 6:
+            color = vec4(emissive, 1.0);
+            break;
+    }
 }

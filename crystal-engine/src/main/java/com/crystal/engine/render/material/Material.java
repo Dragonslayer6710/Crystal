@@ -138,6 +138,8 @@ public class Material {
     // ---------- BIND ----------
 
     public void bindProperties() {
+        shader.setInt(ShaderUniforms.DEBUG_VIEW_MODE, 0);
+
         shader.setInt(ShaderUniforms.ALBEDO_TEXTURE, 0);
         shader.setInt(ShaderUniforms.NORMAL_MAP, 1);
         shader.setInt(ShaderUniforms.METALLIC_ROUGHNESS_MAP, 2);
