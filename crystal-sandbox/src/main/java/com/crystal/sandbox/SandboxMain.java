@@ -1,5 +1,7 @@
 package com.crystal.sandbox;
 
+import com.crystal.engine.assets.model.Model;
+import com.crystal.engine.assets.model.ModelLoadOptions;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
 import com.crystal.engine.render.material.Material;
@@ -37,6 +39,11 @@ public class SandboxMain implements Game {
 
         Shader shader = this.ctx.getResources()
                 .createShaderProgram("basic");
+
+        Model model = ctx.getResources().loadModel(
+                "BoxTextured.glb",
+                new ModelLoadOptions().setShader(shader)
+        );
 
         Material material = new Material(shader);
         material.getRenderState()

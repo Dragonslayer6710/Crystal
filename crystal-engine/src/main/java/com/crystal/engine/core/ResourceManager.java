@@ -1,5 +1,8 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.assets.model.AssimpModelLoader;
+import com.crystal.engine.assets.model.Model;
+import com.crystal.engine.assets.model.ModelLoadOptions;
 import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.graphics.TextureType;
@@ -122,5 +125,9 @@ public class ResourceManager {
         } catch (IOException e) {
             throw new RuntimeException("Failed to load asset: " + fullPath.toAbsolutePath(), e);
         }
+    }
+
+    public Model loadModel(String path, ModelLoadOptions options) {
+        return AssimpModelLoader.load(assetRoot.resolve("models/" + path), this, options);
     }
 }
