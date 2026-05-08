@@ -76,10 +76,6 @@ public final class Time {
         return renderTimeMs;
     }
 
-    public double getWorkFrameTimeMs() {
-        return workFrameTimeMs;
-    }
-
     public double getFrameTimeMs() {
         return frameTimeMs;
     }
