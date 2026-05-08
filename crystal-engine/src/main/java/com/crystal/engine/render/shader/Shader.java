@@ -12,21 +12,6 @@ import static org.lwjgl.opengl.GL46.*;
 
 public class Shader implements Disposable {
 
-    public static final class Uniforms {
-        public static final String MODEL = "model";
-
-        public static final String ALBEDO_TEXTURE = "albedoTexture";
-        public static final String NORMAL_MAP = "normalMap";
-        public static final String METALLIC_ROUGHNESS_MAP = "metallicRoughnessMap";
-        public static final String AMBIENT_OCCLUSION_MAP = "ambientOcclusionMap";
-
-        public static final String MATERIAL_TINT = "materialTint";
-        public static final String MATERIAL_ROUGHNESS = "materialRoughness";
-        public static final String MATERIAL_METALLIC = "materialMetallic";
-
-        private Uniforms() {}
-    }
-
     private final String vertexSourcePath;
     private final String fragmentSourcePath;
 
@@ -42,12 +27,12 @@ public class Shader implements Disposable {
         int vs = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vs, vertexSrc);
         glCompileShader(vs);
-        checkCompile(vs);
+        checkCompile(vs, "VERTEX", vertexSourcePath);
 
         int fs = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fs, fragmentSrc);
         glCompileShader(fs);
-        checkCompile(fs);
+        checkCompile(fs, "FRAGMENT", fragmentSourcePath);
 
         id = glCreateProgram();
         glAttachShader(id, vs);
@@ -66,9 +51,17 @@ public class Shader implements Disposable {
         this(vertexSrc, fragmentSrc, null, null);
     }
 
-    private void checkCompile(int shaderId) {
+    private void checkCompile(int shaderId, String stage, String sourcePath) {
         if (glGetShaderi(shaderId, GL_COMPILE_STATUS) == GL_FALSE) {
-            throw new RuntimeException(glGetShaderInfoLog(shaderId));
+            String log = glGetShaderInfoLog(shaderId);
+
+            throw new ShaderException(
+                    "\nShader compilation failed" +
+                            "\nStage: " + stage +
+                            "\nFile: " + sourcePath +
+                            "\n\n--- OpenGL Log ---\n" +
+                            log
+            );
         }
     }
 

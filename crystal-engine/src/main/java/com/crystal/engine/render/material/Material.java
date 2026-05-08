@@ -1,5 +1,6 @@
 package com.crystal.engine.render.material;
 
+import com.crystal.engine.render.shader.ShaderUniforms;
 import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.gl.UniformBuffer;
 import com.crystal.engine.render.shader.Shader;
@@ -118,14 +119,14 @@ public class Material {
     // ---------- BIND ----------
 
     public void bindProperties() {
-        shader.setInt(Shader.Uniforms.ALBEDO_TEXTURE, 0);
-        shader.setInt(Shader.Uniforms.NORMAL_MAP, 1);
-        shader.setInt(Shader.Uniforms.METALLIC_ROUGHNESS_MAP, 2);
-        shader.setInt(Shader.Uniforms.AMBIENT_OCCLUSION_MAP, 3);
+        shader.setInt(ShaderUniforms.ALBEDO_TEXTURE, 0);
+        shader.setInt(ShaderUniforms.NORMAL_MAP, 1);
+        shader.setInt(ShaderUniforms.METALLIC_ROUGHNESS_MAP, 2);
+        shader.setInt(ShaderUniforms.AMBIENT_OCCLUSION_MAP, 3);
 
-        shader.setVec3(Shader.Uniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
-        shader.setFloat(Shader.Uniforms.MATERIAL_ROUGHNESS, roughness);
-        shader.setFloat(Shader.Uniforms.MATERIAL_METALLIC, metallic);
+        shader.setVec3(ShaderUniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
+        shader.setFloat(ShaderUniforms.MATERIAL_ROUGHNESS, roughness);
+        shader.setFloat(ShaderUniforms.MATERIAL_METALLIC, metallic);
 
         if (ubo != null) {
              ubo.bind();

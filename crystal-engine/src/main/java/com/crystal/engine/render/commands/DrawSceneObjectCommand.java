@@ -4,6 +4,7 @@ import com.crystal.engine.render.RenderContext;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
+import com.crystal.engine.render.shader.ShaderUniforms;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -30,7 +31,7 @@ public class DrawSceneObjectCommand implements RenderCommand {
         context.bindMaterial(material);
         context.bindMesh(mesh);
 
-        shader.setMat4(Shader.Uniforms.MODEL, transform.getWorldMatrix());
+        shader.setMat4(ShaderUniforms.MODEL, transform.getWorldMatrix());
 
         if (mesh.isIndexed()) {
             glDrawElements(

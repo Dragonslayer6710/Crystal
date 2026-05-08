@@ -54,10 +54,10 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
     vec3 H = normalize(L + V);
 
-    float diffuse = max(dot(N, L), 0.0);
+    float diffuse = max(dot(normal, L), 0.0);
 
     float shininess = mix(128.0, 8.0, roughness);
-    float specular = pow(max(dot(N, H), 0.0), shininess) * (1.0 - roughness);
+    float specular = pow(max(dot(normal, H), 0.0), shininess) * (1.0 - roughness);
 
     float ao = texture(ambientOcclusionMap, v_UV).r;
 
@@ -75,7 +75,7 @@ void main() {
 
     vec2 mr = getMetallicRoughness();
 
-    vec3 finalColor = calculatLighting(albedo, N, mr.x, mr.y);
+    vec3 finalColor = calculateLighting(albedo, N, mr.x, mr.y);
 
     // Simple Reinhard tone mapping
     vec3 mapped = finalColor / (finalColor + vec3(1.0));
