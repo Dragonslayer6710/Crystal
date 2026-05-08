@@ -26,6 +26,8 @@ public class Renderer {
     private Texture defaultWhiteTexture;
     private Texture defaultNormalTexture;
 
+    private int debugViewMode = 0;
+
     public Renderer(RendererConfig config) {
         if (config == null) throw new IllegalArgumentException("RendererConfig cannot be null");
 
@@ -65,6 +67,7 @@ public class Renderer {
     public void beginFrame() {
         queue.clear();
         context.beginFrame();
+        context.setDebugViewMode(debugViewMode);
 
         queue.submit(new ClearCommand(0.1f, 0.1f, 0.15f, 1.0f));
     }
@@ -131,6 +134,17 @@ public class Renderer {
 
     public void setFrustumCullingEnabled(boolean enabled) {
         frustumCullingEnabled = enabled;
+    }
+
+    public void setDebugViewMode(int debugViewMode) {
+        if (debugViewMode < 0 || debugViewMode > 6)
+            throw new IllegalArgumentException("Debug view mode must be between 0 and 6");
+
+        this.debugViewMode = debugViewMode;
+    }
+
+    public void cycleDebugViewMode() {
+        setDebugViewMode((debugViewMode + 1) % 7);
     }
 
     public boolean isFrustumCullingEnabled() {

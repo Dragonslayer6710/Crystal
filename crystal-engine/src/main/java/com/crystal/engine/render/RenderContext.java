@@ -10,6 +10,8 @@ import static org.lwjgl.opengl.GL46.*;
 
 public class RenderContext {
 
+    private int debugViewMode = 0;
+
     private boolean currentDepthTest = true;
     private boolean currentCullFace = true;
     private boolean currentWireframe = false;
@@ -116,7 +118,7 @@ public class RenderContext {
         }
 
         if (material.getId() != currentMaterialId) {
-            material.bindProperties();
+            material.bindProperties(debugViewMode);
             currentMaterialId = material.getId();
         }
 
@@ -194,5 +196,12 @@ public class RenderContext {
     public void setDefaultTextures(Texture white, Texture normal) {
         this.defaultWhiteTexture = white;
         this.defaultNormalTexture = normal;
+    }
+
+    public void setDebugViewMode(int debugViewMode) {
+        if (debugViewMode < 0 || debugViewMode > 6)
+            throw new IllegalArgumentException("Debug view mode must be between 0 and 6");
+
+        this.debugViewMode = debugViewMode;
     }
 }
