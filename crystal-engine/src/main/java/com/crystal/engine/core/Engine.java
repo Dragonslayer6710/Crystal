@@ -67,7 +67,7 @@ public class Engine implements WindowEventListener, Application {
         renderer = new Renderer(config.getRendererConfig());
         renderer.init(windowConfig.getWidth(), windowConfig.getHeight());
 
-        resourceManager = new ResourceManager();
+        resourceManager = new ResourceManager(config.getAssetConfig());
 
         scene = new Scene();
 

@@ -7,12 +7,14 @@ public final class EngineConfig {
 
     private final WindowConfig windowConfig = new WindowConfig();
     private final RendererConfig rendererConfig = new RendererConfig();
+    private final AssetConfig assetConfig = new AssetConfig();
 
     private int targetFPS = 144;
     private double maxDeltaTime = 0.25f;
 
     public WindowConfig getWindowConfig() { return windowConfig; }
     public RendererConfig getRendererConfig() { return rendererConfig; }
+    public AssetConfig getAssetConfig() { return assetConfig; }
 
     public int getTargetFPS() { return targetFPS; }
     public long getTargetFrameTimeNanos() { return targetFPS == 0 ? 0 : 1_000_000_000L / targetFPS; }

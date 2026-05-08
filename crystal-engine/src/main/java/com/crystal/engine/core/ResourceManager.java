@@ -29,12 +29,21 @@ public class ResourceManager {
     private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
 
     private final List<Disposable> resources = new ArrayList<>();
-    private final Path assetRoot = Path.of("assets");
+    private final Path assetRoot;
 
     private final Map<String, Texture> textureCache = new HashMap<>();
     private final Map<String, Shader> shaderCache = new HashMap<>();
 
     private boolean disposed;
+
+    public ResourceManager(AssetConfig config) {
+        if (config == null) throw new IllegalArgumentException("AssetConfig cannot be null");
+        this.assetRoot = config.getAssetRoot();
+    }
+
+    public ResourceManager() {
+        this(new AssetConfig());
+    }
 
     public <T extends Disposable> T register(T resource) {
         if (disposed) throw new IllegalStateException("ResourceManager has already been disposed");

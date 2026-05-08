@@ -2,6 +2,7 @@ package com.crystal.sandbox;
 
 import com.crystal.engine.assets.model.Model;
 import com.crystal.engine.assets.model.ModelLoadOptions;
+import com.crystal.engine.core.EngineConfig;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
 import com.crystal.engine.render.material.Material;
@@ -122,7 +123,10 @@ public class SandboxMain implements Game {
     public static void main(String[] args) {
         logger.info("Sandbox starting");
 
-        Engine engine = new Engine(new SandboxMain());
+        EngineConfig config = new EngineConfig();
+        config.getAssetConfig().setAssetRoot("assets");
+
+        Engine engine = new Engine(new SandboxMain(), config);
         engine.run();
 
         logger.info("Sandbox exiting");
