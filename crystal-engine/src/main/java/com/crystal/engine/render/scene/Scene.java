@@ -13,9 +13,7 @@ public class Scene implements Disposable {
     private final Camera camera = new Camera(0, 0, 0);
 
     private final DirectionalLight directionalLight = new DirectionalLight();
-
-    private final Vector3f ambientColor = new Vector3f(1.0f);
-    private float ambientIntensity = 0.2f;
+    private final Environment environment = new Environment();
 
     private static final int SCENE_UBO_BINDING_POINT = 0;
     private static final int SCENE_UBO_SIZE_BYTES = 192;
@@ -42,22 +40,8 @@ public class Scene implements Disposable {
         return directionalLight;
     }
 
-    public Vector3f getAmbientColor() {
-        return ambientColor;
-    }
-
-    public float getAmbientIntensity() {
-        return ambientIntensity;
-    }
-
-    public Scene setAmbientColor(float r, float g, float b) {
-        ambientColor.set(r, g, b);
-        return this;
-    }
-
-    public Scene setAmbientIntensity(float ambientIntensity) {
-        this.ambientIntensity = ambientIntensity;
-        return this;
+    public Environment getEnvironment() {
+        return environment;
     }
 
     public UniformBuffer getSceneUBO() {

@@ -172,11 +172,13 @@ public class RenderContext {
         camera.getViewMatrix().get(data, 0);
         camera.getProjectionMatrix(aspectRatio).get(data, 16);
 
-        var ambientColor = scene.getAmbientColor();
+        var environment = scene.getEnvironment();
+        var ambientColor = environment.getAmbientColor();
+
         data[32] = ambientColor.x;
         data[33] = ambientColor.y;
         data[34] = ambientColor.z;
-        data[35] = scene.getAmbientIntensity();
+        data[35] = environment.getAmbientIntensity();
 
         var cameraPosition = camera.getTransform().getWorldPosition();
         data[36] = cameraPosition.x;
