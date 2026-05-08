@@ -10,6 +10,7 @@ uniform sampler2D albedoTexture;
 uniform sampler2D normalMap;
 uniform sampler2D metallicRoughnessMap;
 uniform sampler2D ambientOcclusionMap;
+uniform sampler2D emissiveMap;
 
 layout (std140, binding = 0) uniform SceneData {
     mat4 view;
@@ -25,6 +26,7 @@ layout (std140, binding = 0) uniform SceneData {
 uniform vec3 materialTint;
 uniform float materialRoughness;
 uniform float materialMetallic;
+uniform float materialEmissive;
 
 out vec4 color;
 
@@ -76,6 +78,9 @@ void main() {
     vec2 mr = getMetallicRoughness();
 
     vec3 finalColor = calculateLighting(albedo, N, mr.x, mr.y);
+
+    vec3 emissive = texture(emissiveMap, v_UV).rgb * materialEmissive;
+    finalColor += emissive;
 
     // Simple Reinhard tone mapping
     vec3 mapped = finalColor / (finalColor + vec3(1.0));

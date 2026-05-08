@@ -270,7 +270,7 @@ public final class AssimpModelLoader {
         );
 
         if (emissiveMap != null) {
-            material.setAmbientOcclusionMap(emissiveMap);
+            material.setEmissiveMap(emissiveMap);
             material.setEmissive(1.0f,  1.0f, 1.0f);
         }
 
