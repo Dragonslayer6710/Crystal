@@ -66,6 +66,8 @@ public class SandboxMain implements Game {
 
         for (SceneObject object : model.getRootObjects()) {
             ctx.getScene().add(object);
+
+            object.getTransform().setPosition(0, 0, -2f);
         }
 
 //        addCubes(shader);
@@ -81,6 +83,9 @@ public class SandboxMain implements Game {
             var renderer = ctx.getRenderer();
             renderer.setFrustumCullingEnabled(!renderer.isFrustumCullingEnabled());
         }
+
+        for (SceneObject object : ctx.getScene().getRootObjects())
+            object.getTransform().rotate((float) dt, (float) dt, 0.0f);
 
 //        cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
 //        cubeB.getTransform().rotate((float) dt, 0.0f, 0.0f);
