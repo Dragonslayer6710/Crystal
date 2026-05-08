@@ -34,7 +34,7 @@ public class Material {
 
     // ---------- GETTERS ----------
 
-    public Shader getShaderProgram() {
+    public Shader getShader() {
         return shader;
     }
 

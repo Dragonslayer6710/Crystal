@@ -2,7 +2,6 @@ package com.crystal.engine.render.commands;
 
 import com.crystal.engine.render.RenderContext;
 import com.crystal.engine.render.scene.SceneObject;
-import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shader.ShaderUniforms;
 
@@ -11,13 +10,9 @@ import static org.lwjgl.opengl.GL46.*;
 public class DrawSceneObjectCommand implements RenderCommand {
 
     private final SceneObject object;
-    private final Scene scene;
-    private final float aspectRatio;
 
-    public DrawSceneObjectCommand(SceneObject object, Scene scene, float aspectRatio) {
+    public DrawSceneObjectCommand(SceneObject object) {
         this.object = object;
-        this.scene = scene;
-        this.aspectRatio = aspectRatio;
     }
 
     @Override
@@ -25,7 +20,7 @@ public class DrawSceneObjectCommand implements RenderCommand {
         var material = object.getMaterial();
         var mesh = object.getMesh();
         var transform = object.getTransform();
-        Shader shader = material.getShaderProgram();
+        Shader shader = material.getShader();
 
         context.applyRenderState(material.getRenderState());
         context.bindMaterial(material);

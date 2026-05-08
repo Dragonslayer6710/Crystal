@@ -106,7 +106,7 @@ public class Renderer {
 
         var camera = scene.getCamera();
         camera.updateFrustum(aspectRatio);
-        context.bindScene(scene, aspectRatio);
+        context.prepareScene(scene, aspectRatio);
 
         List<SceneObject> visibleObjects = new ArrayList<>();
 
@@ -118,7 +118,7 @@ public class Renderer {
                         object.getMaterial().getRenderState().getSortKey()
                 )
                 .thenComparingInt(object ->
-                        object.getMaterial().getShaderProgram().getId()
+                        object.getMaterial().getShader().getId()
                 )
                 .thenComparingInt(object ->
                         object.getMaterial().getId()
@@ -129,7 +129,7 @@ public class Renderer {
         );
 
         for (SceneObject object : visibleObjects)
-            queue.submit(new DrawSceneObjectCommand(object, scene, aspectRatio));
+            queue.submit(new DrawSceneObjectCommand(object));
 
         renderFrame();
     }

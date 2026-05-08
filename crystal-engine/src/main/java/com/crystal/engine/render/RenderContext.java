@@ -114,7 +114,7 @@ public class RenderContext {
     }
 
     public void bindMaterial(Material material) {
-        Shader shader = material.getShaderProgram();
+        Shader shader = material.getShader();
         int shaderId = shader.getId();
 
         if (shaderId != currentShaderId) {
@@ -164,7 +164,7 @@ public class RenderContext {
         }
     }
 
-    public void bindScene(Scene scene, float aspectRatio) {
+    public void prepareScene(Scene scene, float aspectRatio) {
         float[] data = new float[48];
 
         var camera = scene.getCamera();

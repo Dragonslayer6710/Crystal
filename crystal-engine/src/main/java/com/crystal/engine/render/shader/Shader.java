@@ -12,18 +12,12 @@ import static org.lwjgl.opengl.GL46.*;
 
 public class Shader implements Disposable {
 
-    private final String vertexSourcePath;
-    private final String fragmentSourcePath;
-
     private final int id;
     private final Map<String, Integer> uniformMap = new HashMap<>();
 
     private boolean disposed;
 
     public Shader(String vertexSrc, String fragmentSrc, String vertexSourcePath, String fragmentSourcePath) {
-        this.vertexSourcePath = vertexSourcePath;
-        this.fragmentSourcePath = fragmentSourcePath;
-
         int vs = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vs, vertexSrc);
         glCompileShader(vs);
@@ -106,14 +100,6 @@ public class Shader implements Disposable {
 
     public int getId() {
         return id;
-    }
-
-    public String getVertexSourcePath() {
-        return vertexSourcePath;
-    }
-
-    public String getFragmentSourcePath() {
-        return fragmentSourcePath;
     }
 
     public void bind() {
