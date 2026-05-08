@@ -1,6 +1,7 @@
 package com.crystal.engine.render.scene;
 
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class Transform {
@@ -9,6 +10,7 @@ public class Transform {
 
     private final Vector3f position = new Vector3f(0, 0, 0);
     private final Vector3f rotation = new Vector3f(0, 0, 0); // Euler for now
+    private final Quaternionf rotationQuat = new Quaternionf();
     private final Vector3f scale    = new Vector3f(1, 1, 1);
 
     private final Matrix4f localMatrix = new Matrix4f();
@@ -58,19 +60,28 @@ public class Transform {
         return this;
     }
 
+    public Transform setRotation(Quaternionf rotation) {
+        if (rotation == null) {
+            throw new IllegalArgumentException("Rotation cannot be null");
+        }
+
+        this.rotationQuat.set(rotation);
+        this.rotation.set(rotation.getEulerAnglesXYZ(new Vector3f()));
+        return this;
+    }
+
     public Transform setRotation(float x, float y, float z) {
         rotation.set(x, y, z);
+        rotationQuat.identity().rotateXYZ(x, y, z);
         return this;
     }
 
     public Transform setRotationDegrees(float x, float y, float z) {
-        rotation.set(
+        return setRotation(
                 (float) Math.toRadians(x),
                 (float) Math.toRadians(y),
                 (float) Math.toRadians(z)
         );
-
-        return this;
     }
 
     public Transform translate(float x, float y, float z) {
@@ -80,17 +91,16 @@ public class Transform {
 
     public Transform rotate(float x, float y, float z) {
         rotation.add(x, y, z);
+        rotationQuat.rotateXYZ(x, y, z);
         return this;
     }
 
     public Transform rotateDegrees(float x, float y, float z) {
-        rotation.add(
+        return rotate(
                 (float) Math.toRadians(x),
                 (float) Math.toRadians(y),
                 (float) Math.toRadians(z)
         );
-
-        return this;
     }
 
     public Transform scaleBy(float x, float y, float z) {
@@ -101,9 +111,7 @@ public class Transform {
     public Matrix4f getLocalMatrix() {
         localMatrix.identity()
                 .translate(position)
-                .rotateX(rotation.x)
-                .rotateY(rotation.y)
-                .rotateZ(rotation.z)
+                .rotate(rotationQuat)
                 .scale(scale);
 
         return localMatrix;

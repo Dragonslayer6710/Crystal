@@ -38,7 +38,7 @@ public class ResourceManager {
 
     public ResourceManager(AssetConfig config) {
         if (config == null) throw new IllegalArgumentException("AssetConfig cannot be null");
-        this.assetRoot = config.getAssetRoot();
+        this.assetRoot = config.getAssetRoot().toAbsolutePath().normalize();
     }
 
     public ResourceManager() {
