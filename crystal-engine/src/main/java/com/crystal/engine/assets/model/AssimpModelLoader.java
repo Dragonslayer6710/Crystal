@@ -30,13 +30,16 @@ public final class AssimpModelLoader {
         if (options == null) throw new IllegalArgumentException("ModelLoadOptions cannot be null");
         if (options.getShader() == null) throw new IllegalArgumentException("ModelLoadOptions shader cannot be null");
 
-        AIScene scene = aiImportFile(
-                path.toString(),
+        int flags =
                 aiProcess_Triangulate |
-                        aiProcess_JoinIdenticalVertices |
-                        aiProcess_GenSmoothNormals |
-                        aiProcess_CalcTangentSpace
-        );
+                aiProcess_JoinIdenticalVertices |
+                aiProcess_GenSmoothNormals |
+                aiProcess_CalcTangentSpace;
+
+        if (options.isFlipUVs())
+            flags |= aiProcess_FlipUVs;
+
+        AIScene scene = aiImportFile(path.toString(), flags);
 
         if (scene == null) throw new RuntimeException("Failed to load model: " + path + "\n" + aiGetErrorString());
 
