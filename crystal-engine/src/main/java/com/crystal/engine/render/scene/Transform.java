@@ -63,6 +63,16 @@ public class Transform {
         return this;
     }
 
+    public Transform setRotationDegrees(float x, float y, float z) {
+        rotation.set(
+                (float) Math.toRadians(x),
+                (float) Math.toRadians(y),
+                (float) Math.toRadians(z)
+        );
+
+        return this;
+    }
+
     public Transform translate(float x, float y, float z) {
         position.add(x, y, z);
         return this;
@@ -70,6 +80,16 @@ public class Transform {
 
     public Transform rotate(float x, float y, float z) {
         rotation.add(x, y, z);
+        return this;
+    }
+
+    public Transform rotateDegrees(float x, float y, float z) {
+        rotation.add(
+                (float) Math.toRadians(x),
+                (float) Math.toRadians(y),
+                (float) Math.toRadians(z)
+        );
+
         return this;
     }
 

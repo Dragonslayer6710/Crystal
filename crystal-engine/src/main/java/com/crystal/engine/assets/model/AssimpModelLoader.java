@@ -176,6 +176,17 @@ public final class AssimpModelLoader {
 
         AIMaterial aiMaterial = AIMaterial.create(materials.get(materialIndex));
 
+        loadAlbedo(scene, aiMaterial, modelPath, resources, material);
+        loadNormal(scene, aiMaterial, modelPath, resources, material);
+        loadMetallicRoughness(scene, aiMaterial, modelPath, resources, material);
+        loadAmbientOcclusion(scene, aiMaterial, modelPath, resources, material);
+        loadEmissive(scene, aiMaterial, modelPath, resources, material);
+
+        return material;
+    }
+
+    private static void loadAlbedo(AIScene scene, AIMaterial aiMaterial, Path modelPath,
+                                   ResourceManager resources, Material material) {
         Texture albedo = loadMaterialTexture(
                 scene,
                 aiMaterial,
@@ -187,7 +198,10 @@ public final class AssimpModelLoader {
 
         if (albedo != null)
             material.setAlbedo(albedo);
+    }
 
+    private static void loadNormal(AIScene scene, AIMaterial aiMaterial, Path modelPath,
+                                   ResourceManager resources, Material material) {
         Texture normal = loadMaterialTexture(
                 scene,
                 aiMaterial,
@@ -211,6 +225,10 @@ public final class AssimpModelLoader {
 
         if (normal != null)
             material.setNormalMap(normal);
+    }
+
+    private static void loadMetallicRoughness(AIScene scene, AIMaterial aiMaterial, Path modelPath,
+                                   ResourceManager resources, Material material) {
 
         Texture metallicRoughness = loadMaterialTexture(
                 scene,
@@ -235,7 +253,10 @@ public final class AssimpModelLoader {
 
         if (metallicRoughness != null)
             material.setMetallicRoughnessMap(metallicRoughness);
+    }
 
+    private static void loadAmbientOcclusion(AIScene scene, AIMaterial aiMaterial, Path modelPath,
+                                              ResourceManager resources, Material material) {
         Texture ambientOcclusion = loadMaterialTexture(
                 scene,
                 aiMaterial,
@@ -259,7 +280,10 @@ public final class AssimpModelLoader {
 
         if (ambientOcclusion != null)
             material.setAmbientOcclusionMap(ambientOcclusion);
+    }
 
+    private static void loadEmissive(AIScene scene, AIMaterial aiMaterial, Path modelPath,
+                                             ResourceManager resources, Material material) {
         Texture emissiveMap = loadMaterialTexture(
                 scene,
                 aiMaterial,
@@ -273,8 +297,6 @@ public final class AssimpModelLoader {
             material.setEmissiveMap(emissiveMap);
             material.setEmissive(1.0f,  1.0f, 1.0f);
         }
-
-        return material;
     }
 
     private static Texture loadMaterialTexture(AIScene scene, AIMaterial material, Path modelPath,

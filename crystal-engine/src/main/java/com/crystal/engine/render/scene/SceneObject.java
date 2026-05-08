@@ -45,6 +45,10 @@ public class SceneObject {
         return material;
     }
 
+    public boolean isRenderable() {
+        return mesh != null && material != null;
+    }
+
     public Transform getTransform() {
         return transform;
     }

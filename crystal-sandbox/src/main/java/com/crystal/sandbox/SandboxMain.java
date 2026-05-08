@@ -74,11 +74,7 @@ public class SandboxMain implements Game {
 
             object.getTransform()
                     .setPosition(0.75f, 0.0f, -2.5f)
-                    .setRotation(
-                            (float) Math.toRadians(90.0),
-                            0.0f,
-                            (float) Math.toRadians(-15.0)
-                    );
+                    .setRotationDegrees(90.0f, 0.0f, -15.0f);
         }
 
 //        addCubes(shader);

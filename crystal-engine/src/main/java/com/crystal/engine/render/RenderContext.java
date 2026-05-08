@@ -4,6 +4,7 @@ import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shader.ShaderUniforms;
 import com.crystal.engine.render.texture.Texture;
 
@@ -113,18 +114,19 @@ public class RenderContext {
     }
 
     public void bindMaterial(Material material) {
-        int shaderId = material.getShaderProgram().getId();
+        Shader shader = material.getShaderProgram();
+        int shaderId = shader.getId();
 
         if (shaderId != currentShaderId) {
-            material.getShaderProgram().bind();
-
-            material.getShaderProgram().setFloat(ShaderUniforms.EXPOSURE, exposure);
-
+            shader.bind();
             currentShaderId = shaderId;
         }
 
+        shader.setInt(ShaderUniforms.DEBUG_VIEW_MODE, debugViewMode);
+        shader.setFloat(ShaderUniforms.EXPOSURE, exposure);
+
         if (material.getId() != currentMaterialId) {
-            material.bindProperties(debugViewMode);
+            material.bindProperties();
             currentMaterialId = material.getId();
         }
 

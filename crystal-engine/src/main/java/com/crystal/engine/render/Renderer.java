@@ -88,15 +88,14 @@ public class Renderer {
         if (!object.isActive())
             return;
 
-        if (!object.isVisible()) {
-            return;
+        if (object.isVisible() && object.isRenderable()) {
+            if (!frustumCullingEnabled || camera.canSee(
+                    object.getTransform().getWorldPosition(),
+                    object.getBoundingRadius()
+            )) {
+                visibleObjects.add(object);
+            }
         }
-
-        if (!frustumCullingEnabled || camera.canSee(
-                object.getTransform().getWorldPosition(),
-                object.getBoundingRadius()
-        ))
-            visibleObjects.add(object);
 
         for (SceneObject child : object.getChildren())
             collectVisibleObjects(child, visibleObjects, camera);

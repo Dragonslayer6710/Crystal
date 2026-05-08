@@ -151,6 +151,7 @@ public class Engine implements WindowEventListener, Application {
     private void throttle(long frameStart) {
         long targetEndTime = frameStart + config.getTargetFrameTimeNanos();
 
+        // Accurate but CPU-heavy. Replace with hybrid sleep/spin later if needed.
         while (System.nanoTime() < targetEndTime) {
             Thread.onSpinWait();
         }
