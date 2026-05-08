@@ -27,10 +27,6 @@ uniform float materialMetallic;
 
 out vec4 color;
 
-vec3 getAlbedo() {
-    return texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
-}
-
 vec3 getNormal() {
     vec3 N = normalize(v_Normal);
     vec3 T = normalize(v_Tangent);
@@ -62,7 +58,7 @@ void main() {
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
     vec3 H = normalize(L + V);
 
-    vec3 albedo = getAlbedo();
+    vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
 
     vec2 mr = getMetallicRoughness();
     float metallic = mr.x;
