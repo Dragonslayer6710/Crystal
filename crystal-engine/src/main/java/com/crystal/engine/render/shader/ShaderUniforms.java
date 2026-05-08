@@ -11,6 +11,10 @@ public final class ShaderUniforms {
     public static final String AMBIENT_OCCLUSION_MAP = "ambientOcclusionMap";
     public static final String EMISSIVE_MAP = "emissiveMap";
 
+    public static final String IRRADIANCE_MAP = "irradianceMap";
+    public static final String PREFILTER_MAP = "prefilterMap";
+    public static final String BRDF_LUT = "brdfLut";
+
     public static final String MATERIAL_TINT = "materialTint";
     public static final String MATERIAL_ROUGHNESS = "materialRoughness";
     public static final String MATERIAL_METALLIC = "materialMetallic";

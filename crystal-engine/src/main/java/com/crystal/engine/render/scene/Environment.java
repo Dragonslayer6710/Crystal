@@ -71,9 +71,15 @@ public class Environment {
         return skybox != null;
     }
 
+    public boolean hasDiffuseIBL() {
+        return irradianceMap != null;
+    }
+
+    public boolean hasSpecularIBL() {
+        return prefilteredEnvironmentMap != null && brdfLut != null;
+    }
+
     public boolean hasIBL() {
-        return irradianceMap != null
-                && prefilteredEnvironmentMap != null
-                && brdfLut != null;
+        return hasDiffuseIBL() && hasSpecularIBL();
     }
 }
