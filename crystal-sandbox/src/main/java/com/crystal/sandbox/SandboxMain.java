@@ -30,20 +30,8 @@ public class SandboxMain implements Game {
 
     private FlyCameraController cameraController;
 
-    @Override
-    public void init(EngineContext ctx) {
-        this.ctx = ctx;
-        logger.info("Game init");
-
+    private void addCubes(Shader shader) {
         Mesh mesh = MeshFactory.createTexturedCube(ctx.getResources());
-
-        Shader shader = this.ctx.getResources()
-                .createShaderProgram("basic");
-
-        Model model = ctx.getResources().loadModel(
-                "BoxTextured.glb",
-                new ModelLoadOptions().setShader(shader)
-        );
 
         Material material = new Material(shader);
         material.getRenderState()
@@ -61,6 +49,26 @@ public class SandboxMain implements Game {
         cubeB.addChild(cubeC);
 
         this.ctx.getScene().add(cubeA);
+    }
+
+    @Override
+    public void init(EngineContext ctx) {
+        this.ctx = ctx;
+        logger.info("Game init");
+
+        Shader shader = this.ctx.getResources()
+                .createShaderProgram("basic");
+
+        Model model = ctx.getResources().loadModel(
+                "BoxTextured.glb",
+                new ModelLoadOptions().setShader(shader)
+        );
+
+        for (SceneObject object : model.getRootObjects()) {
+            ctx.getScene().add(object);
+        }
+
+//        addCubes(shader);
 
         cameraController = new FlyCameraController(ctx);
     }
@@ -74,9 +82,9 @@ public class SandboxMain implements Game {
             renderer.setFrustumCullingEnabled(!renderer.isFrustumCullingEnabled());
         }
 
-        cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
-        cubeB.getTransform().rotate((float) dt, 0.0f, 0.0f);
-        cubeC.getTransform().rotate(0.0f, 0.0f, (float) dt);
+//        cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
+//        cubeB.getTransform().rotate((float) dt, 0.0f, 0.0f);
+//        cubeC.getTransform().rotate(0.0f, 0.0f, (float) dt);
 
     }
 
