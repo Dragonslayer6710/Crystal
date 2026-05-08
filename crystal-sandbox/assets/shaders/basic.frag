@@ -46,7 +46,7 @@ float distributionGGX(vec3 N, vec3 H, float roughness) {
     float NdotH = max(dot(N, H), 0.0);
     float NdotH2 = NdotH * NdotH;
 
-    float denominator = NdotH * (a2 - 1.0) + 1.0;
+    float denominator = NdotH2 * (a2 - 1.0) + 1.0;
     denominator = PI * denominator * denominator;
 
     return a2 / max(denominator, 0.0001);
@@ -57,6 +57,16 @@ float geometrySchlickGGX(float NdotV, float roughness) {
     float k = (r * r) / 8.0;
 
     return NdotV / (NdotV * (1.0 - k) + k);
+}
+
+float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
+    float NdotV = max(dot(N, V), 0.0);
+    float NdotL = max(dot(N, L), 0.0);
+
+    float ggxV = geometrySchlickGGX(NdotV, roughness);
+    float ggxL = geometrySchlickGGX(NdotL, roughness);
+
+    return ggxV * ggxL;
 }
 
 vec3 getNormal() {
@@ -99,7 +109,7 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
 
     vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
     float D = distributionGGX(normal, H, roughness);
-    float G = geometrySchlickGGX(normal, V, L, roughness);
+    float G = geometrySmith(normal, V, L, roughness);
 
     float NdotL = max(dot(normal, L), 0.0);
     float NdotV = max(dot(normal, V), 0.0);
