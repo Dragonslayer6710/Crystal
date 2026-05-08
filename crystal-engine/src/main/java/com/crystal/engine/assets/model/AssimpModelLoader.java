@@ -112,7 +112,7 @@ public final class AssimpModelLoader {
                 vertices[offset++] = 1.0f;
             }
 
-            if (normals != null) {
+            if (tangents != null) {
                 var tangent = tangents.get(i);
                 vertices[offset++] = tangent.x();
                 vertices[offset++] = tangent.y();
