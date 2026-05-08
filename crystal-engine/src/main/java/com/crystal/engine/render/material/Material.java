@@ -14,12 +14,14 @@ public class Material {
     private Texture normalMap;
     private Texture metallicRoughnessMap;
     private Texture ambientOcclusionMap;
+    private Texture emissiveMap;
 
     private UniformBuffer ubo;
 
     private final Vector3f tint = new Vector3f(1.0f);
     private float roughness = 0.5f;
     private float metallic = 0.0f;
+    private final Vector3f emissive = new Vector3f(0.0f);
 
     private final RenderState renderState = new RenderState();
 
@@ -52,6 +54,10 @@ public class Material {
         return ambientOcclusionMap;
     }
 
+    public Texture getEmissiveMap() {
+        return emissiveMap;
+    }
+
     public Vector3f getTint() {
         return tint;
     }
@@ -62,6 +68,10 @@ public class Material {
 
     public float getMetallic() {
         return metallic;
+    }
+
+    public Vector3f getEmissive() {
+        return emissive;
     }
 
     public RenderState getRenderState() {
@@ -91,6 +101,10 @@ public class Material {
         ambientOcclusionMap = texture;
     }
 
+    public void setEmissiveMap(Texture texture) {
+        emissiveMap = texture;
+    }
+
     public void setUBO(UniformBuffer ubo) {
         this.ubo = ubo;
     }
@@ -116,6 +130,11 @@ public class Material {
         return this;
     }
 
+    public Material setEmissive(float r, float g, float b) {
+        emissive.set(r, g, b);
+        return this;
+    }
+
     // ---------- BIND ----------
 
     public void bindProperties() {
@@ -123,13 +142,14 @@ public class Material {
         shader.setInt(ShaderUniforms.NORMAL_MAP, 1);
         shader.setInt(ShaderUniforms.METALLIC_ROUGHNESS_MAP, 2);
         shader.setInt(ShaderUniforms.AMBIENT_OCCLUSION_MAP, 3);
+        shader.setInt(ShaderUniforms.EMISSIVE_MAP, 4);
 
         shader.setVec3(ShaderUniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
         shader.setFloat(ShaderUniforms.MATERIAL_ROUGHNESS, roughness);
         shader.setFloat(ShaderUniforms.MATERIAL_METALLIC, metallic);
+        shader.setVec3(ShaderUniforms.MATERIAL_EMISSIVE, emissive.x, emissive.y, emissive.z);
 
-        if (ubo != null) {
-             ubo.bind();
-        }
+        if (ubo != null)
+            ubo.bind();
     }
 }

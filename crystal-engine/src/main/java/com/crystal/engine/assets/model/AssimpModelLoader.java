@@ -258,7 +258,21 @@ public final class AssimpModelLoader {
         }
 
         if (ambientOcclusion != null)
-            material.setMetallicRoughnessMap(ambientOcclusion);
+            material.setAmbientOcclusionMap(ambientOcclusion);
+
+        Texture emissiveMap = loadMaterialTexture(
+                scene,
+                aiMaterial,
+                modelPath,
+                resources,
+                aiTextureType_EMISSIVE,
+                TextureSettings.defaultData()
+        );
+
+        if (emissiveMap != null) {
+            material.setAmbientOcclusionMap(emissiveMap);
+            material.setEmissive(1.0f,  1.0f, 1.0f);
+        }
 
         return material;
     }

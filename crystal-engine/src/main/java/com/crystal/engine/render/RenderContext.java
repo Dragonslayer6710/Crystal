@@ -19,6 +19,7 @@ public class RenderContext {
     private int currentNormalMapTextureId = 0;
     private int currentMetallicRoughnessTextureId = 0;
     private int currentAmbientOcclusionTextureId = 0;
+    private int currentEmissiveMapId = 0;
     private int currentMaterialId = 0;
 
     private int currentMeshId = 0;
@@ -33,6 +34,7 @@ public class RenderContext {
         currentNormalMapTextureId = 0;
         currentMetallicRoughnessTextureId = 0;
         currentAmbientOcclusionTextureId = 0;
+        currentEmissiveMapId = 0;
 
         currentMaterialId = 0;
 
@@ -87,8 +89,12 @@ public class RenderContext {
                 currentMetallicRoughnessTextureId = textureId;
             }
             case 3 -> {
-                if (textureId == currentAlbedoTextureId) return;
+                if (textureId == currentAmbientOcclusionTextureId) return;
                 currentAmbientOcclusionTextureId = textureId;
+            }
+            case 4 -> {
+                if (textureId == currentEmissiveMapId) return;
+                currentEmissiveMapId = textureId;
             }
             default -> throw new IllegalArgumentException("Unsupported texture slot: " + slot);
         }
@@ -130,10 +136,15 @@ public class RenderContext {
                 ? material.getAmbientOcclusionMap()
                 : defaultWhiteTexture;
 
+        Texture emissiveMap = material.getEmissiveMap() != null
+                ? material.getEmissiveMap()
+                : defaultWhiteTexture;
+
         bindTextureIfNeeded(albedo, GL_TEXTURE0, GL_TEXTURE_2D, 0);
         bindTextureIfNeeded(normalMap, GL_TEXTURE1, GL_TEXTURE_2D, 1);
         bindTextureIfNeeded(metallicRoughness, GL_TEXTURE2, GL_TEXTURE_2D, 2);
         bindTextureIfNeeded(ambientOcclusion, GL_TEXTURE3, GL_TEXTURE_2D, 3);
+        bindTextureIfNeeded(emissiveMap, GL_TEXTURE4, GL_TEXTURE_2D, 4);
     }
 
     public void bindMesh(Mesh mesh) {
