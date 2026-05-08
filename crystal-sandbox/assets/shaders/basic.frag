@@ -42,27 +42,16 @@ vec3 getNormal() {
 vec2 getMetallicRoughness() {
     vec4 mrSample = texture(metallicRoughnessMap, v_UV);
 
-    float roughness = materialRoughness * mrSample.g;
-    float metallic = materialMetallic * mrSample.b;
+    float roughness = clamp(materialRoughness * mrSample.g, 0.0, 1.0);
+    float metallic = clamp(materialMetallic * mrSample.b, 0.0, 1.0);
 
     return vec2(metallic, roughness);
 }
 
-vec3 calculateLighting() {
-    return vec3(1);
-}
-
-void main() {
-    vec3 N = getNormal();
+vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness) {
     vec3 L = normalize(-sunDirection.xyz);
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
     vec3 H = normalize(L + V);
-
-    vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
-
-    vec2 mr = getMetallicRoughness();
-    float metallic = mr.x;
-    float roughness = mr.y;
 
     float diffuse = max(dot(N, L), 0.0);
 
@@ -73,9 +62,17 @@ void main() {
     vec3 diffuseLight = sunColor.rgb * sunColor.a * diffuse;
     vec3 specularLight = sunColor.rgb * sunColor.a * specular;
 
-    vec3 finalColor =
-            albedo * (ambientLight + diffuseLight) * mix(1.0, 0.35, metallic)
-            + specularLight;
+    return albedo * (ambientLight + diffuseLight) * mix(1.0, 0.35, metallic) + specularLight;
+}
+
+void main() {
+    vec3 N = getNormal();
+
+    vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
+
+    vec2 mr = getMetallicRoughness();
+
+    vec3 finalColor = calculatLighting(albedo, N, mr.x, mr.y);
 
     // Simple Reinhard tone mapping
     vec3 mapped = finalColor / (finalColor + vec3(1.0));
