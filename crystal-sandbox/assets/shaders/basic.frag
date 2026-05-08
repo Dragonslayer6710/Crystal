@@ -69,6 +69,14 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
     return ggxV * ggxL;
 }
 
+vec3 toneMapReinhard(vec3 value) {
+    return value / (value + vec3(1.0));
+}
+
+vec3 gammaCorrect(vec3 value) {
+    return pow(value, vec3(1.0 / 2.2));
+}
+
 vec3 getNormal() {
     vec3 N = normalize(v_Normal);
     vec3 T = normalize(v_Tangent);
@@ -140,8 +148,8 @@ void main() {
             vec3 finalColor = calculateLighting(albedo, N, metallic, roughness, ao);
             finalColor += emissive;
 
-            vec3 mapped = finalColor / (finalColor + vec3(1.0));
-            mapped = pow(mapped, vec3(1.0 / 2.2));
+            vec3 mapped = toneMapReinhard(finalColor);
+            mapped = gammaCorrect(mapped);
 
             color = vec4(mapped, 1.0);
             break;
