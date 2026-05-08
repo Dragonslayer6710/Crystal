@@ -27,7 +27,11 @@ uniform float materialMetallic;
 
 out vec4 color;
 
-void main() {
+vec3 getAlbedo() {
+    return texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
+}
+
+vec3 getNormal() {
     vec3 N = normalize(v_Normal);
     vec3 T = normalize(v_Tangent);
     T = normalize(T - dot(T, N) * N);
@@ -36,18 +40,33 @@ void main() {
     mat3 TBN = mat3(T, B, N);
 
     vec3 sampledNormal = texture(normalMap, v_UV).xyz * 2.0 - 1.0;
-    N = normalize(TBN * sampledNormal);
+    return normalize(TBN * sampledNormal);
+}
 
-    vec3 L = normalize(-sunDirection.xyz);
-    vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
-    vec3 H = normalize(L + V);
-
-    vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
-
+vec2 getMetallicRoughness() {
     vec4 mrSample = texture(metallicRoughnessMap, v_UV);
 
     float roughness = materialRoughness * mrSample.g;
     float metallic = materialMetallic * mrSample.b;
+
+    return vec2(metallic, roughness);
+}
+
+vec3 calculateLighting() {
+    return vec3(1);
+}
+
+void main() {
+    vec3 N = getNormal();
+    vec3 L = normalize(-sunDirection.xyz);
+    vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
+    vec3 H = normalize(L + V);
+
+    vec3 albedo = getAlbedo();
+
+    vec2 mr = getMetallicRoughness();
+    float metallic = mr.x;
+    float roughness = mr.y;
 
     float diffuse = max(dot(N, L), 0.0);
 
