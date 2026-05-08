@@ -8,6 +8,7 @@ in vec3 v_Tangent;
 
 uniform sampler2D albedoTexture;
 uniform sampler2D normalMap;
+uniform sampler2D metallicRoughnessMap;
 
 layout (std140, binding = 0) uniform SceneData {
     mat4 view;
@@ -43,16 +44,23 @@ void main() {
 
     vec3 albedo = texture(albedoTexture, v_UV).rgb * materialTint;
 
+    vec4 mrSample = texture(metallicRoughnessMap, v_UV);
+
+    float roughness = materialRoughness * mrSample.g;
+    float metallic = materialRoughness * mrSample.b;
+
     float diffuse = max(dot(N, L), 0.0);
 
-    float shininess = mix(128.0, 8.0, materialRoughness);
-    float specular = pow(max(dot(N, H), 0.0), shininess) * (1.0 - materialRoughness);
+    float shininess = mix(128.0, 8.0, roughness);
+    float specular = pow(max(dot(N, H), 0.0), shininess) * (1.0 - roughness);
 
     vec3 ambientLight = ambient.rgb * ambient.a;
     vec3 diffuseLight = sunColor.rgb * sunColor.a * diffuse;
     vec3 specularLight = sunColor.rgb * sunColor.a * specular;
 
-    vec3 finalColor = albedo * (ambientLight + diffuseLight) + specularLight;
+    vec3 finalColor =
+            albedo * (ambientLight + diffuseLight) * (1.0 - metallic)
+            + specularLight;
 
     color = vec4(finalColor, 1.0);
 }

@@ -11,6 +11,7 @@ public class Material {
 
     private Texture albedo;
     private Texture normalMap;
+    private Texture metallicRoughnessMap;
 
     private UniformBuffer materialUBO;
 
@@ -29,6 +30,22 @@ public class Material {
 
     // ---------- GETTERS ----------
 
+    public Shader getShaderProgram() {
+        return shader;
+    }
+
+    public Texture getAlbedo() {
+        return albedo;
+    }
+
+    public Texture getNormalMap() {
+        return normalMap;
+    }
+
+    public Texture getMetallicRoughnessMap() {
+        return metallicRoughnessMap;
+    }
+
     public Vector3f getTint() {
         return tint;
     }
@@ -45,6 +62,11 @@ public class Material {
         return renderState;
     }
 
+    public int getId() {
+        return id;
+    }
+
+
     // ---------- SETTERS (explicit, no collections) ----------
 
     public void setAlbedo(Texture texture) {
@@ -53,6 +75,10 @@ public class Material {
 
     public void setNormalMap(Texture texture) {
         this.normalMap = texture;
+    }
+
+    public void setMetallicRoughnessMap(Texture texture) {
+        this.metallicRoughnessMap = texture;
     }
 
     public void setMaterialUBO(UniformBuffer ubo) {
@@ -85,6 +111,7 @@ public class Material {
     public void bindProperties() {
         shader.setInt(Shader.Uniforms.ALBEDO_TEXTURE, 0);
         shader.setInt(Shader.Uniforms.NORMAL_MAP, 1);
+        shader.setInt(Shader.Uniforms.METALLIC_ROUGHNESS_MAP, 2);
 
         shader.setVec3(Shader.Uniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
         shader.setFloat(Shader.Uniforms.MATERIAL_ROUGHNESS, roughness);
@@ -93,21 +120,5 @@ public class Material {
         if (materialUBO != null) {
              materialUBO.bind();
         }
-    }
-
-    public Shader getShaderProgram() {
-        return shader;
-    }
-
-    public Texture getAlbedo() {
-        return albedo;
-    }
-
-    public Texture getNormalMap() {
-        return normalMap;
-    }
-
-    public int getId() {
-        return id;
     }
 }

@@ -13,17 +13,17 @@ import static org.lwjgl.opengl.GL46.*;
 public class Shader implements Disposable {
 
     public static final class Uniforms {
-        private Uniforms() {
-        }
-
         public static final String MODEL = "model";
 
         public static final String ALBEDO_TEXTURE = "albedoTexture";
         public static final String NORMAL_MAP = "normalMap";
+        public static final String METALLIC_ROUGHNESS_MAP = "metallicRoughnessMap";
 
         public static final String MATERIAL_TINT = "materialTint";
         public static final String MATERIAL_ROUGHNESS = "materialRoughness";
         public static final String MATERIAL_METALLIC = "materialMetallic";
+
+        private Uniforms() {}
     }
 
     private final String vertexSourcePath;

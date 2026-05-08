@@ -17,6 +17,7 @@ public class RenderContext {
     private int currentShaderId = 0;
     private int currentAlbedoTextureId = 0;
     private int currentNormalMapTextureId = 0;
+    private int currentMetallicRoughnessTextureId = 0;
     private int currentMaterialId = 0;
 
     private int currentMeshId = 0;
@@ -26,8 +27,11 @@ public class RenderContext {
 
     public void beginFrame() {
         currentShaderId = 0;
+
         currentAlbedoTextureId = 0;
         currentNormalMapTextureId = 0;
+        currentMetallicRoughnessTextureId = 0;
+
         currentMaterialId = 0;
 
         currentMeshId = 0;
@@ -64,21 +68,23 @@ public class RenderContext {
         }
     }
 
-    private void bindTextureIfNeeded(Texture texture, int textureUnit, int target, boolean albedoSlot) {
+    private void bindTextureIfNeeded(Texture texture, int textureUnit, int target, int slot) {
         int textureId = texture != null ? texture.getId() : 0;
 
-        if (albedoSlot) {
-            if (textureId == currentAlbedoTextureId) {
-                return;
+        switch (slot) {
+            case 0 -> {
+                if (textureId == currentAlbedoTextureId)  return;
+                currentAlbedoTextureId = textureId;
             }
-
-            currentAlbedoTextureId = textureId;
-        } else {
-            if (textureId == currentNormalMapTextureId) {
-                return;
+            case 1 -> {
+                if (textureId == currentNormalMapTextureId) return;
+                currentNormalMapTextureId = textureId;
             }
-
-            currentNormalMapTextureId = textureId;
+            case 2 -> {
+                if (textureId == currentMetallicRoughnessTextureId) return;
+                currentMetallicRoughnessTextureId = textureId;
+            }
+            default -> throw new IllegalArgumentException("Unsupported texture slot: " + slot);
         }
 
         if (texture != null) {
@@ -110,8 +116,13 @@ public class RenderContext {
                 ? material.getNormalMap()
                 : defaultNormalTexture;
 
-        bindTextureIfNeeded(albedo, GL_TEXTURE0, GL_TEXTURE_2D, true);
-        bindTextureIfNeeded(normalMap, GL_TEXTURE1, GL_TEXTURE_2D, false);
+        Texture metallicRoughness = material.getMetallicRoughnessMap() != null
+                ? material.getMetallicRoughnessMap()
+                : defaultWhiteTexture;
+
+        bindTextureIfNeeded(albedo, GL_TEXTURE0, GL_TEXTURE_2D, 0);
+        bindTextureIfNeeded(normalMap, GL_TEXTURE1, GL_TEXTURE_2D, 1);
+        bindTextureIfNeeded(metallicRoughness, GL_TEXTURE2, GL_TEXTURE_2D, 2);
     }
 
     public void bindMesh(Mesh mesh) {
