@@ -8,7 +8,7 @@ public final class EngineConfig {
     private final WindowConfig windowConfig = new WindowConfig();
     private final RendererConfig rendererConfig = new RendererConfig();
 
-    private int targetFPS = 0;
+    private int targetFPS = 144;
     private double maxDeltaTime = 0.25f;
 
     public WindowConfig getWindowConfig() { return windowConfig; }

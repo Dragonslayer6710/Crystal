@@ -10,8 +10,6 @@ import org.lwjgl.opengl.GL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.locks.LockSupport;
-
 public class Engine implements WindowEventListener, Application {
 
     private static final Logger logger = LoggerFactory.getLogger(Engine.class);
@@ -148,16 +146,11 @@ public class Engine implements WindowEventListener, Application {
     }
 
     private void throttle(long frameStart) {
-        long elapsed = System.nanoTime() - frameStart;
-        long sleepNanos = config.getTargetFrameTimeNanos() - elapsed;
+        long targetEndTime = frameStart + config.getTargetFrameTimeNanos();
 
-        if (sleepNanos <= 0)
-            return;
-
-        LockSupport.parkNanos(sleepNanos);
-
-        if (Thread.interrupted())
-            Thread.currentThread().interrupt();
+        while (System.nanoTime() < targetEndTime) {
+            Thread.onSpinWait();
+        }
     }
 
     private void shutdown() {
