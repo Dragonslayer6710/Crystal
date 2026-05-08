@@ -6,6 +6,8 @@ import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.texture.Texture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -14,6 +16,8 @@ import java.util.List;
 import static org.lwjgl.opengl.GL46.*;
 
 public class Renderer {
+
+    private static final Logger logger = LoggerFactory.getLogger(Renderer.class);
 
     private final RendererConfig config;
 
@@ -140,7 +144,12 @@ public class Renderer {
         if (debugViewMode < 0 || debugViewMode > 6)
             throw new IllegalArgumentException("Debug view mode must be between 0 and 6");
 
+        if (this.debugViewMode == debugViewMode)
+            return;
+
         this.debugViewMode = debugViewMode;
+
+        logger.info("Debug View: {}", getDebugViewName());
     }
 
     public void cycleDebugViewMode() {
@@ -157,6 +166,23 @@ public class Renderer {
 
     public Texture getDefaultNormalTexture() {
         return defaultNormalTexture;
+    }
+
+    public int getDebugViewMode() {
+        return debugViewMode;
+    }
+
+    public String getDebugViewName() {
+        return switch (debugViewMode) {
+            case 0 -> "Final";
+            case 1 -> "Albedo";
+            case 2 -> "Normals";
+            case 3 -> "Metallic";
+            case 4 -> "Roughness";
+            case 5 -> "Ambient Occlusion";
+            case 6 -> "Emissive";
+            default -> "Unknown";
+        };
     }
 
     public void dispose() {

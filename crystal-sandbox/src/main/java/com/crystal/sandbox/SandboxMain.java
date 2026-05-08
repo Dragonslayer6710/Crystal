@@ -90,10 +90,23 @@ public class SandboxMain implements Game {
     public void update(double dt) {
         cameraController.update(dt);
 
-        if (ctx.getInput().isKeyPressed(Key.F)) {
-            var renderer = ctx.getRenderer();
+        var input = ctx.getInput();
+        var renderer = ctx.getRenderer();
+
+        if (input.isKeyPressed(Key.F))
             renderer.setFrustumCullingEnabled(!renderer.isFrustumCullingEnabled());
-        }
+
+        if (input.isKeyPressed(Key.NUMPAD_0)) renderer.setDebugViewMode(0);
+        if (input.isKeyPressed(Key.NUMPAD_1)) renderer.setDebugViewMode(1);
+        if (input.isKeyPressed(Key.NUMPAD_2)) renderer.setDebugViewMode(2);
+        if (input.isKeyPressed(Key.NUMPAD_3)) renderer.setDebugViewMode(3);
+        if (input.isKeyPressed(Key.NUMPAD_4)) renderer.setDebugViewMode(4);
+        if (input.isKeyPressed(Key.NUMPAD_5)) renderer.setDebugViewMode(5);
+        if (input.isKeyPressed(Key.NUMPAD_6)) renderer.setDebugViewMode(6);
+
+        if (input.isKeyPressed(Key.NUMPAD_ENTER))
+            renderer.cycleDebugViewMode();
+
 
 //        for (SceneObject object : ctx.getScene().getRootObjects())
 //            object.getTransform().rotate((float) dt, (float) dt, 0.0f);
