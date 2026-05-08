@@ -6,6 +6,7 @@ in vec2 v_UV;
 in vec3 v_Normal;
 in vec3 v_Tangent;
 
+
 uniform int debugViewMode;
 
 uniform sampler2D albedoTexture;
@@ -32,6 +33,32 @@ uniform vec3 materialEmissive;
 
 out vec4 color;
 
+const float PI = 3.14159265358979;
+
+vec3 fresnelSchlick(float cosTheta, vec3 F0) {
+    return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}
+
+float distributionGGX(vec3 N, vec3 H, float roughness) {
+    float a = roughness * roughness;
+    float a2 = a * a;
+
+    float NdotH = max(dot(N, H), 0.0);
+    float NdotH2 = NdotH * NdotH;
+
+    float denominator = NdotH * (a2 - 1.0) + 1.0;
+    denominator = PI * denominator * denominator;
+
+    return a2 / max(denominator, 0.0001);
+}
+
+float geometrySchlickGGX(float NdotV, float roughness) {
+    float r = roughness + 1.0;
+    float k = (r * r) / 8.0;
+
+    return NdotV / (NdotV * (1.0 - k) + k);
+}
+
 vec3 getNormal() {
     vec3 N = normalize(v_Normal);
     vec3 T = normalize(v_Tangent);
@@ -54,18 +81,34 @@ vec2 getMetallicRoughness() {
 }
 
 vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness, float ao) {
+    // Ambient
+    vec3 ambientLight = ambient.rgb * ambient.a * ao;
+
+    // Diffuse
     vec3 L = normalize(-sunDirection.xyz);
+
+    float diffuse = max(dot(normal, L), 0.0);
+    vec3 diffuseLight = sunColor.rgb * sunColor.a * diffuse;
+
+    // Specular
+    vec3 F0 = vec3(0.04f);
+    F0 = mix(F0, albedo, metallic);
+
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
     vec3 H = normalize(L + V);
 
-    float diffuse = max(dot(normal, L), 0.0);
+    vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
+    float D = distributionGGX(normal, H, roughness);
+    float G = geometrySchlickGGX(normal, V, L, roughness);
 
-    float shininess = mix(128.0, 8.0, roughness);
-    float specular = pow(max(dot(normal, H), 0.0), shininess) * (1.0 - roughness);
+    float NdotL = max(dot(normal, L), 0.0);
+    float NdotV = max(dot(normal, V), 0.0);
 
-    vec3 ambientLight = ambient.rgb * ambient.a * ao;
-    vec3 diffuseLight = sunColor.rgb * sunColor.a * diffuse;
-    vec3 specularLight = sunColor.rgb * sunColor.a * specular;
+    vec3 numerator = D * G * F;
+    float denominator = 4.0 * NdotV * NdotL + 0.0001;
+    vec3 specular = numerator / denominator;
+
+    vec3 specularLight = sunColor.rgb * sunColor.a * specular * NdotL;
 
     return albedo * (ambientLight + diffuseLight) * mix(1.0, 0.35, metallic) + specularLight;
 }
