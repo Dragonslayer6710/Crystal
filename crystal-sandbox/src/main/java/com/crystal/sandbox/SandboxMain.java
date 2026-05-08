@@ -59,8 +59,13 @@ public class SandboxMain implements Game {
         Shader shader = this.ctx.getResources()
                 .createShaderProgram("basic");
 
+//        Model model = ctx.getResources().loadModel(
+//                "/external/BoxTextured.glb",
+//                new ModelLoadOptions().setShader(shader)
+//        );
+
         Model model = ctx.getResources().loadModel(
-                "BoxTextured.glb",
+                "/external/DamagedHelmet.glb",
                 new ModelLoadOptions().setShader(shader)
         );
 
@@ -68,6 +73,7 @@ public class SandboxMain implements Game {
             ctx.getScene().add(object);
 
             object.getTransform().setPosition(0, 0, -2f);
+            object.getTransform().rotate(90.0f, 0.0f, 0.0f);
         }
 
 //        addCubes(shader);
@@ -84,8 +90,8 @@ public class SandboxMain implements Game {
             renderer.setFrustumCullingEnabled(!renderer.isFrustumCullingEnabled());
         }
 
-        for (SceneObject object : ctx.getScene().getRootObjects())
-            object.getTransform().rotate((float) dt, (float) dt, 0.0f);
+//        for (SceneObject object : ctx.getScene().getRootObjects())
+//            object.getTransform().rotate((float) dt, (float) dt, 0.0f);
 
 //        cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
 //        cubeB.getTransform().rotate((float) dt, 0.0f, 0.0f);

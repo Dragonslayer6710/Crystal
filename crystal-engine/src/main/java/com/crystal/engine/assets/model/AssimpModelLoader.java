@@ -184,6 +184,30 @@ public final class AssimpModelLoader {
         if (albedo != null)
             material.setAlbedo(albedo);
 
+        Texture normal = loadMaterialTexture(
+                scene,
+                aiMaterial,
+                modelPath,
+                resources,
+                aiTextureType_NORMALS,
+                TextureSettings.defaultData()
+        );
+
+        // Some Assets store normal maps as aiTextureType_HEIGHT so also fallback:
+        if (normal == null) {
+            normal = loadMaterialTexture(
+                    scene,
+                    aiMaterial,
+                    modelPath,
+                    resources,
+                    aiTextureType_HEIGHT,
+                    TextureSettings.defaultData()
+            );
+        }
+
+        if (normal != null)
+            material.setNormalMap(normal);
+
         return material;
     }
 
