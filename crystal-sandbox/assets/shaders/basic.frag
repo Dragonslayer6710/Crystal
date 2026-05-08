@@ -91,36 +91,36 @@ vec2 getMetallicRoughness() {
 }
 
 vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness, float ao) {
-    // Ambient
-    vec3 ambientLight = ambient.rgb * ambient.a * ao;
-
-    // Diffuse
     vec3 L = normalize(-sunDirection.xyz);
-
-    float diffuse = max(dot(normal, L), 0.0);
-    vec3 diffuseLight = sunColor.rgb * sunColor.a * diffuse;
-
-    // Specular
-    vec3 F0 = vec3(0.04f);
-    F0 = mix(F0, albedo, metallic);
-
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
     vec3 H = normalize(L + V);
+
+    float NdotL = max(dot(normal, L), 0.0);
+    float NdotV = max(dot(normal, V), 0.0);
+
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, albedo, metallic);
 
     vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
     float D = distributionGGX(normal, H, roughness);
     float G = geometrySmith(normal, V, L, roughness);
 
-    float NdotL = max(dot(normal, L), 0.0);
-    float NdotV = max(dot(normal, V), 0.0);
-
     vec3 numerator = D * G * F;
     float denominator = 4.0 * NdotV * NdotL + 0.0001;
     vec3 specular = numerator / denominator;
 
-    vec3 specularLight = sunColor.rgb * sunColor.a * specular * NdotL;
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;
 
-    return albedo * (ambientLight + diffuseLight) * mix(1.0, 0.35, metallic) + specularLight;
+    vec3 radiance = sunColor.rgb * sunColor.a;
+
+    vec3 diffuseBRDF = kD * albedo / PI;
+
+    vec3 directLighting = (diffuseBRDF + specular) * radiance * NdotL;
+    vec3 ambientLighting = ambient.rgb * ambient.a * albedo * ao;
+
+    return ambientLighting + directLighting;
 }
 
 void main() {
