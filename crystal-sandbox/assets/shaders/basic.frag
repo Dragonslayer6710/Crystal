@@ -110,5 +110,8 @@ void main() {
         case 6:
             color = vec4(emissive, 1.0);
             break;
+        default:
+            color = vec4(1.0, 0.0, 1.0, 1.0);
+            break;
     }
 }
