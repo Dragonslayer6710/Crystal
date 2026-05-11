@@ -5,6 +5,7 @@ import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.render.gl.VertexArray;
 import com.crystal.engine.render.gl.ElementBuffer;
 import com.crystal.engine.render.gl.VertexBuffer;
+import org.joml.Vector3f;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -16,7 +17,7 @@ public class Mesh implements Disposable {
 
     private final PrimitiveType type;
     private final int vertexCount;
-    private float boundingRadius;
+    private final MeshBounds bounds;
 
     private final VertexLayout layout;
 
@@ -49,7 +50,7 @@ public class Mesh implements Disposable {
         this.type = type;
         this.layout = layout;
         vertexCount = vertices.length / layout.getFloatsPerVertex();
-        boundingRadius = calculateBoundingRadius(vertices, layout);
+        bounds = calculateBounds(vertices, layout);
 
         if (indices != null) {
             for (int index : indices) {
@@ -92,20 +93,48 @@ public class Mesh implements Disposable {
         this(type, vertices, indices, VertexLayout.POSITION_COLOR);
     }
 
-    private static float calculateBoundingRadius(float[] vertices, VertexLayout layout) {
-        float maxDistanceSquared = 0.0f;
+    private static MeshBounds calculateBounds(float[] vertices, VertexLayout layout) {
         int stride = layout.getFloatsPerVertex();
+
+        float minX = Float.POSITIVE_INFINITY;
+        float minY = Float.POSITIVE_INFINITY;
+        float minZ = Float.POSITIVE_INFINITY;
+
+        float maxX = Float.NEGATIVE_INFINITY;
+        float maxY = Float.NEGATIVE_INFINITY;
+        float maxZ = Float.NEGATIVE_INFINITY;
 
         for (int i = 0; i < vertices.length; i += stride) {
             float x = vertices[i];
             float y = vertices[i + 1];
             float z = vertices[i + 2];
 
-            float distanceSquared = x * x + y * y + z * z;
-            maxDistanceSquared = Math.max(maxDistanceSquared, distanceSquared);
+            minX = Math.min(minX, x);
+            minY = Math.min(minY, y);
+            minZ = Math.min(minZ, z);
+
+            maxX = Math.max(maxX, x);
+            maxY = Math.max(maxY, y);
+            maxZ = Math.max(maxZ, z);
         }
 
-        return (float) Math.sqrt(maxDistanceSquared);
+        Vector3f center = new Vector3f(
+                (minX + maxX) * 0.5f,
+                (minY + maxY) * 0.5f,
+                (minZ + maxZ) * 0.5f
+        );
+
+        float radius = 0.5f;
+
+        for (int i = 0; i < vertices.length; i += stride) {
+            float dx = vertices[i] - center.x;
+            float dy = vertices[i + 1] - center.y;
+            float dz = vertices[i + 2] - center.z;
+
+            radius = Math.max(radius, (float) Math.sqrt(dx * dx + dy * dy + dz * dz));
+        }
+
+        return new MeshBounds(center, radius);
     }
 
     public boolean isIndexed() {
@@ -124,8 +153,8 @@ public class Mesh implements Disposable {
         return vertexCount;
     }
 
-    public float getBoundingRadius() {
-        return boundingRadius;
+    public MeshBounds getBounds() {
+        return bounds;
     }
 
     public int getId() {

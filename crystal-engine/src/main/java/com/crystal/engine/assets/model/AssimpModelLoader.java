@@ -99,14 +99,16 @@ public final class AssimpModelLoader {
             for (int i = 0; i < node.mNumMeshes(); i++) {
                 int meshIndex = meshIndices.get(i);
 
+                Mesh mesh = loadedMeshes[meshIndex];
+
                 SceneObject meshObject = new SceneObject(
                         nodeObject.getName() + "_mesh_" + i,
-                        loadedMeshes[meshIndex],
+                        mesh,
                         loadedMaterials[meshIndex],
                         new Transform()
                 );
 
-                meshObject.setBoundingRadius(meshObject.getBoundingRadius());
+                meshObject.setBoundingRadius(mesh.getBoundingRadius());
 
                 nodeObject.addChild(meshObject);
             }

@@ -2,6 +2,7 @@ package com.crystal.engine.render.scene;
 
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,22 +114,43 @@ public class SceneObject {
         return active;
     }
 
+    public boolean isVisible() {
+        return visible;
+    }
+
+    public float getBoundingRadius() {
+        return boundingRadius;
+    }
+
+    public Vector3f getWorldBoundsCenter() {
+        if (mesh == null)
+            return transform.getWorldPosition();
+
+        return transform.getWorldMatrix()
+                .transformPosition(mesh.getBounds().center(), new Vector3f());
+    }
+    public float getWorldBoundingRadius() {
+        if (mesh == null)
+            return boundingRadius;
+
+        Vector3f scale = transform.getScale();
+
+        float maxScale = Math.max(
+                Math.abs(scale.x),
+                Math.max(Math.abs(scale.y), Math.abs(scale.z))
+        );
+
+        return mesh.getBounds().radius() * maxScale;
+    }
+
     public SceneObject setActive(boolean active) {
         this.active = active;
         return this;
     }
 
-    public boolean isVisible() {
-        return visible;
-    }
-
     public SceneObject setVisible(boolean visible) {
         this.visible = visible;
         return this;
-    }
-
-    public float getBoundingRadius() {
-        return boundingRadius;
     }
 
     public SceneObject setBoundingRadius(float boundingRadius) {

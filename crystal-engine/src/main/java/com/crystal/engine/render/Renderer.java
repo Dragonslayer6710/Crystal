@@ -90,8 +90,8 @@ public class Renderer {
 
         if (object.isVisible() && object.isRenderable()) {
             if (!frustumCullingEnabled || camera.canSee(
-                    object.getTransform().getWorldPosition(),
-                    object.getBoundingRadius()
+                    object.getWorldBoundsCenter(),
+                    object.getWorldBoundingRadius()
             )) {
                 visibleObjects.add(object);
             }
