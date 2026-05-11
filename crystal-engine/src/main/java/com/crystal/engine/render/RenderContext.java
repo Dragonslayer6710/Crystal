@@ -78,7 +78,7 @@ public class RenderContext {
         }
     }
 
-    private void bindTextureIfNeeded(Texture texture, int textureUnit, int target, int slot) {
+    private void bindTextureIfNeeded(Texture texture, int unit, int slot) {
         int textureId = texture != null ? texture.getId() : 0;
 
         switch (slot) {
@@ -106,10 +106,9 @@ public class RenderContext {
         }
 
         if (texture != null) {
-            texture.bind(textureUnit, target);
+            texture.bind(unit);
         } else {
-            glActiveTexture(textureUnit);
-            glBindTexture(target, 0);
+            glBindTextureUnit(unit, 0);
         }
     }
 
@@ -150,11 +149,11 @@ public class RenderContext {
                 ? material.getEmissiveMap()
                 : defaultWhiteTexture;
 
-        bindTextureIfNeeded(albedo, GL_TEXTURE0, GL_TEXTURE_2D, 0);
-        bindTextureIfNeeded(normalMap, GL_TEXTURE1, GL_TEXTURE_2D, 1);
-        bindTextureIfNeeded(metallicRoughness, GL_TEXTURE2, GL_TEXTURE_2D, 2);
-        bindTextureIfNeeded(ambientOcclusion, GL_TEXTURE3, GL_TEXTURE_2D, 3);
-        bindTextureIfNeeded(emissiveMap, GL_TEXTURE4, GL_TEXTURE_2D, 4);
+        bindTextureIfNeeded(albedo, GL_TEXTURE0, 0);
+        bindTextureIfNeeded(normalMap, GL_TEXTURE1, 1);
+        bindTextureIfNeeded(metallicRoughness, GL_TEXTURE2, 2);
+        bindTextureIfNeeded(ambientOcclusion, GL_TEXTURE3, 3);
+        bindTextureIfNeeded(emissiveMap, GL_TEXTURE4, 4);
     }
 
     public void bindMesh(Mesh mesh) {

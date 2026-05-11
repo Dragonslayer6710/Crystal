@@ -62,6 +62,16 @@ public final class TextureSettings {
                 .setMagFilter(TextureFilter.LINEAR);
     }
 
+    public static TextureSettings defaultCubemap() {
+        return new TextureSettings()
+                .setFormat(TextureFormat.RGBA8)
+                .setGenerateMipmaps(false)
+                .setMinFilter(TextureFilter.LINEAR)
+                .setMagFilter(TextureFilter.LINEAR)
+                .setWrapS(TextureWrap.CLAMP_TO_EDGE)
+                .setWrapT(TextureWrap.CLAMP_TO_EDGE);
+    }
+
     public static TextureSettings forType(TextureType type) {
         if (type == null) throw new IllegalArgumentException("TextureType cannot be null");
 

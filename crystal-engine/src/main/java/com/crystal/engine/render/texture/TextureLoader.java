@@ -2,6 +2,7 @@ package com.crystal.engine.render.texture;
 
 import com.crystal.engine.graphics.TextureFormat;
 import com.crystal.engine.graphics.TextureSettings;
+import com.crystal.engine.graphics.TextureTarget;
 import com.crystal.engine.render.GLObjectLabel;
 import org.lwjgl.system.MemoryStack;
 
@@ -131,5 +132,36 @@ public class TextureLoader {
             glGenerateTextureMipmap(textureId);
 
         return new Texture(textureId, width, height, sourcePath);
+    }
+
+    public static Texture createCubemap(int size, TextureSettings settings, String debugName) {
+        int textureId = glCreateTextures(GL_TEXTURE_CUBE_MAP);
+
+        glTextureStorage2D(
+                textureId,
+                settings.isGenerateMipmaps() ? mipLevels(size, size) : 1,
+                settings.getFormat().glValue,
+                size,
+                size
+        );
+
+        glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, settings.getMinFilter().glValue);
+        glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, settings.getMagFilter().glValue);
+
+        glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTextureParameteri(textureId, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        return new Texture(
+                textureId,
+                TextureTarget.CUBE_MAP,
+                size,
+                size,
+                debugName
+        );
+    }
+
+    public static Texture createCubemap(int size, String debugName) {
+        return createCubemap(size, TextureSettings.defaultCubemap(), debugName);
     }
 }

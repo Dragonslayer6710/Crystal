@@ -1,6 +1,7 @@
 package com.crystal.engine.render.texture;
 
 import com.crystal.engine.core.Disposable;
+import com.crystal.engine.graphics.TextureTarget;
 import com.crystal.engine.render.GLObjectLabel;
 import org.lwjgl.system.MemoryStack;
 
@@ -11,17 +12,23 @@ import static org.lwjgl.opengl.GL46.*;
 public class Texture implements Disposable {
 
     private final int id;
+    private TextureTarget target;
     private final int width;
     private final int height;
     private final String sourcePath;
 
     private boolean disposed;
 
-    public Texture(int id, int width, int height, String sourcePath) {
+    public Texture(int id, TextureTarget target, int width, int height, String sourcePath) {
         this.id = id;
+        this.target = target;
         this.width = width;
         this.height = height;
         this.sourcePath = sourcePath;
+    }
+
+    public Texture(int id, int width, int height, String sourcePath) {
+        this(id, TextureTarget.TEXTURE_2D, width, height, sourcePath);
     }
 
     public static Texture create1x1(String name, int r, int g, int b, int a) {
@@ -78,9 +85,8 @@ public class Texture implements Disposable {
         return sourcePath;
     }
 
-    public void bind(int texture, int target) {
-        glActiveTexture(texture);
-        glBindTexture(target, id);
+    public void bind(int unit) {
+        glBindTextureUnit(unit, id);
     }
 
     @Override
