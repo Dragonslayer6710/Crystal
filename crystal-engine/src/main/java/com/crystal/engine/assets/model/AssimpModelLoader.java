@@ -16,6 +16,8 @@ import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -24,6 +26,8 @@ import java.nio.file.Path;
 import static org.lwjgl.assimp.Assimp.*;
 
 public final class AssimpModelLoader {
+
+    private static final Logger logger = LoggerFactory.getLogger(AssimpModelLoader.class);
 
     private AssimpModelLoader() {
     }
@@ -264,6 +268,16 @@ public final class AssimpModelLoader {
         loadMetallicRoughness(scene, aiMaterial, modelPath, resources, material);
         loadAmbientOcclusion(scene, aiMaterial, modelPath, resources, material);
         loadEmissive(scene, aiMaterial, modelPath, resources, material);
+
+        logger.info(
+                "Loaded material for mesh '{}': albedo={}, normal={}, metallicRoughness={}, ao={}, emissive={}",
+                aiMesh.mName().dataString(),
+                material.getAlbedo() != null,
+                material.getNormalMap() != null,
+                material.getMetallicRoughnessMap() != null,
+                material.getAmbientOcclusionMap() != null,
+                material.getEmissiveMap() != null
+        );
 
         return material;
     }
