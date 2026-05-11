@@ -20,6 +20,12 @@ public final class ShaderUniforms {
     public static final String MATERIAL_METALLIC = "materialMetallic";
     public static final String MATERIAL_EMISSIVE = "materialEmissive";
 
+    public static final String HAS_ALBEDO_TEXTURE = "hasAlbedoTexture";
+    public static final String HAS_NORMAL_MAP = "hasNormalMap";
+    public static final String HAS_METALLIC_ROUGHNESS_MAP = "hasMetallicRoughnessMap";
+    public static final String HAS_AO_MAP = "hasAoMap";
+    public static final String HAS_EMISSIVE_MAP = "hasEmissiveMap";
+
     public static final String EXPOSURE = "exposure";
 
     private ShaderUniforms() {}

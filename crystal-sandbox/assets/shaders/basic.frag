@@ -31,6 +31,12 @@ uniform float materialRoughness;
 uniform float materialMetallic;
 uniform vec3 materialEmissive;
 
+uniform int hasAlbedoTexture;
+uniform int hasNormalMap;
+uniform int hasMetallicRoughnessMap;
+uniform int hasAoMap;
+uniform int hasEmissiveMap;
+
 uniform float exposure;
 
 out vec4 color;
@@ -134,16 +140,25 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
 }
 
 void main() {
-    vec3 N = getNormal();
+    vec3 N = hasNormalMap == 1 ? getNormal() : normalize(v_Normal);
 
-    vec3 albedo = texture(albedoTexture, v_UV).rgb * v_Color * materialTint;
+    vec3 albedo = hasAlbedoTexture == 1
+    ? texture(albedoTexture, v_UV).rgb * v_Color * materialTint
+    : v_Color * materialTint;
 
-    vec2 mr = getMetallicRoughness();
+    vec2 mr = hasMetallicRoughnessMap == 1
+    ? getMetallicRoughness()
+    : vec2(materialMetallic, materialRoughness);
     float metallic = mr.x;
     float roughness = mr.y;
 
-    float ao = texture(ambientOcclusionMap, v_UV).r;
-    vec3 emissive = texture(emissiveMap, v_UV).rgb * materialEmissive;
+    float ao = hasAoMap == 1
+    ? texture(ambientOcclusionMap, v_UV).r
+    : 1.0;
+
+    vec3 emissive = hasEmissiveMap == 1
+    ? texture(emissiveMap, v_UV).rgb * materialEmissive
+    : materialEmissive;
 
     switch (debugViewMode) {
         case 0:
@@ -151,7 +166,6 @@ void main() {
             finalColor += emissive;
 
             vec3 mapped = toneMapReinhard(finalColor * exposure);
-            mapped = gammaCorrect(mapped);
 
             color = vec4(mapped, 1.0);
             break;

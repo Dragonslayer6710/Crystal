@@ -251,7 +251,7 @@ public final class AssimpModelLoader {
                                            ResourceManager resources, ModelLoadOptions options) {
         Material material = new Material(options.getShader())
                 .setRoughness(1.0f)
-                .setMetallic(1.0f);
+                .setMetallic(0.0f);
 
         PointerBuffer materials = scene.mMaterials();
         if (materials == null)
@@ -263,6 +263,8 @@ public final class AssimpModelLoader {
 
         AIMaterial aiMaterial = AIMaterial.create(materials.get(materialIndex));
 
+        String materialName = getMaterialName(aiMaterial);
+
         loadAlbedo(scene, aiMaterial, modelPath, resources, material);
         loadNormal(scene, aiMaterial, modelPath, resources, material);
         loadMetallicRoughness(scene, aiMaterial, modelPath, resources, material);
@@ -270,7 +272,8 @@ public final class AssimpModelLoader {
         loadEmissive(scene, aiMaterial, modelPath, resources, material);
 
         logger.info(
-                "Loaded material for mesh '{}': albedo={}, normal={}, metallicRoughness={}, ao={}, emissive={}",
+                "Loaded material '{}' for mesh '{}': albedo={}, normal={}, metallicRoughness={}, ao={}, emissive={}",
+                materialName,
                 aiMesh.mName().dataString(),
                 material.getAlbedo() != null,
                 material.getNormalMap() != null,
@@ -280,6 +283,25 @@ public final class AssimpModelLoader {
         );
 
         return material;
+    }
+
+    private static String getMaterialName(AIMaterial material) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            AIString name = AIString.calloc(stack);
+
+            int result = aiGetMaterialString(
+                    material,
+                    AI_MATKEY_NAME,
+                    aiTextureType_NONE,
+                    0,
+                    name
+            );
+
+            if (result != aiReturn_SUCCESS || name.dataString().isBlank())
+                return "<unnamed>";
+
+            return name.dataString();
+        }
     }
 
     private static void loadAlbedo(AIScene scene, AIMaterial aiMaterial, Path modelPath,
@@ -387,7 +409,7 @@ public final class AssimpModelLoader {
                 modelPath,
                 resources,
                 aiTextureType_EMISSIVE,
-                TextureSettings.defaultData()
+                TextureSettings.defaultAlbedo()
         );
 
         if (emissiveMap != null) {

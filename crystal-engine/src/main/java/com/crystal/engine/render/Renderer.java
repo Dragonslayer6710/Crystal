@@ -67,6 +67,8 @@ public class Renderer {
         } else {
             glDisable(GL_CULL_FACE);
         }
+
+        glEnable(GL_FRAMEBUFFER_SRGB);
     }
 
     // Called at start of frame

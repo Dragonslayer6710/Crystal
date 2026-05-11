@@ -149,6 +149,12 @@ public class Material {
         shader.setFloat(ShaderUniforms.MATERIAL_METALLIC, metallic);
         shader.setVec3(ShaderUniforms.MATERIAL_EMISSIVE, emissive.x, emissive.y, emissive.z);
 
+        shader.setInt(ShaderUniforms.HAS_ALBEDO_TEXTURE, albedo != null ? 1 : 0);
+        shader.setInt(ShaderUniforms.HAS_NORMAL_MAP, normalMap != null ? 1 : 0);
+        shader.setInt(ShaderUniforms.HAS_METALLIC_ROUGHNESS_MAP, metallicRoughnessMap != null ? 1 : 0);
+        shader.setInt(ShaderUniforms.HAS_AO_MAP, ambientOcclusionMap != null ? 1 : 0);
+        shader.setInt(ShaderUniforms.HAS_EMISSIVE_MAP, emissiveMap != null ? 1 : 0);
+
         if (ubo != null)
             ubo.bind();
     }
