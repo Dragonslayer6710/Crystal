@@ -370,8 +370,13 @@ public final class AssimpModelLoader {
             );
         }
 
-        if (metallicRoughness != null)
+        if (metallicRoughness != null) {
             material.setMetallicRoughnessMap(metallicRoughness);
+
+            // glTF metallicFactor defaults to 1.0 when a metallic-roughness map is present
+            material.setMetallic(1.0f);
+            material.setRoughness(1.0f);
+        }
     }
 
     private static void loadAmbientOcclusion(AIScene scene, AIMaterial aiMaterial, Path modelPath,
