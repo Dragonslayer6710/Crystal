@@ -108,8 +108,6 @@ public final class AssimpModelLoader {
                         new Transform()
                 );
 
-                meshObject.setBoundingRadius(mesh.getBoundingRadius());
-
                 nodeObject.addChild(meshObject);
             }
         }

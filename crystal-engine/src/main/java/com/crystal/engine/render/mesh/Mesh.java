@@ -124,7 +124,7 @@ public class Mesh implements Disposable {
                 (minZ + maxZ) * 0.5f
         );
 
-        float radius = 0.5f;
+        float radius = 0.0f;
 
         for (int i = 0; i < vertices.length; i += stride) {
             float dx = vertices[i] - center.x;
