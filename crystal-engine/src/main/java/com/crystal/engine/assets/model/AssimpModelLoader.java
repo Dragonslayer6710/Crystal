@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import static org.lwjgl.assimp.Assimp.*;
 
 public final class AssimpModelLoader {
+
     private AssimpModelLoader() {
     }
 
@@ -131,12 +132,7 @@ public final class AssimpModelLoader {
     }
 
     private static Transform createTransform(AIMatrix4x4 aiMatrix) {
-        Matrix4f matrix = new Matrix4f(
-                aiMatrix.a1(), aiMatrix.b1(), aiMatrix.c1(), aiMatrix.d1(),
-                aiMatrix.a2(), aiMatrix.b2(), aiMatrix.c2(), aiMatrix.d2(),
-                aiMatrix.a3(), aiMatrix.b3(), aiMatrix.c3(), aiMatrix.d3(),
-                aiMatrix.a4(), aiMatrix.b4(), aiMatrix.c4(), aiMatrix.d4()
-        );
+        Matrix4f matrix = toJOMLMatrix(aiMatrix);
 
         Vector3f position = new Vector3f();
         Quaternionf rotation = new Quaternionf();
@@ -150,6 +146,15 @@ public final class AssimpModelLoader {
                 .setPosition(position.x, position.y, position.z)
                 .setRotation(rotation)
                 .setScale(scale.x, scale.y, scale.z);
+    }
+
+    private static Matrix4f toJOMLMatrix(AIMatrix4x4 aiMatrix) {
+        return new Matrix4f(
+                aiMatrix.a1(), aiMatrix.b1(), aiMatrix.c1(), aiMatrix.d1(),
+                aiMatrix.a2(), aiMatrix.b2(), aiMatrix.c2(), aiMatrix.d2(),
+                aiMatrix.a3(), aiMatrix.b3(), aiMatrix.c3(), aiMatrix.d3(),
+                aiMatrix.a4(), aiMatrix.b4(), aiMatrix.c4(), aiMatrix.d4()
+        );
     }
 
     private static Mesh createMesh(AIMesh aiMesh, ResourceManager resources) {

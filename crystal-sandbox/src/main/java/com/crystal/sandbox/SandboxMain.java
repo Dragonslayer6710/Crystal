@@ -70,6 +70,8 @@ public class SandboxMain implements Game {
                 new ModelLoadOptions().setShader(shader)
         );
 
+        model.logHierarchy();
+
         for (SceneObject object : model.getRootObjects()) {
             ctx.getScene().add(object);
 
@@ -118,7 +120,6 @@ public class SandboxMain implements Game {
     public void shutdown() {
         logger.info("Game shutdown");
     }
-
 
     public static void main(String[] args) {
         logger.info("Sandbox starting");
