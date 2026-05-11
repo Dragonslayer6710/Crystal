@@ -16,6 +16,7 @@ public class Mesh implements Disposable {
 
     private final PrimitiveType type;
     private final int vertexCount;
+    private float boundingRadius;
 
     private final VertexLayout layout;
 
@@ -48,6 +49,7 @@ public class Mesh implements Disposable {
         this.type = type;
         this.layout = layout;
         vertexCount = vertices.length / layout.getFloatsPerVertex();
+        boundingRadius = calculateBoundingRadius(vertices, layout);
 
         if (indices != null) {
             for (int index : indices) {
@@ -90,6 +92,22 @@ public class Mesh implements Disposable {
         this(type, vertices, indices, VertexLayout.POSITION_COLOR);
     }
 
+    private static float calculateBoundingRadius(float[] vertices, VertexLayout layout) {
+        float maxDistanceSquared = 0.0f;
+        int stride = layout.getFloatsPerVertex();
+
+        for (int i = 0; i < vertices.length; i += stride) {
+            float x = vertices[i];
+            float y = vertices[i + 1];
+            float z = vertices[i + 2];
+
+            float distanceSquared = x * x + y * y + z * z;
+            maxDistanceSquared = Math.max(maxDistanceSquared, distanceSquared);
+        }
+
+        return (float) Math.sqrt(maxDistanceSquared);
+    }
+
     public boolean isIndexed() {
         return ebo != null;
     }
@@ -104,6 +122,10 @@ public class Mesh implements Disposable {
 
     public int getVertexCount() {
         return vertexCount;
+    }
+
+    public float getBoundingRadius() {
+        return boundingRadius;
     }
 
     public int getId() {

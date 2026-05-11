@@ -10,6 +10,7 @@ import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Transform;
 import com.crystal.engine.render.texture.Texture;
 import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.assimp.*;
@@ -105,6 +106,8 @@ public final class AssimpModelLoader {
                         new Transform()
                 );
 
+                meshObject.setBoundingRadius(meshObject.getBoundingRadius());
+
                 nodeObject.addChild(meshObject);
             }
         }
@@ -136,13 +139,16 @@ public final class AssimpModelLoader {
         );
 
         Vector3f position = new Vector3f();
+        Quaternionf rotation = new Quaternionf();
         Vector3f scale = new Vector3f();
 
         matrix.getTranslation(position);
+        matrix.getUnnormalizedRotation(rotation);
         matrix.getScale(scale);
 
         return new Transform()
                 .setPosition(position.x, position.y, position.z)
+                .setRotation(rotation)
                 .setScale(scale.x, scale.y, scale.z);
     }
 
