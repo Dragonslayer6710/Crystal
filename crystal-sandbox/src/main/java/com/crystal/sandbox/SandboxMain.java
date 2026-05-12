@@ -79,10 +79,12 @@ public class SandboxMain implements Game {
         Shader envShader = ctx.getResources()
                         .createShaderProgram("cubemap_capture", "equirectangular_to_cubemap");
 
+        Shader irradianceShader = ctx.getResources()
+                .createShaderProgram("cubemap_capture", "irradiance_convolution");
+
         Mesh envCube = MeshFactory.createTexturedCube(ctx.getResources());
 
-        EnvironmentMapGenerator generator =
-                new EnvironmentMapGenerator(envShader, envCube);
+        EnvironmentMapGenerator generator = new EnvironmentMapGenerator(envShader, irradianceShader, envCube);
 
         Texture environmentCubemap = generator.generateCubemap(hdr, 512);
 
