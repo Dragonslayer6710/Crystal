@@ -108,6 +108,8 @@ public class SandboxMain implements Game {
         if (input.isKeyPressed(Key.NUMPAD_5)) renderer.setDebugViewMode(5);
         if (input.isKeyPressed(Key.NUMPAD_6)) renderer.setDebugViewMode(6);
         if (input.isKeyPressed(Key.NUMPAD_7)) renderer.setDebugViewMode(7);
+        if (input.isKeyPressed(Key.NUMPAD_8)) renderer.setDebugViewMode(8);
+        if (input.isKeyPressed(Key.NUMPAD_9)) renderer.setDebugViewMode(9);
 
         if (input.isKeyPressed(Key.NUMPAD_ENTER))
             renderer.cycleDebugViewMode();

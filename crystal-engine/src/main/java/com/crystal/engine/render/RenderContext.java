@@ -218,8 +218,8 @@ public class RenderContext {
     }
 
     public void setDebugViewMode(int debugViewMode) {
-        if (debugViewMode < 0 || debugViewMode > 7)
-            throw new IllegalArgumentException("Debug view mode must be between 0 and 7");
+        if (debugViewMode < 0 || debugViewMode > 9)
+            throw new IllegalArgumentException("Debug view mode must be between 0 and 9");
 
         this.debugViewMode = debugViewMode;
     }
