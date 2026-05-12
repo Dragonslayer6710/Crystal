@@ -126,6 +126,9 @@ public final class EnvironmentMapGenerator implements Disposable {
             drawCube();
         }
 
+        if (output.hasMipmaps())
+            glGenerateTextureMipmap(output.getId());
+
         glEnable(GL_CULL_FACE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 

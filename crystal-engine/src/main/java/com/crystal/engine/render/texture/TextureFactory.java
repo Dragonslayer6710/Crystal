@@ -66,9 +66,11 @@ public final class TextureFactory {
         int textureId = glCreateTextures(GL_TEXTURE_2D);
         GLObjectLabel.labelTexture(textureId, sourcePath);
 
+        int levels = settings.isGenerateMipmaps() ? mipLevels(width, height) : 1;
+
         glTextureStorage2D(
                 textureId,
-                settings.isGenerateMipmaps() ? mipLevels(width, height) : 1,
+                levels,
                 settings.getFormat().glValue,
                 width,
                 height
@@ -94,7 +96,7 @@ public final class TextureFactory {
         if (settings.isGenerateMipmaps())
             glGenerateTextureMipmap(textureId);
 
-        return new Texture(textureId, width, height, sourcePath);
+        return new Texture(textureId, TextureTarget.TEXTURE_2D, width, height, levels, sourcePath);
     }
 
     public static Texture createCubemap(int size, TextureSettings settings, String debugName) {
@@ -107,9 +109,11 @@ public final class TextureFactory {
         int textureId = glCreateTextures(TextureTarget.CUBE_MAP.glValue);
         GLObjectLabel.labelTexture(textureId, debugName);
 
+        int levels = settings.isGenerateMipmaps() ? mipLevels(size, size) : 1;
+
         glTextureStorage2D(
                 textureId,
-                settings.isGenerateMipmaps() ? mipLevels(size, size) : 1,
+                levels,
                 settings.getFormat().glValue,
                 size,
                 size
@@ -129,6 +133,7 @@ public final class TextureFactory {
                 TextureTarget.CUBE_MAP,
                 size,
                 size,
+                levels,
                 debugName
         );
     }
@@ -181,9 +186,11 @@ public final class TextureFactory {
         int textureId = glCreateTextures(TextureTarget.TEXTURE_2D.glValue);
         GLObjectLabel.labelTexture(textureId, sourcePath);
 
+        int levels = settings.isGenerateMipmaps() ? mipLevels(width, height) : 1;
+
         glTextureStorage2D(
                 textureId,
-                settings.isGenerateMipmaps() ? mipLevels(width, height) : 1,
+                levels,
                 settings.getFormat().glValue,
                 width,
                 height
@@ -215,6 +222,7 @@ public final class TextureFactory {
                 TextureTarget.TEXTURE_2D,
                 width,
                 height,
+                levels,
                 sourcePath
         );
     }
