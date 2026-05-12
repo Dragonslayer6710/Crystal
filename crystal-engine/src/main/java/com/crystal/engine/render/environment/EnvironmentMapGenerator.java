@@ -16,6 +16,7 @@ public final class EnvironmentMapGenerator implements Disposable {
 
     private final Shader equirectangularToCubemapShader;
     private final Shader irradianceConvolutionShader;
+    private final Shader prefilterEnvironmentShader;
     private final Mesh cube;
 
     private final int framebuffer;
@@ -24,18 +25,23 @@ public final class EnvironmentMapGenerator implements Disposable {
     private boolean disposed;
 
     public EnvironmentMapGenerator(Shader equirectangularToCubemapShader,
-                                   Shader irradianceConvolutionShader, Mesh cube) {
+                                   Shader irradianceConvolutionShader,
+                                   Shader prefilterEnvironmentShader, Mesh cube) {
         if (equirectangularToCubemapShader == null)
             throw new IllegalArgumentException("Equirectangular conversion shader cannot be null");
 
         if (irradianceConvolutionShader == null)
-            throw new IllegalArgumentException("Irradiance Convolution shader cannot be null");
+            throw new IllegalArgumentException("Irradiance convolution shader cannot be null");
+
+        if (prefilterEnvironmentShader == null)
+            throw new IllegalArgumentException("Prefilter environment shader cannot be null");
 
         if (cube == null)
             throw new IllegalArgumentException("Cube mesh cannot be null");
 
         this.equirectangularToCubemapShader = equirectangularToCubemapShader;
         this.irradianceConvolutionShader = irradianceConvolutionShader;
+        this.prefilterEnvironmentShader = prefilterEnvironmentShader;
         this.cube = cube;
 
         framebuffer = glCreateFramebuffers();
@@ -63,6 +69,7 @@ public final class EnvironmentMapGenerator implements Disposable {
         return renderToCubemap(
                 "<generated:environment-cubemap>",
                 size,
+                TextureSettings.defaultHDR(),
                 equirectangularToCubemapShader,
                 equirectangularTexture,
                 "equirectangularMap"
@@ -80,17 +87,32 @@ public final class EnvironmentMapGenerator implements Disposable {
         return renderToCubemap(
                 "<generated:irradiance-map>",
                 32,
+                TextureSettings.defaultHDR(),
                 irradianceConvolutionShader,
                 environmentCubemap,
                 "environmentMap"
         );
     }
 
-    private Texture renderToCubemap(String debugname, int size, Shader shader,
+    public Texture generatePrefilterMap(Texture environmentCubemap) {
+        if (environmentCubemap == null)
+            throw new IllegalArgumentException("Environment cubemap cannot be null");
+
+        return renderToCubemap(
+                "<generated:prefilter-map>",
+                128,
+                TextureSettings.defaultPrefilterCubemap(),
+                prefilterEnvironmentShader,
+                environmentCubemap,
+                "environmentMap"
+        );
+    }
+
+    private Texture renderToCubemap(String debugname, int size, TextureSettings settings, Shader shader,
                                     Texture inputTexture, String inputSamplerName) {
         Texture output = TextureFactory.createCubemap(
                 size,
-                TextureSettings.defaultHDR(),
+                settings,
                 debugname
         );
 
