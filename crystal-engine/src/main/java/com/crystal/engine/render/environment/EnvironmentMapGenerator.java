@@ -90,7 +90,7 @@ public final class EnvironmentMapGenerator implements Disposable {
         equirectangularToCubemapShader.setMat4("projection", projection);
         equirectangularTexture.bind(0);
 
-        glDisable(GL_CULL_FACE);;
+        glDisable(GL_CULL_FACE);
 
         for (int face = 0; face < 6; face++) {
             equirectangularToCubemapShader.setMat4("view", views[face]);
@@ -122,6 +122,8 @@ public final class EnvironmentMapGenerator implements Disposable {
                 );
             }
         }
+
+        glEnable(GL_CULL_FACE);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
