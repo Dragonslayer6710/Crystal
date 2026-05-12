@@ -142,8 +142,8 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
 
     if (hasIBL == 1) {
         vec3 irradiance = texture(irradianceMap, normal).rgb;
-        vec3 diffeuseIBL = irradiance * albedo;
-        ambientLighting = diffeuseIBL * ao;
+        vec3 diffuseIB = irradiance * albedo;
+        ambientLighting = diffuseIB * ao;
     } else {
         ambientLighting = ambient.rgb * ambient.a * albedo * ao;
     }

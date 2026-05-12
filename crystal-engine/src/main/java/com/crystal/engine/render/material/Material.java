@@ -144,6 +144,10 @@ public class Material {
         shader.setInt(ShaderUniforms.METALLIC_ROUGHNESS_MAP, TextureSlots.METALLIC_ROUGHNESS);
         shader.setInt(ShaderUniforms.AMBIENT_OCCLUSION_MAP, TextureSlots.AMBIENT_OCCLUSION);
         shader.setInt(ShaderUniforms.EMISSIVE_MAP, TextureSlots.EMISSIVE);
+        
+        shader.setInt(ShaderUniforms.IRRADIANCE_MAP, TextureSlots.IRRADIANCE);
+        shader.setInt(ShaderUniforms.PREFILTER_MAP, TextureSlots.PREFILTER);
+        shader.setInt(ShaderUniforms.BRDF_LUT, TextureSlots.BRDF_LUT);
 
         shader.setVec3(ShaderUniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
         shader.setFloat(ShaderUniforms.MATERIAL_ROUGHNESS, roughness);
