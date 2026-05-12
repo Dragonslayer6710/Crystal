@@ -10,7 +10,7 @@ public class Environment {
 
     private Texture skybox;
     private Texture irradianceMap;
-    private Texture prefilteredEnvironmentMap;
+    private Texture prefilterMap;
     private Texture brdfLut;
 
     public Vector3f getAmbientColor() {
@@ -29,8 +29,8 @@ public class Environment {
         return irradianceMap;
     }
 
-    public Texture getPrefilteredEnvironmentMap() {
-        return prefilteredEnvironmentMap;
+    public Texture getPrefilterMap() {
+        return prefilterMap;
     }
 
     public Texture getBrdfLut() {
@@ -57,8 +57,8 @@ public class Environment {
         return this;
     }
 
-    public Environment setPrefilteredEnvironmentMap(Texture prefilteredEnvironmentMap) {
-        this.prefilteredEnvironmentMap = prefilteredEnvironmentMap;
+    public Environment setPrefilterMap(Texture prefilterMap) {
+        this.prefilterMap = prefilterMap;
         return this;
     }
 
@@ -76,7 +76,7 @@ public class Environment {
     }
 
     public boolean hasSpecularIBL() {
-        return prefilteredEnvironmentMap != null && brdfLut != null;
+        return prefilterMap != null && brdfLut != null;
     }
 
     public boolean hasIBL() {

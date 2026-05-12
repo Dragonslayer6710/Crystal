@@ -13,6 +13,8 @@ import static org.lwjgl.opengl.GL46.*;
 
 public class RenderContext {
 
+    private static final int MAX_TEXTURE_UNITS = 16;
+
     private int debugViewMode = 0;
 
     private boolean currentDepthTest = true;
@@ -20,11 +22,7 @@ public class RenderContext {
     private boolean currentWireframe = false;
 
     private int currentShaderId = 0;
-    private int currentAlbedoTextureId = 0;
-    private int currentNormalMapTextureId = 0;
-    private int currentMetallicRoughnessTextureId = 0;
-    private int currentAmbientOcclusionTextureId = 0;
-    private int currentEmissiveMapId = 0;
+    private final int[] boundTextures = new int[MAX_TEXTURE_UNITS];
     private int currentMaterialId = 0;
 
     private float exposure = 1.0f;
@@ -36,12 +34,6 @@ public class RenderContext {
 
     public void beginFrame() {
         currentShaderId = 0;
-
-        currentAlbedoTextureId = 0;
-        currentNormalMapTextureId = 0;
-        currentMetallicRoughnessTextureId = 0;
-        currentAmbientOcclusionTextureId = 0;
-        currentEmissiveMapId = 0;
 
         currentMaterialId = 0;
 
@@ -79,32 +71,16 @@ public class RenderContext {
         }
     }
 
-    private void bindTextureIfNeeded(Texture texture, int unit, int slot) {
+    private void bindTextureIfNeeded(Texture texture, int unit) {
+        if (unit < 0 || unit > boundTextures.length)
+            throw new IllegalArgumentException("Texture unit out of range: " + unit);
+
         int textureId = texture != null ? texture.getId() : 0;
 
-        switch (slot) {
-            case 0 -> {
-                if (textureId == currentAlbedoTextureId)  return;
-                currentAlbedoTextureId = textureId;
-            }
-            case 1 -> {
-                if (textureId == currentNormalMapTextureId) return;
-                currentNormalMapTextureId = textureId;
-            }
-            case 2 -> {
-                if (textureId == currentMetallicRoughnessTextureId) return;
-                currentMetallicRoughnessTextureId = textureId;
-            }
-            case 3 -> {
-                if (textureId == currentAmbientOcclusionTextureId) return;
-                currentAmbientOcclusionTextureId = textureId;
-            }
-            case 4 -> {
-                if (textureId == currentEmissiveMapId) return;
-                currentEmissiveMapId = textureId;
-            }
-            default -> throw new IllegalArgumentException("Unsupported texture slot: " + slot);
-        }
+        if (boundTextures[unit] == textureId)
+            return;
+
+        boundTextures[unit] = textureId;
 
         if (texture != null) {
             texture.bind(unit);
@@ -150,11 +126,11 @@ public class RenderContext {
                 ? material.getEmissiveMap()
                 : defaultWhiteTexture;
 
-        bindTextureIfNeeded(albedo, GL_TEXTURE0, TextureSlots.ALBEDO);
-        bindTextureIfNeeded(normalMap, GL_TEXTURE1, TextureSlots.NORMAL);
-        bindTextureIfNeeded(metallicRoughness, GL_TEXTURE2, TextureSlots.METALLIC_ROUGHNESS);
-        bindTextureIfNeeded(ambientOcclusion, GL_TEXTURE3, TextureSlots.AMBIENT_OCCLUSION);
-        bindTextureIfNeeded(emissiveMap, GL_TEXTURE4, TextureSlots.EMISSIVE);
+        bindTextureIfNeeded(albedo, TextureSlots.ALBEDO);
+        bindTextureIfNeeded(normalMap, TextureSlots.NORMAL);
+        bindTextureIfNeeded(metallicRoughness, TextureSlots.METALLIC_ROUGHNESS);
+        bindTextureIfNeeded(ambientOcclusion, TextureSlots.AMBIENT_OCCLUSION);
+        bindTextureIfNeeded(emissiveMap, TextureSlots.EMISSIVE);
     }
 
     public void bindMesh(Mesh mesh) {
@@ -201,6 +177,10 @@ public class RenderContext {
         var sceneUBO = scene.getSceneUBO();
         sceneUBO.setData(0, data);
         sceneUBO.bind();
+
+        bindTextureIfNeeded(environment.getIrradianceMap(), TextureSlots.IRRADIANCE);
+        bindTextureIfNeeded(environment.getPrefilterMap(), TextureSlots.PREFILTER);
+        bindTextureIfNeeded(environment.getBrdfLut(), TextureSlots.BRDF_LUT);
     }
 
     public void setExposure(float exposure) {
