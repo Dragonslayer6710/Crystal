@@ -7,6 +7,7 @@ import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shader.ShaderUniforms;
 import com.crystal.engine.render.texture.Texture;
+import com.crystal.engine.render.texture.TextureSlots;
 
 import static org.lwjgl.opengl.GL46.*;
 
@@ -149,11 +150,11 @@ public class RenderContext {
                 ? material.getEmissiveMap()
                 : defaultWhiteTexture;
 
-        bindTextureIfNeeded(albedo, GL_TEXTURE0, 0);
-        bindTextureIfNeeded(normalMap, GL_TEXTURE1, 1);
-        bindTextureIfNeeded(metallicRoughness, GL_TEXTURE2, 2);
-        bindTextureIfNeeded(ambientOcclusion, GL_TEXTURE3, 3);
-        bindTextureIfNeeded(emissiveMap, GL_TEXTURE4, 4);
+        bindTextureIfNeeded(albedo, GL_TEXTURE0, TextureSlots.ALBEDO);
+        bindTextureIfNeeded(normalMap, GL_TEXTURE1, TextureSlots.NORMAL);
+        bindTextureIfNeeded(metallicRoughness, GL_TEXTURE2, TextureSlots.METALLIC_ROUGHNESS);
+        bindTextureIfNeeded(ambientOcclusion, GL_TEXTURE3, TextureSlots.AMBIENT_OCCLUSION);
+        bindTextureIfNeeded(emissiveMap, GL_TEXTURE4, TextureSlots.EMISSIVE);
     }
 
     public void bindMesh(Mesh mesh) {

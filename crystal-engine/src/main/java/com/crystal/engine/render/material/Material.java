@@ -4,6 +4,7 @@ import com.crystal.engine.render.shader.ShaderUniforms;
 import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.gl.UniformBuffer;
 import com.crystal.engine.render.shader.Shader;
+import com.crystal.engine.render.texture.TextureSlots;
 import org.joml.Vector3f;
 
 public class Material {
@@ -138,11 +139,11 @@ public class Material {
     // ---------- BIND ----------
 
     public void bindProperties() {
-        shader.setInt(ShaderUniforms.ALBEDO_TEXTURE, 0);
-        shader.setInt(ShaderUniforms.NORMAL_MAP, 1);
-        shader.setInt(ShaderUniforms.METALLIC_ROUGHNESS_MAP, 2);
-        shader.setInt(ShaderUniforms.AMBIENT_OCCLUSION_MAP, 3);
-        shader.setInt(ShaderUniforms.EMISSIVE_MAP, 4);
+        shader.setInt(ShaderUniforms.ALBEDO_TEXTURE, TextureSlots.ALBEDO);
+        shader.setInt(ShaderUniforms.NORMAL_MAP, TextureSlots.NORMAL);
+        shader.setInt(ShaderUniforms.METALLIC_ROUGHNESS_MAP, TextureSlots.METALLIC_ROUGHNESS);
+        shader.setInt(ShaderUniforms.AMBIENT_OCCLUSION_MAP, TextureSlots.AMBIENT_OCCLUSION);
+        shader.setInt(ShaderUniforms.EMISSIVE_MAP, TextureSlots.EMISSIVE);
 
         shader.setVec3(ShaderUniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
         shader.setFloat(ShaderUniforms.MATERIAL_ROUGHNESS, roughness);
