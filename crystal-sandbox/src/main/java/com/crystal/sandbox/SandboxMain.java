@@ -85,18 +85,26 @@ public class SandboxMain implements Game {
         Shader prefilterShader = ctx.getResources()
                 .createShaderProgram("cubemap_capture", "prefilter_environment");
 
-        Mesh envCube = MeshFactory.createTexturedCube(ctx.getResources());
+        Shader brdfLutShader = ctx.getResources()
+                .createShaderProgram("brdf_lut");
+
+        Mesh envCube = MeshFactory.createPositionOnlyCube(ctx.getResources());
+
+        Mesh fullscreenQuad = MeshFactory.createFullscreenQuad(ctx.getResources());
 
         EnvironmentMapGenerator generator = new EnvironmentMapGenerator(
                 envShader,
                 irradianceShader,
                 prefilterShader,
-                envCube
+                brdfLutShader,
+                envCube,
+                fullscreenQuad
         );
 
         Texture environmentCubemap = generator.generateCubemap(hdr, 512);
         Texture irradianceMap = generator.generateIrradianceMap(environmentCubemap);
         Texture prefilterMap = generator.generatePrefilterMap(environmentCubemap);
+        Texture brdfLut = generator.generateBrdfLut();
 
         ctx.getRenderer().resizeViewport(
                 ctx.getWindow().getWidth(),
@@ -107,7 +115,7 @@ public class SandboxMain implements Game {
                 .setSkybox(environmentCubemap)
                 .setIrradianceMap(irradianceMap)
                 .setPrefilterMap(prefilterMap)
-                .setBrdfLut(TextureFactory.create1x1("temporary-brdf-lut", 255, 255, 255, 255));
+                .setBrdfLut(brdfLut);
 
         for (SceneObject object : model.getRootObjects()) {
             ctx.getScene().add(object);

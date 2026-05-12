@@ -34,6 +34,12 @@ public enum VertexLayout {
             new VertexAttribute(2, 2, 6 * Float.BYTES),
             new VertexAttribute(3, 3, 8 * Float.BYTES),
             new VertexAttribute(4, 3, 11 * Float.BYTES)
+    ),
+
+    POSITION_UV(
+            5,
+            new VertexAttribute(0, 3, 0),
+            new VertexAttribute(1, 2, 3 * Float.BYTES)
     );
 
 

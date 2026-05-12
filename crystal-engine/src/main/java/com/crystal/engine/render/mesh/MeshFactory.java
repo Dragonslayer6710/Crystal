@@ -64,4 +64,60 @@ public final class MeshFactory {
         );
     }
 
+    public static Mesh createPositionOnlyCube(ResourceManager resources) {
+        if (resources == null) throw new IllegalArgumentException("ResourceManager cannot be null");
+
+        float[] vertices = {
+                -1, -1, -1,
+                1, -1, -1,
+                1,  1, -1,
+                -1,  1, -1,
+                -1, -1,  1,
+                1, -1,  1,
+                1,  1,  1,
+                -1,  1,  1
+        };
+
+        int[] indices = {
+                0, 1, 2, 2, 3, 0,
+                4, 6, 5, 6, 4, 7,
+                4, 5, 1, 1, 0, 4,
+                7, 3, 2, 2, 6, 7,
+                5, 6, 2, 2, 1, 5,
+                4, 0, 3, 3, 7, 4
+        };
+
+        return resources.createMesh(
+                PrimitiveType.TRIANGLES,
+                vertices,
+                indices,
+                VertexLayout.POSITION
+        );
+    }
+
+    public static Mesh createFullscreenQuad(ResourceManager resources) {
+        if (resources == null) {
+            throw new IllegalArgumentException("ResourceManager cannot be null");
+        }
+
+        float[] vertices = {
+                // position          uv
+                -1.0f,  1.0f, 0.0f,  0.0f, 1.0f,
+                -1.0f, -1.0f, 0.0f,  0.0f, 0.0f,
+                1.0f, -1.0f, 0.0f,  1.0f, 0.0f,
+                1.0f,  1.0f, 0.0f,  1.0f, 1.0f
+        };
+
+        int[] indices = {
+                0, 1, 2,
+                2, 3, 0
+        };
+
+        return resources.createMesh(
+                PrimitiveType.TRIANGLES,
+                vertices,
+                indices,
+                VertexLayout.POSITION_UV
+        );
+    }
 }

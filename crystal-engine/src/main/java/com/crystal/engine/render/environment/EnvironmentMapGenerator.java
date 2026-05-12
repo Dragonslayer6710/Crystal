@@ -17,7 +17,9 @@ public final class EnvironmentMapGenerator implements Disposable {
     private final Shader equirectangularToCubemapShader;
     private final Shader irradianceConvolutionShader;
     private final Shader prefilterEnvironmentShader;
+    private final Shader brdfLutShader;
     private final Mesh cube;
+    private final Mesh fullscreenQuad;
 
     private final int framebuffer;
     private final int renderbuffer;
@@ -26,7 +28,8 @@ public final class EnvironmentMapGenerator implements Disposable {
 
     public EnvironmentMapGenerator(Shader equirectangularToCubemapShader,
                                    Shader irradianceConvolutionShader,
-                                   Shader prefilterEnvironmentShader, Mesh cube) {
+                                   Shader prefilterEnvironmentShader,
+                                   Shader brdfLutShader, Mesh cube, Mesh fullscreenQuad) {
         if (equirectangularToCubemapShader == null)
             throw new IllegalArgumentException("Equirectangular conversion shader cannot be null");
 
@@ -36,13 +39,22 @@ public final class EnvironmentMapGenerator implements Disposable {
         if (prefilterEnvironmentShader == null)
             throw new IllegalArgumentException("Prefilter environment shader cannot be null");
 
+        if (brdfLutShader == null)
+            throw new IllegalArgumentException("BRDF LUT shader cannot be null");
+
         if (cube == null)
             throw new IllegalArgumentException("Cube mesh cannot be null");
+
+        if (fullscreenQuad == null)
+            throw new IllegalArgumentException("Fullscreen quad mesh cannot be null");
 
         this.equirectangularToCubemapShader = equirectangularToCubemapShader;
         this.irradianceConvolutionShader = irradianceConvolutionShader;
         this.prefilterEnvironmentShader = prefilterEnvironmentShader;
+        this.brdfLutShader = brdfLutShader;
+
         this.cube = cube;
+        this.fullscreenQuad = fullscreenQuad;
 
         framebuffer = glCreateFramebuffers();
         renderbuffer = glCreateRenderbuffers();
@@ -105,6 +117,15 @@ public final class EnvironmentMapGenerator implements Disposable {
                 prefilterEnvironmentShader,
                 environmentCubemap,
                 "environmentMap"
+        );
+    }
+
+    public Texture generateBrdfLut() {
+        return TextureFactory.createRenderTexture2D(
+                512,
+                512,
+                TextureSettings.defaultHDR(),
+                "<generated:brdf-lut>"
         );
     }
 
