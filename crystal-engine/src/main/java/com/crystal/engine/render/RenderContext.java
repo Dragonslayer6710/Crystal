@@ -9,6 +9,8 @@ import com.crystal.engine.render.shader.ShaderUniforms;
 import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.texture.TextureSlots;
 
+import java.util.Arrays;
+
 import static org.lwjgl.opengl.GL46.*;
 
 public class RenderContext {
@@ -25,16 +27,16 @@ public class RenderContext {
     private final int[] boundTextures = new int[MAX_TEXTURE_UNITS];
     private int currentMaterialId = 0;
 
-    private float exposure = 1.0f;
-
     private int currentMeshId = 0;
+
+    private float exposure = 1.0f;
 
     private Texture defaultWhiteTexture;
     private Texture defaultNormalTexture;
 
     public void beginFrame() {
         currentShaderId = 0;
-
+        Arrays.fill(boundTextures, 0);
         currentMaterialId = 0;
 
         currentMeshId = 0;
@@ -72,7 +74,7 @@ public class RenderContext {
     }
 
     private void bindTextureIfNeeded(Texture texture, int unit) {
-        if (unit < 0 || unit > boundTextures.length)
+        if (unit < 0 || unit >= boundTextures.length)
             throw new IllegalArgumentException("Texture unit out of range: " + unit);
 
         int textureId = texture != null ? texture.getId() : 0;

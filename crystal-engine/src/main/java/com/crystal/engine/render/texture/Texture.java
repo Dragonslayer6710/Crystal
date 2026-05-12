@@ -12,7 +12,7 @@ import static org.lwjgl.opengl.GL46.*;
 public class Texture implements Disposable {
 
     private final int id;
-    private TextureTarget target;
+    private final TextureTarget target;
     private final int width;
     private final int height;
     private final String sourcePath;
@@ -20,6 +20,8 @@ public class Texture implements Disposable {
     private boolean disposed;
 
     public Texture(int id, TextureTarget target, int width, int height, String sourcePath) {
+        if (target == null) throw new IllegalArgumentException("TextureTarget cannot be null");
+
         this.id = id;
         this.target = target;
         this.width = width;
