@@ -134,4 +134,43 @@ public final class TextureFactory {
     public static Texture createCubemap(int size, String debugName) {
         return createCubemap(size, TextureSettings.defaultCubemap(), debugName);
     }
+
+    public static Texture createSolidCubemap(String name, int size, int r, int g, int b, int a) {
+        if (size <= 0) throw new IllegalArgumentException("Cubemap size must be greater than 0");
+
+        Texture texture = createCubemap(size, TextureSettings.defaultCubemap(), "<generated:" + name + ">");
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            ByteBuffer pixels = stack.malloc(size * size * 4);
+
+            for (int i = 0; i < size * size; i++) {
+                pixels.put((byte) r);
+                pixels.put((byte) g);
+                pixels.put((byte) b);
+                pixels.put((byte) a);
+            }
+
+            pixels.flip();
+
+            for (int face = 0; face < 6; face++) {
+                glTextureSubImage3D(
+                        texture.getId(),
+                        0,
+                        0,
+                        0,
+                        face,
+                        size,
+                        size,
+                        1,
+                        GL_RGBA,
+                        GL_UNSIGNED_BYTE,
+                        pixels
+                );
+
+                pixels.rewind();
+            }
+        }
+
+        return texture;
+    }
 }

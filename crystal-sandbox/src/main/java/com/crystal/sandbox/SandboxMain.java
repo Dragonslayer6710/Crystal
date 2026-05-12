@@ -12,6 +12,7 @@ import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Transform;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
+import com.crystal.engine.render.texture.TextureFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,8 +44,8 @@ public class SandboxMain implements Game {
         material.setNormalMap(ctx.getResources().createDataTexture("bricks_normal.png"));
 
         cubeA = new SceneObject("Cube A", mesh, material, new Transform().setPosition(-2, 0, -2f));
-        cubeB = new SceneObject("Cube B", mesh, material, new Transform().setPosition( 0, 0, -2f));
-        cubeC = new SceneObject("Cube C", mesh, material, new Transform().setPosition( 2, 0, -2f));
+        cubeB = new SceneObject("Cube B", mesh, material, new Transform().setPosition(0, 0, -2f));
+        cubeC = new SceneObject("Cube C", mesh, material, new Transform().setPosition(2, 0, -2f));
 
         cubeA.addChild(cubeB);
         cubeB.addChild(cubeC);
@@ -69,8 +70,12 @@ public class SandboxMain implements Game {
                 "/external/DamagedHelmet.glb",
                 new ModelLoadOptions().setShader(shader)
         );
-
         model.logHierarchy();
+
+        ctx.getScene().getEnvironment()
+                .setIrradianceMap(TextureFactory.createSolidCubemap("test-irradiance", 1, 40, 40, 40, 255))
+                .setPrefilterMap(TextureFactory.createSolidCubemap("test-prefilter", 1, 0, 0, 0, 255))
+                .setBrdfLut(TextureFactory.create1x1("test-brdf-lut", 255, 255, 255, 255));
 
         for (SceneObject object : model.getRootObjects()) {
             ctx.getScene().add(object);
