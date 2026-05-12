@@ -18,6 +18,8 @@ public class RenderContext {
     private static final int MAX_TEXTURE_UNITS = 16;
 
     private int debugViewMode = 0;
+    private float exposure = 1.0f;
+    private boolean hasIBL;
 
     private boolean currentDepthTest = true;
     private boolean currentCullFace = true;
@@ -28,8 +30,6 @@ public class RenderContext {
     private int currentMaterialId = 0;
 
     private int currentMeshId = 0;
-
-    private float exposure = 1.0f;
 
     private Texture defaultWhiteTexture;
     private Texture defaultNormalTexture;
@@ -105,6 +105,7 @@ public class RenderContext {
 
         shader.setInt(ShaderUniforms.DEBUG_VIEW_MODE, debugViewMode);
         shader.setFloat(ShaderUniforms.EXPOSURE, exposure);
+        shader.setInt(ShaderUniforms.HAS_IBL, hasIBL ? 1 : 0);
 
         if (material.getId() != currentMaterialId) {
             material.bindProperties();
@@ -154,6 +155,9 @@ public class RenderContext {
         camera.getProjectionMatrix(aspectRatio).get(data, 16);
 
         var environment = scene.getEnvironment();
+
+        this.hasIBL = environment.hasIBL();
+
         var ambientColor = environment.getAmbientColor();
 
         data[32] = ambientColor.x;
@@ -219,5 +223,4 @@ public class RenderContext {
 
         this.debugViewMode = debugViewMode;
     }
-
 }

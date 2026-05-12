@@ -215,5 +215,15 @@ public class Renderer {
             defaultNormalTexture.dispose();
             defaultNormalTexture = null;
         }
+
+        if (defaultBlackCubemap != null) {
+            defaultBlackCubemap.dispose();
+            defaultBlackCubemap = null;
+        }
+
+        if (defaultBrdfLut != null) {
+            defaultBrdfLut.dispose();
+            defaultBrdfLut = null;
+        }
     }
 }

@@ -8,12 +8,18 @@ in vec3 v_Tangent;
 
 
 uniform int debugViewMode;
+uniform float exposure;
+uniform int hasIBL;
 
 uniform sampler2D albedoTexture;
 uniform sampler2D normalMap;
 uniform sampler2D metallicRoughnessMap;
 uniform sampler2D ambientOcclusionMap;
 uniform sampler2D emissiveMap;
+
+uniform samplerCube irradianceMap;
+uniform samplerCube prefilterMap;
+uniform sampler2D brdfLut;
 
 layout (std140, binding = 0) uniform SceneData {
     mat4 view;
@@ -36,8 +42,6 @@ uniform int hasNormalMap;
 uniform int hasMetallicRoughnessMap;
 uniform int hasAoMap;
 uniform int hasEmissiveMap;
-
-uniform float exposure;
 
 out vec4 color;
 
@@ -134,7 +138,15 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
     vec3 diffuseBRDF = kD * albedo / PI;
 
     vec3 directLighting = (diffuseBRDF + specular) * radiance * NdotL;
-    vec3 ambientLighting = ambient.rgb * ambient.a * albedo * ao;
+    vec3 ambientLighting;
+
+    if (hasIBL == 1) {
+        vec3 irradiance = texture(irradianceMap, normal).rgb;
+        vec3 diffeuseIBL = irradiance * albedo;
+        ambientLighting = diffeuseIBL * ao;
+    } else {
+        ambientLighting = ambient.rgb * ambient.a * albedo * ao;
+    }
 
     return ambientLighting + directLighting;
 }
