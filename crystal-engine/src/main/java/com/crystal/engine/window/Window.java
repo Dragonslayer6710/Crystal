@@ -144,6 +144,14 @@ public class Window {
         return handle;
     }
 
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
     public float getAspectRatio() {
         return aspectRatio;
     }

@@ -77,7 +77,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                 new Matrix4f().lookAt(0, 0, 0,  1,  0,  0,  0, -1,  0),
                 new Matrix4f().lookAt(0, 0, 0, -1,  0,  0,  0, -1,  0),
                 new Matrix4f().lookAt(0, 0, 0,  0,  1,  0,  0,  0,  1),
-                new Matrix4f().lookAt(0, 0, 0,  0, -1,  0,  0,  0,  0, -1),
+                new Matrix4f().lookAt(0, 0, 0,  0, -1,  0,  0,  0, -1),
                 new Matrix4f().lookAt(0, 0, 0,  0,  0,  1,  0, -1,  0),
                 new Matrix4f().lookAt(0, 0, 0,  0,  0, -1,  0, -1,  0)
         };
@@ -87,8 +87,7 @@ public final class EnvironmentMapGenerator implements Disposable {
 
         equirectangularToCubemapShader.bind();
         equirectangularToCubemapShader.setInt("equirectangularMap", 0);
-        equirectangularToCubemapShader.setMat4("equirectangularMap", projection);
-
+        equirectangularToCubemapShader.setMat4("projection", projection);
         equirectangularTexture.bind(0);
 
         glDisable(GL_CULL_FACE);;

@@ -86,6 +86,11 @@ public class SandboxMain implements Game {
 
         Texture environmentCubemap = generator.generateCubemap(hdr, 512);
 
+        ctx.getRenderer().resizeViewport(
+                ctx.getWindow().getWidth(),
+                ctx.getWindow().getHeight()
+        );
+
         ctx.getScene().getEnvironment()
                 .setSkybox(environmentCubemap)
                 .setIrradianceMap(environmentCubemap)
