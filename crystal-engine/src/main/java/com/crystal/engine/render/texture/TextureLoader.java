@@ -135,6 +135,12 @@ public class TextureLoader {
     }
 
     public static Texture createCubemap(int size, TextureSettings settings, String debugName) {
+        if (size <= 0) throw new IllegalArgumentException("Cubemap size must be greater than 0");
+        if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
+        if (debugName == null || debugName.isBlank()) throw new IllegalArgumentException("Debug name cannot be null or blank");
+
+        settings.validate();
+
         int textureId = glCreateTextures(GL_TEXTURE_CUBE_MAP);
 
         glTextureStorage2D(
@@ -151,6 +157,8 @@ public class TextureLoader {
         glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
         glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTextureParameteri(textureId, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+        GLObjectLabel.labelTexture(textureId, debugName);
 
         return new Texture(
                 textureId,
