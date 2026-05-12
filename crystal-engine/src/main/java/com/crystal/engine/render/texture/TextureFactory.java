@@ -17,7 +17,7 @@ public final class TextureFactory {
     private TextureFactory() {}
 
     public static Texture create1x1(String name, int r, int g, int b, int a) {
-        int textureId = glCreateTextures(TextureTarget.CUBE_MAP.glValue);
+        int textureId = glCreateTextures(TextureTarget.TEXTURE_2D.glValue);
 
         glTextureStorage2D(textureId, 1, GL_RGBA8, 1, 1);
 
