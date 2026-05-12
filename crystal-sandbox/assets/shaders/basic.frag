@@ -46,6 +46,7 @@ uniform int hasEmissiveMap;
 out vec4 color;
 
 const float PI = 3.14159265358979;
+const float MAX_REFLECTION_LOD = 4.0;
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
@@ -142,8 +143,16 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
 
     if (hasIBL == 1) {
         vec3 irradiance = texture(irradianceMap, normal).rgb;
-        vec3 diffuseIB = irradiance * albedo;
-        ambientLighting = diffuseIB * ao;
+        vec3 diffuseIBL = irradiance * albedo;
+
+        vec3 R = reflect(-V, normal);
+
+        vec3 prefilteredColor = textureLod(prefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+
+        vec2 brdf = texture(brdfLut, vec2(max(dot(normal, V), 0.0), roughness)).rg;
+        vec3 specularIBL = prefilteredColor * (F * brdf.x + brdf.y);
+
+        ambientLighting = (diffuseIBL * kD + specularIBL) * ao;
     } else {
         ambientLighting = ambient.rgb * ambient.a * albedo * ao;
     }

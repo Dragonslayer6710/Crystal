@@ -7,6 +7,7 @@ import com.crystal.engine.render.GLObjectLabel;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL11.GL_RGBA8;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
@@ -104,6 +105,7 @@ public final class TextureFactory {
         settings.validate();
 
         int textureId = glCreateTextures(TextureTarget.CUBE_MAP.glValue);
+        GLObjectLabel.labelTexture(textureId, debugName);
 
         glTextureStorage2D(
                 textureId,
@@ -120,7 +122,7 @@ public final class TextureFactory {
         glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, TextureWrap.CLAMP_TO_EDGE.glValue);
         glTextureParameteri(textureId, GL_TEXTURE_WRAP_R, TextureWrap.CLAMP_TO_EDGE.glValue);
 
-        GLObjectLabel.labelTexture(textureId, debugName);
+
 
         return new Texture(
                 textureId,
@@ -172,5 +174,48 @@ public final class TextureFactory {
         }
 
         return texture;
+    }
+
+    public static Texture createTextureFromFloatPixels(FloatBuffer pixels, int width, int height,
+                                                       TextureSettings settings, String sourcePath) {
+        int textureId = glCreateTextures(TextureTarget.TEXTURE_2D.glValue);
+        GLObjectLabel.labelTexture(textureId, sourcePath);
+
+        glTextureStorage2D(
+                textureId,
+                settings.isGenerateMipmaps() ? mipLevels(width, height) : 1,
+                settings.getFormat().glValue,
+                width,
+                height
+        );
+
+        glTextureSubImage2D(
+                textureId,
+                0,
+                0,
+                0,
+                width,
+                height,
+                GL_RGBA,
+                GL_FLOAT,
+                pixels
+        );
+
+        glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, settings.getMinFilter().glValue);
+        glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, settings.getMagFilter().glValue);
+        glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, settings.getWrapS().glValue);
+        glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, settings.getWrapT().glValue);
+
+        if (settings.isGenerateMipmaps()) {
+            glGenerateTextureMipmap(textureId);
+        }
+
+        return new Texture(
+                textureId,
+                TextureTarget.TEXTURE_2D,
+                width,
+                height,
+                sourcePath
+        );
     }
 }

@@ -9,6 +9,51 @@ public final class TextureSettings {
     private TextureWrap wrapT = TextureWrap.REPEAT;
     private boolean generateMipmaps = false;
 
+    public static TextureSettings defaultAlbedo() {
+        return new TextureSettings()
+                .setFormat(TextureFormat.SRGBA8)
+                .setGenerateMipmaps(true)
+                .setMinFilter(TextureFilter.LINEAR_MIPMAP_LINEAR)
+                .setMagFilter(TextureFilter.LINEAR);
+    }
+
+    public static TextureSettings defaultData() {
+        return new TextureSettings()
+                .setFormat(TextureFormat.RGBA8)
+                .setGenerateMipmaps(false)
+                .setMinFilter(TextureFilter.LINEAR)
+                .setMagFilter(TextureFilter.LINEAR);
+    }
+
+    public static TextureSettings defaultCubemap() {
+        return new TextureSettings()
+                .setFormat(TextureFormat.RGBA8)
+                .setGenerateMipmaps(false)
+                .setMinFilter(TextureFilter.LINEAR)
+                .setMagFilter(TextureFilter.LINEAR)
+                .setWrapS(TextureWrap.CLAMP_TO_EDGE)
+                .setWrapT(TextureWrap.CLAMP_TO_EDGE);
+    }
+
+    public static TextureSettings defaultHDR() {
+        return new TextureSettings()
+                .setFormat(TextureFormat.RGBA16F)
+                .setGenerateMipmaps(false)
+                .setMinFilter(TextureFilter.LINEAR)
+                .setMagFilter(TextureFilter.LINEAR)
+                .setWrapS(TextureWrap.CLAMP_TO_EDGE)
+                .setWrapT(TextureWrap.CLAMP_TO_EDGE);
+    }
+
+    public static TextureSettings forType(TextureType type) {
+        if (type == null) throw new IllegalArgumentException("TextureType cannot be null");
+
+        return switch (type) {
+            case ALBEDO -> defaultAlbedo();
+            case NORMAL, DATA -> defaultData();
+        };
+    }
+
     public TextureFormat getFormat() { return format; }
     public TextureFilter getMinFilter() { return minFilter; }
     public TextureFilter getMagFilter() { return magFilter; }
@@ -44,41 +89,6 @@ public final class TextureSettings {
     public TextureSettings setGenerateMipmaps(boolean generateMipmaps) {
         this.generateMipmaps = generateMipmaps;
         return this;
-    }
-
-    public static TextureSettings defaultAlbedo() {
-        return new TextureSettings()
-                .setFormat(TextureFormat.SRGBA8)
-                .setGenerateMipmaps(true)
-                .setMinFilter(TextureFilter.LINEAR_MIPMAP_LINEAR)
-                .setMagFilter(TextureFilter.LINEAR);
-    }
-
-    public static TextureSettings defaultData() {
-        return new TextureSettings()
-                .setFormat(TextureFormat.RGBA8)
-                .setGenerateMipmaps(false)
-                .setMinFilter(TextureFilter.LINEAR)
-                .setMagFilter(TextureFilter.LINEAR);
-    }
-
-    public static TextureSettings defaultCubemap() {
-        return new TextureSettings()
-                .setFormat(TextureFormat.RGBA8)
-                .setGenerateMipmaps(false)
-                .setMinFilter(TextureFilter.LINEAR)
-                .setMagFilter(TextureFilter.LINEAR)
-                .setWrapS(TextureWrap.CLAMP_TO_EDGE)
-                .setWrapT(TextureWrap.CLAMP_TO_EDGE);
-    }
-
-    public static TextureSettings forType(TextureType type) {
-        if (type == null) throw new IllegalArgumentException("TextureType cannot be null");
-
-        return switch (type) {
-            case ALBEDO -> defaultAlbedo();
-            case NORMAL, DATA -> defaultData();
-        };
     }
 
     public void validate() {
