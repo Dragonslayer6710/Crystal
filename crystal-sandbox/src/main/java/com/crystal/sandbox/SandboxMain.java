@@ -77,7 +77,7 @@ public class SandboxMain implements Game {
         logger.info("Loaded HDR environment: {}x{}", hdr.getWidth(), hdr.getHeight());
 
         Shader envShader = ctx.getResources()
-                        .createShaderProgram("equirectangular_to_cubemap");
+                        .createShaderProgram("cubemap_capture", "equirectangular_to_cubemap");
 
         Mesh envCube = MeshFactory.createTexturedCube(ctx.getResources());
 
