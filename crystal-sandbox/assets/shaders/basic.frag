@@ -199,6 +199,13 @@ void main() {
         case 6:
             color = vec4(emissive, 1.0);
             break;
+        case 7:
+            if (hasIBL == 1) {
+                color = vec4(texture(irradianceMap, N).rgb, 1.0);
+            } else {
+                color = vec4(1.0, 0.0, 1.0, 1.0);
+            }
+            break;
         default:
             color = vec4(1.0, 0.0, 1.0, 1.0);
             break;

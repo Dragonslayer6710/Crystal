@@ -157,8 +157,8 @@ public class Renderer {
     }
 
     public void setDebugViewMode(int debugViewMode) {
-        if (debugViewMode < 0 || debugViewMode > 6)
-            throw new IllegalArgumentException("Debug view mode must be between 0 and 6");
+        if (debugViewMode < 0 || debugViewMode > 7)
+            throw new IllegalArgumentException("Debug view mode must be between 0 and 7");
 
         if (this.debugViewMode == debugViewMode)
             return;
@@ -169,7 +169,7 @@ public class Renderer {
     }
 
     public void cycleDebugViewMode() {
-        setDebugViewMode((debugViewMode + 1) % 7);
+        setDebugViewMode((debugViewMode + 1) % 8);
     }
 
     public boolean isFrustumCullingEnabled() {
@@ -201,6 +201,7 @@ public class Renderer {
             case 4 -> "Roughness";
             case 5 -> "Ambient Occlusion";
             case 6 -> "Emissive";
+            case 7 -> "Irradiance";
             default -> "Unknown";
         };
     }
