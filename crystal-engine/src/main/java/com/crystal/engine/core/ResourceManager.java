@@ -102,12 +102,21 @@ public class ResourceManager {
         return createTexture(path, TextureSettings.forType(type));
     }
 
+    public Texture createTexture(String path) {
+        return createTexture(path, TextureSettings.defaultAlbedo());
+    }
+
     public Texture createDataTexture(String path) {
         return createTexture(path, TextureSettings.defaultData());
     }
 
-    public Texture createTexture(String path) {
-        return createTexture(path, TextureSettings.defaultAlbedo());
+    public Texture createHDRTexture(String path) {
+        String cacheKey = "textures/" + path + "|" + TextureSettings.defaultHDR().cacheKey();
+
+        return textureCache.computeIfAbsent(cacheKey, key -> register(TextureLoader.loadHDR(
+                assetRoot.resolve("textures/" + path),
+                TextureSettings.defaultHDR()
+        )));
     }
 
     public void disposeAll() {

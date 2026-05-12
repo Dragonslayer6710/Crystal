@@ -5,6 +5,7 @@ import com.crystal.engine.assets.model.ModelLoadOptions;
 import com.crystal.engine.core.EngineConfig;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
+import com.crystal.engine.render.environment.EnvironmentMapGenerator;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.MeshFactory;
@@ -72,10 +73,24 @@ public class SandboxMain implements Game {
         );
         model.logHierarchy();
 
+        Texture hdr = ctx.getResources().createHDRTexture("environment/studio_small_03_1k.hdr");
+        logger.info("Loaded HDR environment: {}x{}", hdr.getWidth(), hdr.getHeight());
+
+        Shader envShader = ctx.getResources()
+                        .createShaderProgram("equirectangular_to_cubemap");
+
+        Mesh envCube = MeshFactory.createTexturedCube(ctx.getResources());
+
+        EnvironmentMapGenerator generator =
+                new EnvironmentMapGenerator(envShader, envCube);
+
+        Texture environmentCubemap = generator.generateCubemap(hdr, 512);
+
         ctx.getScene().getEnvironment()
-                .setIrradianceMap(TextureFactory.createSolidCubemap("test-irradiance", 1, 40, 40, 40, 255))
-                .setPrefilterMap(TextureFactory.createSolidCubemap("test-prefilter", 1, 0, 0, 0, 255))
-                .setBrdfLut(TextureFactory.create1x1("test-brdf-lut", 255, 255, 255, 255));
+                .setSkybox(environmentCubemap)
+                .setIrradianceMap(environmentCubemap)
+                .setPrefilterMap(environmentCubemap)
+                .setBrdfLut(TextureFactory.create1x1("temporary-brdf-lut", 255, 255, 255, 255));
 
         for (SceneObject object : model.getRootObjects()) {
             ctx.getScene().add(object);

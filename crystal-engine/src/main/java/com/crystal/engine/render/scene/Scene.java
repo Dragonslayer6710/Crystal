@@ -1,8 +1,8 @@
 package com.crystal.engine.render.scene;
 
 import com.crystal.engine.core.Disposable;
+import com.crystal.engine.render.environment.Environment;
 import com.crystal.engine.render.gl.UniformBuffer;
-import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;

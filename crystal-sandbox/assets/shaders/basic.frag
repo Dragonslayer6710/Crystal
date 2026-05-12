@@ -43,7 +43,7 @@ uniform int hasMetallicRoughnessMap;
 uniform int hasAoMap;
 uniform int hasEmissiveMap;
 
-out vec4 color;
+out vec4 f_Color;
 
 const float PI = 3.14159265358979;
 const float MAX_REFLECTION_LOD = 4.0;
@@ -188,55 +188,55 @@ void main() {
 
             vec3 mapped = toneMapReinhard(finalColor * exposure);
 
-            color = vec4(mapped, 1.0);
+            f_Color = vec4(mapped, 1.0);
             break;
 
         case 1:
-            color = vec4(albedo, 1.0);
+            f_Color = vec4(albedo, 1.0);
             break;
 
         case 2:
-            color = vec4(N * 0.5 + 0.5, 1.0);
+            f_Color = vec4(N * 0.5 + 0.5, 1.0);
             break;
 
         case 3:
-            color = vec4(vec3(metallic), 1.0);
+            f_Color = vec4(vec3(metallic), 1.0);
             break;
 
         case 4:
-            color = vec4(vec3(roughness), 1.0);
+            f_Color = vec4(vec3(roughness), 1.0);
             break;
 
         case 5:
-            color = vec4(vec3(ao), 1.0);
+            f_Color = vec4(vec3(ao), 1.0);
             break;
 
         case 6:
-            color = vec4(emissive, 1.0);
+            f_Color = vec4(emissive, 1.0);
             break;
 
         case 7:
             if (hasIBL == 1) {
-                color = vec4(texture(irradianceMap, N).rgb, 1.0);
+                f_Color = vec4(texture(irradianceMap, N).rgb, 1.0);
             } else {
-                color = vec4(1.0, 0.0, 1.0, 1.0);
+                f_Color = vec4(1.0, 0.0, 1.0, 1.0);
             }
             break;
 
         case 8:
             if (hasIBL == 1) {
                 vec3 R = reflect(-normalize(cameraPosition.xyz - v_WorldPosition), N);
-                color = vec4(texture(prefilterMap, R).rgb, 1.0);
+                f_Color = vec4(texture(prefilterMap, R).rgb, 1.0);
             } else {
-                color = vec4(1.0, 0.0, 1.0, 1.0);
+                f_Color = vec4(1.0, 0.0, 1.0, 1.0);
             }
             break;
 
         case 9:
-            color = vec4(texture(brdfLut, v_UV).rgb, 1.0);
+            f_Color = vec4(texture(brdfLut, v_UV).rgb, 1.0);
             break;
         default:
-            color = vec4(1.0, 0.0, 1.0, 1.0);
+            f_Color = vec4(1.0, 0.0, 1.0, 1.0);
             break;
     }
 }
