@@ -6,6 +6,7 @@ import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.texture.Texture;
+import com.crystal.engine.render.texture.TextureFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +32,8 @@ public class Renderer {
 
     private Texture defaultWhiteTexture;
     private Texture defaultNormalTexture;
+    private Texture defaultBlackCubemap;
+    private Texture defaultBrdfLut;
 
     private int debugViewMode = 0;
 
@@ -46,10 +49,13 @@ public class Renderer {
     }
 
     public void init(int width, int height) {
-        defaultWhiteTexture = Texture.create1x1("default-white",255, 255, 255, 255);
-        defaultNormalTexture = Texture.create1x1("default-normal",128, 128, 255, 255);
-
+        defaultWhiteTexture = TextureFactory.create1x1("default-white",255, 255, 255, 255);
+        defaultNormalTexture = TextureFactory.create1x1("default-normal",128, 128, 255, 255);
         context.setDefaultTextures(defaultWhiteTexture, defaultNormalTexture);
+
+        defaultBlackCubemap = TextureFactory.createCubemap(1, "default-black-cubemap");
+        defaultBrdfLut = TextureFactory.create1x1("default-brdf-lut", 255, 255, 255, 255);
+        context.setDefaultEnvironmentTextures(defaultWhiteTexture, defaultNormalTexture);
 
         resizeViewport(width, height);
 

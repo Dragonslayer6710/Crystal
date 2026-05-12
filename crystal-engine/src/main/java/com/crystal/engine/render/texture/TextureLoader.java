@@ -2,26 +2,16 @@ package com.crystal.engine.render.texture;
 
 import com.crystal.engine.graphics.TextureFormat;
 import com.crystal.engine.graphics.TextureSettings;
-import com.crystal.engine.graphics.TextureTarget;
-import com.crystal.engine.render.GLObjectLabel;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL45.*;
 import static org.lwjgl.stb.STBImage.*;
 
 public class TextureLoader {
 
     private TextureLoader() {}
-
-    private static int mipLevels(int width, int height) {
-        return 1 + (int) Math.floor(
-                Math.log(Math.max(width, height)) / Math.log(2)
-        );
-    }
 
     public static Texture load(Path path, TextureSettings settings) {
         if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
@@ -46,7 +36,7 @@ public class TextureLoader {
             if (pixels == null)
                 throw new RuntimeException("Failed to load texture: " + path + "\n" + stbi_failure_reason());
 
-            Texture texture = createTextureFromPixels(
+            Texture texture = TextureFactory.createTextureFromPixels(
                     pixels,
                     width.get(0),
                     height.get(0),
@@ -85,7 +75,7 @@ public class TextureLoader {
                 throw new RuntimeException("Failed to load embedded texture: "
                         + sourcePath + "\n" + stbi_failure_reason());
 
-            Texture texture = createTextureFromPixels(
+            Texture texture = TextureFactory.createTextureFromPixels(
                     pixels,
                     width.get(0),
                     height.get(0),
@@ -98,78 +88,4 @@ public class TextureLoader {
         }
     }
 
-    private static Texture createTextureFromPixels(ByteBuffer pixels, int width, int height,
-                                                   TextureSettings settings, String sourcePath) {
-        int textureId = glCreateTextures(GL_TEXTURE_2D);
-        GLObjectLabel.labelTexture(textureId, sourcePath);
-
-        glTextureStorage2D(
-                textureId,
-                settings.isGenerateMipmaps() ? mipLevels(width, height) : 1,
-                settings.getFormat().glValue,
-                width,
-                height
-        );
-
-        glTextureSubImage2D(
-                textureId,
-                0,
-                0,
-                0,
-                width,
-                height,
-                GL_RGBA,
-                GL_UNSIGNED_BYTE,
-                pixels
-        );
-
-        glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, settings.getMinFilter().glValue);
-        glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, settings.getMagFilter().glValue);
-        glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, settings.getWrapS().glValue);
-        glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, settings.getWrapT().glValue);
-
-        if (settings.isGenerateMipmaps())
-            glGenerateTextureMipmap(textureId);
-
-        return new Texture(textureId, width, height, sourcePath);
-    }
-
-    public static Texture createCubemap(int size, TextureSettings settings, String debugName) {
-        if (size <= 0) throw new IllegalArgumentException("Cubemap size must be greater than 0");
-        if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
-        if (debugName == null || debugName.isBlank()) throw new IllegalArgumentException("Debug name cannot be null or blank");
-
-        settings.validate();
-
-        int textureId = glCreateTextures(GL_TEXTURE_CUBE_MAP);
-
-        glTextureStorage2D(
-                textureId,
-                settings.isGenerateMipmaps() ? mipLevels(size, size) : 1,
-                settings.getFormat().glValue,
-                size,
-                size
-        );
-
-        glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, settings.getMinFilter().glValue);
-        glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, settings.getMagFilter().glValue);
-
-        glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTextureParameteri(textureId, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-        GLObjectLabel.labelTexture(textureId, debugName);
-
-        return new Texture(
-                textureId,
-                TextureTarget.CUBE_MAP,
-                size,
-                size,
-                debugName
-        );
-    }
-
-    public static Texture createCubemap(int size, String debugName) {
-        return createCubemap(size, TextureSettings.defaultCubemap(), debugName);
-    }
 }

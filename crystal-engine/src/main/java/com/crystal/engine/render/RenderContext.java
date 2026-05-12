@@ -34,6 +34,9 @@ public class RenderContext {
     private Texture defaultWhiteTexture;
     private Texture defaultNormalTexture;
 
+    private Texture defaultBlackCubemap;
+    private Texture defaultBrdfLut;
+
     public void beginFrame() {
         currentShaderId = 0;
         Arrays.fill(boundTextures, 0);
@@ -180,9 +183,20 @@ public class RenderContext {
         sceneUBO.setData(0, data);
         sceneUBO.bind();
 
-        bindTextureIfNeeded(environment.getIrradianceMap(), TextureSlots.IRRADIANCE);
-        bindTextureIfNeeded(environment.getPrefilterMap(), TextureSlots.PREFILTER);
-        bindTextureIfNeeded(environment.getBrdfLut(), TextureSlots.BRDF_LUT);
+        bindTextureIfNeeded(
+                environment.getIrradianceMap() != null ? environment.getIrradianceMap() : defaultBlackCubemap,
+                TextureSlots.IRRADIANCE
+        );
+
+        bindTextureIfNeeded(
+                environment.getPrefilterMap() != null ? environment.getPrefilterMap() : defaultBlackCubemap,
+                TextureSlots.PREFILTER
+        );
+
+        bindTextureIfNeeded(
+                environment.getBrdfLut() != null ? environment.getBrdfLut() : defaultBrdfLut,
+                TextureSlots.BRDF_LUT
+        );
     }
 
     public void setExposure(float exposure) {
@@ -194,10 +208,16 @@ public class RenderContext {
         this.defaultNormalTexture = normal;
     }
 
+    public void setDefaultEnvironmentTextures(Texture blackCubemap, Texture brdfLut) {
+        this.defaultBlackCubemap = blackCubemap;
+        this.defaultBrdfLut = brdfLut;
+    }
+
     public void setDebugViewMode(int debugViewMode) {
         if (debugViewMode < 0 || debugViewMode > 6)
             throw new IllegalArgumentException("Debug view mode must be between 0 and 6");
 
         this.debugViewMode = debugViewMode;
     }
+
 }
