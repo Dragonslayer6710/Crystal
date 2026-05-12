@@ -84,7 +84,8 @@ public final class EnvironmentMapGenerator implements Disposable {
                 TextureSettings.defaultHDR(),
                 equirectangularToCubemapShader,
                 equirectangularTexture,
-                "equirectangularMap"
+                "equirectangularMap",
+                cube
         );
     }
 
@@ -102,7 +103,8 @@ public final class EnvironmentMapGenerator implements Disposable {
                 TextureSettings.defaultHDR(),
                 irradianceConvolutionShader,
                 environmentCubemap,
-                "environmentMap"
+                "environmentMap",
+                cube
         );
     }
 
@@ -116,21 +118,50 @@ public final class EnvironmentMapGenerator implements Disposable {
                 TextureSettings.defaultPrefilterCubemap(),
                 prefilterEnvironmentShader,
                 environmentCubemap,
-                "environmentMap"
+                "environmentMap",
+                cube
         );
     }
 
     public Texture generateBrdfLut() {
-        return TextureFactory.createRenderTexture2D(
-                512,
-                512,
+        int size = 512;
+
+        Texture output = TextureFactory.createRenderTexture2D(
+                size,
+                size,
                 TextureSettings.defaultHDR(),
                 "<generated:brdf-lut>"
         );
+
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+        glNamedFramebufferTexture(
+                framebuffer,
+                GL_COLOR_ATTACHMENT0,
+                output.getId(),
+                0
+        );
+
+        glViewport(0, 0, size, size);
+
+        glDisable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+
+        brdfLutShader.bind();
+
+        glClear(GL_COLOR_BUFFER_BIT);
+        drawMesh(fullscreenQuad);
+
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        return output;
     }
 
     private Texture renderToCubemap(String debugname, int size, TextureSettings settings, Shader shader,
-                                    Texture inputTexture, String inputSamplerName) {
+                                    Texture inputTexture, String inputSamplerName, Mesh mesh) {
         Texture output = TextureFactory.createCubemap(
                 size,
                 settings,
@@ -166,7 +197,7 @@ public final class EnvironmentMapGenerator implements Disposable {
             );
 
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            drawCube();
+            drawMesh(mesh);
         }
 
         if (output.hasMipmaps())
@@ -193,21 +224,21 @@ public final class EnvironmentMapGenerator implements Disposable {
         };
     }
 
-    private void drawCube() {
-        cube.bind();
+    private void drawMesh(Mesh mesh) {
+        mesh.bind();
 
-        if (cube.isIndexed()) {
+        if (mesh.isIndexed()) {
             glDrawElements(
-                    cube.getPrimTypeValue(),
-                    cube.getIndexCount(),
+                    mesh.getPrimTypeValue(),
+                    mesh.getIndexCount(),
                     GL_UNSIGNED_INT,
                     0
             );
         } else {
             glDrawArrays(
-                    cube.getPrimTypeValue(),
+                    mesh.getPrimTypeValue(),
                     0,
-                    cube.getVertexCount()
+                    mesh.getVertexCount()
             );
         }
     }

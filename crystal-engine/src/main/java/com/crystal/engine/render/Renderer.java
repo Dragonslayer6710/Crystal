@@ -55,7 +55,7 @@ public class Renderer {
 
         defaultBlackCubemap = TextureFactory.createCubemap(1, "default-black-cubemap");
         defaultBrdfLut = TextureFactory.create1x1("default-brdf-lut", 255, 255, 255, 255);
-        context.setDefaultEnvironmentTextures(defaultWhiteTexture, defaultNormalTexture);
+        context.setDefaultEnvironmentTextures(defaultBlackCubemap, defaultBrdfLut);
 
         resizeViewport(width, height);
 
