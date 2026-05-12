@@ -2,6 +2,7 @@ package com.crystal.engine.render.texture;
 
 import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.graphics.TextureTarget;
+import com.crystal.engine.graphics.TextureWrap;
 import com.crystal.engine.render.GLObjectLabel;
 import org.lwjgl.system.MemoryStack;
 
@@ -15,9 +16,8 @@ public final class TextureFactory {
 
     private TextureFactory() {}
 
-
     public static Texture create1x1(String name, int r, int g, int b, int a) {
-        int textureId = glCreateTextures(GL_TEXTURE_2D);
+        int textureId = glCreateTextures(TextureTarget.CUBE_MAP.glValue);
 
         glTextureStorage2D(textureId, 1, GL_RGBA8, 1, 1);
 
@@ -103,7 +103,7 @@ public final class TextureFactory {
 
         settings.validate();
 
-        int textureId = glCreateTextures(GL_TEXTURE_CUBE_MAP);
+        int textureId = glCreateTextures(TextureTarget.CUBE_MAP.glValue);
 
         glTextureStorage2D(
                 textureId,
@@ -116,9 +116,9 @@ public final class TextureFactory {
         glTextureParameteri(textureId, GL_TEXTURE_MIN_FILTER, settings.getMinFilter().glValue);
         glTextureParameteri(textureId, GL_TEXTURE_MAG_FILTER, settings.getMagFilter().glValue);
 
-        glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTextureParameteri(textureId, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, TextureWrap.CLAMP_TO_EDGE.glValue);
+        glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, TextureWrap.CLAMP_TO_EDGE.glValue);
+        glTextureParameteri(textureId, GL_TEXTURE_WRAP_R, TextureWrap.CLAMP_TO_EDGE.glValue);
 
         GLObjectLabel.labelTexture(textureId, debugName);
 
