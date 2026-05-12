@@ -107,6 +107,8 @@ public final class EnvironmentMapGenerator implements Disposable {
         shader.setInt(inputSamplerName, 0);
         shader.setMat4("projection", projection);
 
+        inputTexture.bind(0);
+
         glDisable(GL_CULL_FACE);
 
         for (int face = 0; face < 6; face++) {

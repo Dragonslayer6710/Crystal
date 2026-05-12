@@ -87,6 +87,7 @@ public class SandboxMain implements Game {
         EnvironmentMapGenerator generator = new EnvironmentMapGenerator(envShader, irradianceShader, envCube);
 
         Texture environmentCubemap = generator.generateCubemap(hdr, 512);
+        Texture irradianceMap = generator.generateIrradianceMap(environmentCubemap);
 
         ctx.getRenderer().resizeViewport(
                 ctx.getWindow().getWidth(),
@@ -95,7 +96,7 @@ public class SandboxMain implements Game {
 
         ctx.getScene().getEnvironment()
                 .setSkybox(environmentCubemap)
-                .setIrradianceMap(environmentCubemap)
+                .setIrradianceMap(irradianceMap)
                 .setPrefilterMap(environmentCubemap)
                 .setBrdfLut(TextureFactory.create1x1("temporary-brdf-lut", 255, 255, 255, 255));
 
