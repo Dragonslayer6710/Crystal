@@ -5,15 +5,13 @@ import com.crystal.engine.assets.model.ModelLoadOptions;
 import com.crystal.engine.core.EngineConfig;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
-import com.crystal.engine.render.environment.EnvironmentMapGenerator;
+import com.crystal.engine.render.environment.IBLGenerator;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.MeshFactory;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Transform;
 import com.crystal.engine.render.shader.Shader;
-import com.crystal.engine.render.texture.Texture;
-import com.crystal.engine.render.texture.TextureFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,44 +71,11 @@ public class SandboxMain implements Game {
         );
         model.logHierarchy();
 
-        Texture hdr = ctx.getResources().createHDRTexture("environment/studio_small_03_1k.hdr");
-        logger.info("Loaded HDR environment: {}x{}", hdr.getWidth(), hdr.getHeight());
-
-        Shader envShader = ctx.getResources()
-                        .createShaderProgram("cubemap_capture", "equirectangular_to_cubemap");
-
-        Shader irradianceShader = ctx.getResources()
-                .createShaderProgram("cubemap_capture", "irradiance_convolution");
-
-        Shader prefilterShader = ctx.getResources()
-                .createShaderProgram("cubemap_capture", "prefilter_environment");
-
-        Shader brdfLutShader = ctx.getResources()
-                .createShaderProgram("brdf_lut");
-
-        Mesh envCube = MeshFactory.createPositionOnlyCube(ctx.getResources());
-
-        Mesh fullscreenQuad = MeshFactory.createFullscreenQuad(ctx.getResources());
-
-        EnvironmentMapGenerator generator = ctx.getResources().register(new EnvironmentMapGenerator(
-                envShader,
-                irradianceShader,
-                prefilterShader,
-                brdfLutShader,
-                envCube,
-                fullscreenQuad
-        ));
-
-        Texture environmentCubemap = ctx.getResources().register(generator.generateCubemap(hdr, 512));
-        Texture irradianceMap = ctx.getResources().register(generator.generateIrradianceMap(environmentCubemap));
-        Texture prefilterMap = ctx.getResources().register(generator.generatePrefilterMap(environmentCubemap));
-        Texture brdfLut = ctx.getResources().register(generator.generateBrdfLut());
-
-        ctx.getScene().getEnvironment()
-                .setSkybox(environmentCubemap)
-                .setIrradianceMap(irradianceMap)
-                .setPrefilterMap(prefilterMap)
-                .setBrdfLut(brdfLut);
+        IBLGenerator iblGenerator = IBLGenerator.createDefault(ctx.getResources());
+        iblGenerator.generateFromHDR(
+                ctx.getScene().getEnvironment(),
+                "environment/studio_small_03_1k.hdr"
+        );
 
         for (SceneObject object : model.getRootObjects()) {
             ctx.getScene().add(object);
