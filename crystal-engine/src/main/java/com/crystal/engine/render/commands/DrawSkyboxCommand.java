@@ -36,46 +36,48 @@ public class DrawSkyboxCommand implements RenderCommand {
         glDepthFunc(GL_LEQUAL);
         glDepthMask(false);
 
-        shader.bind();
+        try {
+            shader.bind();
 
-        shader.setInt(ShaderUniforms.SKYBOX, 0);
+            shader.setInt(ShaderUniforms.SKYBOX, 0);
 
-        Matrix4f view = new Matrix4f(
-                scene.getCamera().getViewMatrix()
-        );
-
-        view.m30(0.0f);
-        view.m31(0.0f);
-        view.m32(0.0f);
-
-        shader.setMat4(ShaderUniforms.VIEW, view);
-        shader.setMat4(
-                ShaderUniforms.PROJECTION,
-                scene.getCamera().getProjectionMatrix(
-                        context.getAspectRatio()
-                )
-        );
-
-        skybox.bind(0);
-
-        cubeMesh.bind();
-
-        if (cubeMesh.isIndexed()) {
-            glDrawElements(
-                    cubeMesh.getPrimTypeValue(),
-                    cubeMesh.getIndexCount(),
-                    GL_UNSIGNED_INT,
-                    0
+            Matrix4f view = new Matrix4f(
+                    scene.getCamera().getViewMatrix()
             );
-        } else {
-            glDrawArrays(
-                    cubeMesh.getPrimTypeValue(),
-                    0,
-                    cubeMesh.getVertexCount()
+
+            view.m30(0.0f);
+            view.m31(0.0f);
+            view.m32(0.0f);
+
+            shader.setMat4(ShaderUniforms.VIEW, view);
+            shader.setMat4(
+                    ShaderUniforms.PROJECTION,
+                    scene.getCamera().getProjectionMatrix(
+                            context.getAspectRatio()
+                    )
             );
+
+            skybox.bind(0);
+
+            cubeMesh.bind();
+
+            if (cubeMesh.isIndexed()) {
+                glDrawElements(
+                        cubeMesh.getPrimTypeValue(),
+                        cubeMesh.getIndexCount(),
+                        GL_UNSIGNED_INT,
+                        0
+                );
+            } else {
+                glDrawArrays(
+                        cubeMesh.getPrimTypeValue(),
+                        0,
+                        cubeMesh.getVertexCount()
+                );
+            }
+        } finally {
+            glDepthMask(true);
+            glDepthFunc(GL_LESS);
         }
-
-        glDepthMask(true);
-        glDepthFunc(GL_LESS);
     }
 }
