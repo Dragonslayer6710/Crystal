@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="DrawSkyboxCommand Restore GL State">
+    <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="updates">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.frag" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/assets/shaders/basic.frag" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-sandbox/src/main/java/com/crystal/sandbox/SandboxMain.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/Renderer.java" beforeDir="false" afterPath="$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/Renderer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -241,14 +240,6 @@
       <updated>1777644207104</updated>
       <workItem from="1777822388524" duration="233000" />
       <workItem from="1777822642411" duration="43000" />
-    </task>
-    <task id="LOCAL-00120" summary="Ambient Color/intensity into new Environment class">
-      <option name="closed" value="true" />
-      <created>1778256136960</created>
-      <option name="number" value="00120" />
-      <option name="presentableId" value="LOCAL-00120" />
-      <option name="project" value="LOCAL" />
-      <updated>1778256136960</updated>
     </task>
     <task id="LOCAL-00121" summary="Tidy up">
       <option name="closed" value="true" />
@@ -634,7 +625,15 @@
       <option name="project" value="LOCAL" />
       <updated>1778685593167</updated>
     </task>
-    <option name="localTasksCounter" value="169" />
+    <task id="LOCAL-00169" summary="updates">
+      <option name="closed" value="true" />
+      <created>1778686062998</created>
+      <option name="number" value="00169" />
+      <option name="presentableId" value="LOCAL-00169" />
+      <option name="project" value="LOCAL" />
+      <updated>1778686062998</updated>
+    </task>
+    <option name="localTasksCounter" value="170" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -652,7 +651,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="debugViewMode 7" />
     <MESSAGE value="AI cleanup" />
     <MESSAGE value="debugviewmodes up to 9" />
     <MESSAGE value="corrections and setup for HDR texture loading for actual IBL texturing" />
@@ -677,7 +675,8 @@
     <MESSAGE value="Basic skybox rendering" />
     <MESSAGE value="fixes" />
     <MESSAGE value="DrawSkyboxCommand Restore GL State" />
-    <option name="LAST_COMMIT_MESSAGE" value="DrawSkyboxCommand Restore GL State" />
+    <MESSAGE value="updates" />
+    <option name="LAST_COMMIT_MESSAGE" value="updates" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

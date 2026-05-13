@@ -85,6 +85,60 @@ public class Renderer {
         queue.execute(context);
     }
 
+    private void prepareFrame(Scene scene, float aspectRatio) {
+        beginFrame();
+
+        var camera = scene.getCamera();
+
+        camera.updateFrustum(aspectRatio);
+
+        context.prepareScene(scene, aspectRatio);
+    }
+
+    private void submitSkybox(Scene scene) {
+        if (!scene.getEnvironment().hasSkybox())
+            return;
+
+        queue.submit(new DrawSkyboxCommand(
+                scene,
+                skyboxShader,
+                skyboxCubeMesh
+        ));
+    }
+
+    private List<SceneObject> collectVisibleObjects(Scene scene) {
+        List<SceneObject> visibleObjects = new ArrayList<>();
+
+        Camera camera = scene.getCamera();
+
+        for (SceneObject root : scene.getRootObjects())
+            collectVisibleObjects(root, visibleObjects, camera);
+
+        return visibleObjects;
+    }
+
+    private void sortVisibleObjects(List<SceneObject> visibleObjects) {
+        visibleObjects.sort(Comparator.
+                comparingInt((SceneObject object) ->
+                        object.getMaterial().getRenderState().getSortKey()
+                )
+                .thenComparingInt(object ->
+                        object.getMaterial().getShader().getId()
+                )
+                .thenComparingInt(object ->
+                        object.getMaterial().getId()
+                )
+                .thenComparingInt(object ->
+                        object.getMesh().getId()
+                )
+        );
+    }
+
+    private void submitVisibleObjects(List<SceneObject> visibleObjects) {
+        for (SceneObject object : visibleObjects)
+            queue.submit(new DrawSceneObjectCommand(object));
+    }
+
     private void collectVisibleObjects(SceneObject object, List<SceneObject> visibleObjects, Camera camera) {
         if (!object.isActive())
             return;
@@ -103,42 +157,11 @@ public class Renderer {
     }
 
     public void render(Scene scene, float aspectRatio) {
-        beginFrame();
-
-        var camera = scene.getCamera();
-        camera.updateFrustum(aspectRatio);
-        context.prepareScene(scene, aspectRatio);
-        if (scene.getEnvironment().hasSkybox()) {
-            queue.submit(new DrawSkyboxCommand(
-                    scene,
-                    skyboxShader,
-                    skyboxCubeMesh
-            ));
-        }
-
-        List<SceneObject> visibleObjects = new ArrayList<>();
-
-        for (SceneObject root : scene.getRootObjects())
-            collectVisibleObjects(root, visibleObjects, camera);
-
-        visibleObjects.sort(Comparator.
-                comparingInt((SceneObject object) ->
-                        object.getMaterial().getRenderState().getSortKey()
-                )
-                .thenComparingInt(object ->
-                        object.getMaterial().getShader().getId()
-                )
-                .thenComparingInt(object ->
-                        object.getMaterial().getId()
-                )
-                .thenComparingInt(object ->
-                        object.getMesh().getId()
-                )
-        );
-
-        for (SceneObject object : visibleObjects)
-            queue.submit(new DrawSceneObjectCommand(object));
-
+        prepareFrame(scene, aspectRatio);
+        submitSkybox(scene);
+        List<SceneObject> visibleObjects = collectVisibleObjects(scene);
+        sortVisibleObjects(visibleObjects);
+        submitVisibleObjects(visibleObjects);
         renderFrame();
     }
 
