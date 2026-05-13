@@ -1,0 +1,718 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="Basic skybox rendering">
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="101" />
+  </component>
+  <component name="ExternalProjectsData">
+    <projectState path="$PROJECT_DIR$">
+      <ProjectState />
+    </projectState>
+  </component>
+  <component name="ExternalProjectsManager">
+    <system id="GRADLE">
+      <state>
+        <task path="$PROJECT_DIR$">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/crystal-sandbox">
+          <activation />
+        </task>
+        <task path="$PROJECT_DIR$/crystal-engine">
+          <activation />
+        </task>
+        <projects_view>
+          <tree_state>
+            <expand>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Crystal" type="f1a62948:ProjectNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Crystal" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Crystal" type="f1a62948:ProjectNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+                <item name="build setup" type="c8890929:TasksNode$1" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Crystal" type="f1a62948:ProjectNode" />
+                <item name="crystal-engine" type="2d1252cf:ModuleNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Crystal" type="f1a62948:ProjectNode" />
+                <item name="crystal-engine" type="2d1252cf:ModuleNode" />
+                <item name="Tasks" type="e4a08cd1:TasksNode" />
+              </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="Crystal" type="f1a62948:ProjectNode" />
+                <item name="crystal-sandbox" type="2d1252cf:ModuleNode" />
+              </path>
+            </expand>
+            <select />
+          </tree_state>
+        </projects_view>
+      </state>
+    </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Record" />
+        <option value="Enum" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="RESET_MODE" value="MIXED" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Dragonslayer6710&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Dragonslayer6710/Crystal.git&quot;,
+    &quot;accountId&quot;: &quot;c6ecd6a3-965d-448d-9f2d-b6797d0dc71a&quot;
+  }
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="Security Analysis" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
+  <component name="ProjectId" id="3D7ryvU3UnlC4nxsVXo17FgMqiF" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.Crystal [run].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Crystal [wrapper].executor&quot;: &quot;Coverage&quot;,
+    &quot;Gradle.Crystal:crystal-sandbox [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Crystal:crystal-sandbox [run].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Download Sources.executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.Upgrade Gradle wrapper.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
+    &quot;codeWithMe.voiceChat.enabledByDefault&quot;: &quot;false&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/harri/IdeaProjects/Crystal/crystal-sandbox/assets/shaders&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/harri/IdeaProjects/Crystal/crystal-sandbox/src/main/java/org/example/Main.java&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-sandbox\assets\shaders" />
+      <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-sandbox\assets\textures\environment" />
+      <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-sandbox\assets\models" />
+      <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-sandbox\assets\textures" />
+      <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-sandbox" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-sandbox\assets\models\external" />
+      <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-sandbox\assets\models" />
+      <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-sandbox\assets\textures" />
+      <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-sandbox" />
+      <recent name="C:\Users\harri\IdeaProjects\Crystal\crystal-engine" />
+    </key>
+    <key name="MoveMembersDialog.RECENTS_KEY">
+      <recent name="com.crystal.engine.render.texture.TextureFactory" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.crystal.engine.graphics" />
+      <recent name="com.crystal.engine.render.gl" />
+      <recent name="com.crystal.engine.input" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Gradle.Crystal:crystal-sandbox [run]">
+    <configuration name="Crystal:crystal-sandbox [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/crystal-sandbox" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="build" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <configuration name="Crystal:crystal-sandbox [run]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
+      <ExternalSystemSettings>
+        <option name="executionName" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$/crystal-sandbox" />
+        <option name="externalSystemIdString" value="GRADLE" />
+        <option name="scriptParameters" value="--stacktrace" />
+        <option name="taskDescriptions">
+          <list />
+        </option>
+        <option name="taskNames">
+          <list>
+            <option value="run" />
+          </list>
+        </option>
+        <option name="vmOptions" />
+      </ExternalSystemSettings>
+      <ExternalSystemDebugServerProcess>true</ExternalSystemDebugServerProcess>
+      <ExternalSystemReattachDebugProcess>true</ExternalSystemReattachDebugProcess>
+      <ExternalSystemDebugDisabled>false</ExternalSystemDebugDisabled>
+      <DebugAllEnabled>false</DebugAllEnabled>
+      <RunAsTest>false</RunAsTest>
+      <GradleProfilingDisabled>false</GradleProfilingDisabled>
+      <GradleCoverageDisabled>false</GradleCoverageDisabled>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Gradle.Crystal:crystal-sandbox [build]" />
+      <item itemvalue="Gradle.Crystal:crystal-sandbox [run]" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Gradle.Crystal:crystal-sandbox [run]" />
+        <item itemvalue="Gradle.Crystal:crystal-sandbox [build]" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="7d0c4135-bdd2-4ccc-8942-85db8cbace50" name="Changes" comment="" />
+      <created>1777644207104</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1777644207104</updated>
+      <workItem from="1777822388524" duration="233000" />
+      <workItem from="1777822642411" duration="43000" />
+    </task>
+    <task id="LOCAL-00118" summary="exposure">
+      <option name="closed" value="true" />
+      <created>1778254239881</created>
+      <option name="number" value="00118" />
+      <option name="presentableId" value="LOCAL-00118" />
+      <option name="project" value="LOCAL" />
+      <updated>1778254239881</updated>
+    </task>
+    <task id="LOCAL-00119" summary="Refactoring">
+      <option name="closed" value="true" />
+      <created>1778255567008</created>
+      <option name="number" value="00119" />
+      <option name="presentableId" value="LOCAL-00119" />
+      <option name="project" value="LOCAL" />
+      <updated>1778255567008</updated>
+    </task>
+    <task id="LOCAL-00120" summary="Ambient Color/intensity into new Environment class">
+      <option name="closed" value="true" />
+      <created>1778256136960</created>
+      <option name="number" value="00120" />
+      <option name="presentableId" value="LOCAL-00120" />
+      <option name="project" value="LOCAL" />
+      <updated>1778256136960</updated>
+    </task>
+    <task id="LOCAL-00121" summary="Tidy up">
+      <option name="closed" value="true" />
+      <created>1778256693668</created>
+      <option name="number" value="00121" />
+      <option name="presentableId" value="LOCAL-00121" />
+      <option name="project" value="LOCAL" />
+      <updated>1778256693668</updated>
+    </task>
+    <task id="LOCAL-00122" summary="Environment Update!">
+      <option name="closed" value="true" />
+      <created>1778257305023</created>
+      <option name="number" value="00122" />
+      <option name="presentableId" value="LOCAL-00122" />
+      <option name="project" value="LOCAL" />
+      <updated>1778257305023</updated>
+    </task>
+    <task id="LOCAL-00123" summary="Environment Update!">
+      <option name="closed" value="true" />
+      <created>1778257869319</created>
+      <option name="number" value="00123" />
+      <option name="presentableId" value="LOCAL-00123" />
+      <option name="project" value="LOCAL" />
+      <updated>1778257869319</updated>
+    </task>
+    <task id="LOCAL-00124" summary="AssetConfig">
+      <option name="closed" value="true" />
+      <created>1778259310632</created>
+      <option name="number" value="00124" />
+      <option name="presentableId" value="LOCAL-00124" />
+      <option name="project" value="LOCAL" />
+      <updated>1778259310632</updated>
+    </task>
+    <task id="LOCAL-00125" summary="Mesh changes">
+      <option name="closed" value="true" />
+      <created>1778485956404</created>
+      <option name="number" value="00125" />
+      <option name="presentableId" value="LOCAL-00125" />
+      <option name="project" value="LOCAL" />
+      <updated>1778485956405</updated>
+    </task>
+    <task id="LOCAL-00126" summary="Mesh changes/ Model Loading changes">
+      <option name="closed" value="true" />
+      <created>1778487103625</created>
+      <option name="number" value="00126" />
+      <option name="presentableId" value="LOCAL-00126" />
+      <option name="project" value="LOCAL" />
+      <updated>1778487103625</updated>
+    </task>
+    <task id="LOCAL-00127" summary="AI fixes">
+      <option name="closed" value="true" />
+      <created>1778487246942</created>
+      <option name="number" value="00127" />
+      <option name="presentableId" value="LOCAL-00127" />
+      <option name="project" value="LOCAL" />
+      <updated>1778487246942</updated>
+    </task>
+    <task id="LOCAL-00128" summary="Model hierarchy logging">
+      <option name="closed" value="true" />
+      <created>1778488621122</created>
+      <option name="number" value="00128" />
+      <option name="presentableId" value="LOCAL-00128" />
+      <option name="project" value="LOCAL" />
+      <updated>1778488621122</updated>
+    </task>
+    <task id="LOCAL-00129" summary="Model material logging">
+      <option name="closed" value="true" />
+      <created>1778488833415</created>
+      <option name="number" value="00129" />
+      <option name="presentableId" value="LOCAL-00129" />
+      <option name="project" value="LOCAL" />
+      <updated>1778488833415</updated>
+    </task>
+    <task id="LOCAL-00130" summary="Implement hierarchical glTF scene import and improve PBR material handling&#10;&#10;- Add configurable AssetConfig asset root support&#10;- Preserve Assimp node hierarchy during model import&#10;- Import node transforms with quaternion rotation support&#10;- Add parented SceneObject transform propagation&#10;- Introduce MeshBounds with local-space center/radius calculation&#10;- Add world-space bounds helpers for frustum culling&#10;- Improve renderer culling using transformed mesh bounds&#10;- Add quaternion-based Transform rotation pipeline&#10;- Synchronize degree/radian rotation helpers&#10;- Add model hierarchy logging utilities&#10;- Improve material texture diagnostics/logging&#10;- Add explicit shader texture presence flags&#10;- Enable framebuffer sRGB output workflow&#10;- Improve PBR texture colour-space handling&#10;- Refine material fallback defaults and emissive handling">
+      <option name="closed" value="true" />
+      <created>1778490997379</created>
+      <option name="number" value="00130" />
+      <option name="presentableId" value="LOCAL-00130" />
+      <option name="project" value="LOCAL" />
+      <updated>1778490997380</updated>
+    </task>
+    <task id="LOCAL-00131" summary="fixed lack of metallicness">
+      <option name="closed" value="true" />
+      <created>1778491294453</created>
+      <option name="number" value="00131" />
+      <option name="presentableId" value="LOCAL-00131" />
+      <option name="project" value="LOCAL" />
+      <updated>1778491294453</updated>
+    </task>
+    <task id="LOCAL-00132" summary="Cubemap starting... better DSA for texture units">
+      <option name="closed" value="true" />
+      <created>1778494694865</created>
+      <option name="number" value="00132" />
+      <option name="presentableId" value="LOCAL-00132" />
+      <option name="project" value="LOCAL" />
+      <updated>1778494694865</updated>
+    </task>
+    <task id="LOCAL-00133" summary="Cubemap starting... better DSA for texture units">
+      <option name="closed" value="true" />
+      <created>1778572179232</created>
+      <option name="number" value="00133" />
+      <option name="presentableId" value="LOCAL-00133" />
+      <option name="project" value="LOCAL" />
+      <updated>1778572179233</updated>
+    </task>
+    <task id="LOCAL-00134" summary="Using Texture slots">
+      <option name="closed" value="true" />
+      <created>1778572376869</created>
+      <option name="number" value="00134" />
+      <option name="presentableId" value="LOCAL-00134" />
+      <option name="project" value="LOCAL" />
+      <updated>1778572376869</updated>
+    </task>
+    <task id="LOCAL-00135" summary="Using Texture slots, updated bindTextureIfNeeded">
+      <option name="closed" value="true" />
+      <created>1778572993467</created>
+      <option name="number" value="00135" />
+      <option name="presentableId" value="LOCAL-00135" />
+      <option name="project" value="LOCAL" />
+      <updated>1778572993467</updated>
+    </task>
+    <task id="LOCAL-00136" summary="AI touch ups">
+      <option name="closed" value="true" />
+      <created>1778573248364</created>
+      <option name="number" value="00136" />
+      <option name="presentableId" value="LOCAL-00136" />
+      <option name="project" value="LOCAL" />
+      <updated>1778573248365</updated>
+    </task>
+    <task id="LOCAL-00137" summary="Default environment textures + TextureFactory refactoring">
+      <option name="closed" value="true" />
+      <created>1778573969195</created>
+      <option name="number" value="00137" />
+      <option name="presentableId" value="LOCAL-00137" />
+      <option name="project" value="LOCAL" />
+      <updated>1778573969196</updated>
+    </task>
+    <task id="LOCAL-00138" summary="AI touch ups">
+      <option name="closed" value="true" />
+      <created>1778574217065</created>
+      <option name="number" value="00138" />
+      <option name="presentableId" value="LOCAL-00138" />
+      <option name="project" value="LOCAL" />
+      <updated>1778574217065</updated>
+    </task>
+    <task id="LOCAL-00139" summary="IBL shader uniforms">
+      <option name="closed" value="true" />
+      <created>1778574965418</created>
+      <option name="number" value="00139" />
+      <option name="presentableId" value="LOCAL-00139" />
+      <option name="project" value="LOCAL" />
+      <updated>1778574965418</updated>
+    </task>
+    <task id="LOCAL-00140" summary="Testing cubemaps... but erroring">
+      <option name="closed" value="true" />
+      <created>1778575541784</created>
+      <option name="number" value="00140" />
+      <option name="presentableId" value="LOCAL-00140" />
+      <option name="project" value="LOCAL" />
+      <updated>1778575541784</updated>
+    </task>
+    <task id="LOCAL-00141" summary="create1x1 -&gt; using CUBEMAP instead of TEXTURE_2D">
+      <option name="closed" value="true" />
+      <created>1778575624098</created>
+      <option name="number" value="00141" />
+      <option name="presentableId" value="LOCAL-00141" />
+      <option name="project" value="LOCAL" />
+      <updated>1778575624098</updated>
+    </task>
+    <task id="LOCAL-00142" summary="debugViewMode 7">
+      <option name="closed" value="true" />
+      <created>1778576058672</created>
+      <option name="number" value="00142" />
+      <option name="presentableId" value="LOCAL-00142" />
+      <option name="project" value="LOCAL" />
+      <updated>1778576058672</updated>
+    </task>
+    <task id="LOCAL-00143" summary="AI cleanup">
+      <option name="closed" value="true" />
+      <created>1778576230926</created>
+      <option name="number" value="00143" />
+      <option name="presentableId" value="LOCAL-00143" />
+      <option name="project" value="LOCAL" />
+      <updated>1778576230926</updated>
+    </task>
+    <task id="LOCAL-00144" summary="debugviewmodes up to 9">
+      <option name="closed" value="true" />
+      <created>1778576485113</created>
+      <option name="number" value="00144" />
+      <option name="presentableId" value="LOCAL-00144" />
+      <option name="project" value="LOCAL" />
+      <updated>1778576485113</updated>
+    </task>
+    <task id="LOCAL-00145" summary="corrections and setup for HDR texture loading for actual IBL texturing">
+      <option name="closed" value="true" />
+      <created>1778577471599</created>
+      <option name="number" value="00145" />
+      <option name="presentableId" value="LOCAL-00145" />
+      <option name="project" value="LOCAL" />
+      <updated>1778577471599</updated>
+    </task>
+    <task id="LOCAL-00146" summary="Huge amount of Env CubeMap code">
+      <option name="closed" value="true" />
+      <created>1778579773375</created>
+      <option name="number" value="00146" />
+      <option name="presentableId" value="LOCAL-00146" />
+      <option name="project" value="LOCAL" />
+      <updated>1778579773375</updated>
+    </task>
+    <task id="LOCAL-00147" summary="Huge amount of Env CubeMap code">
+      <option name="closed" value="true" />
+      <created>1778580106243</created>
+      <option name="number" value="00147" />
+      <option name="presentableId" value="LOCAL-00147" />
+      <option name="project" value="LOCAL" />
+      <updated>1778580106243</updated>
+    </task>
+    <task id="LOCAL-00148" summary="ai tidyup">
+      <option name="closed" value="true" />
+      <created>1778580378457</created>
+      <option name="number" value="00148" />
+      <option name="presentableId" value="LOCAL-00148" />
+      <option name="project" value="LOCAL" />
+      <updated>1778580378457</updated>
+    </task>
+    <task id="LOCAL-00149" summary="refactoring">
+      <option name="closed" value="true" />
+      <created>1778580738459</created>
+      <option name="number" value="00149" />
+      <option name="presentableId" value="LOCAL-00149" />
+      <option name="project" value="LOCAL" />
+      <updated>1778580738459</updated>
+    </task>
+    <task id="LOCAL-00150" summary="refactoring and introducing IrradianceMap">
+      <option name="closed" value="true" />
+      <created>1778582131022</created>
+      <option name="number" value="00150" />
+      <option name="presentableId" value="LOCAL-00150" />
+      <option name="project" value="LOCAL" />
+      <updated>1778582131022</updated>
+    </task>
+    <task id="LOCAL-00151" summary="changes to irradiance_convolution.frag">
+      <option name="closed" value="true" />
+      <created>1778582686050</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1778582686050</updated>
+    </task>
+    <task id="LOCAL-00152" summary="AI tidy up">
+      <option name="closed" value="true" />
+      <created>1778582883022</created>
+      <option name="number" value="00152" />
+      <option name="presentableId" value="LOCAL-00152" />
+      <option name="project" value="LOCAL" />
+      <updated>1778582883022</updated>
+    </task>
+    <task id="LOCAL-00153" summary="mipmap levels -&gt; stored in Texture">
+      <option name="closed" value="true" />
+      <created>1778583401656</created>
+      <option name="number" value="00153" />
+      <option name="presentableId" value="LOCAL-00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1778583401656</updated>
+    </task>
+    <task id="LOCAL-00154" summary="Prefilter mapping">
+      <option name="closed" value="true" />
+      <created>1778584268929</created>
+      <option name="number" value="00154" />
+      <option name="presentableId" value="LOCAL-00154" />
+      <option name="project" value="LOCAL" />
+      <updated>1778584268929</updated>
+    </task>
+    <task id="LOCAL-00155" summary="BRDF LUT initial">
+      <option name="closed" value="true" />
+      <created>1778585571584</created>
+      <option name="number" value="00155" />
+      <option name="presentableId" value="LOCAL-00155" />
+      <option name="project" value="LOCAL" />
+      <updated>1778585571584</updated>
+    </task>
+    <task id="LOCAL-00156" summary="BRDF LUT further">
+      <option name="closed" value="true" />
+      <created>1778586560393</created>
+      <option name="number" value="00156" />
+      <option name="presentableId" value="LOCAL-00156" />
+      <option name="project" value="LOCAL" />
+      <updated>1778586560393</updated>
+    </task>
+    <task id="LOCAL-00157" summary="BRDF LUT further">
+      <option name="closed" value="true" />
+      <created>1778587047012</created>
+      <option name="number" value="00157" />
+      <option name="presentableId" value="LOCAL-00157" />
+      <option name="project" value="LOCAL" />
+      <updated>1778587047012</updated>
+    </task>
+    <task id="LOCAL-00158" summary="BRDF LUT visualisation better">
+      <option name="closed" value="true" />
+      <created>1778662531923</created>
+      <option name="number" value="00158" />
+      <option name="presentableId" value="LOCAL-00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1778662531923</updated>
+    </task>
+    <task id="LOCAL-00159" summary="Miplevels">
+      <option name="closed" value="true" />
+      <created>1778664365230</created>
+      <option name="number" value="00159" />
+      <option name="presentableId" value="LOCAL-00159" />
+      <option name="project" value="LOCAL" />
+      <updated>1778664365230</updated>
+    </task>
+    <task id="LOCAL-00160" summary="ai tidyup">
+      <option name="closed" value="true" />
+      <created>1778664599391</created>
+      <option name="number" value="00160" />
+      <option name="presentableId" value="LOCAL-00160" />
+      <option name="project" value="LOCAL" />
+      <updated>1778664599391</updated>
+    </task>
+    <task id="LOCAL-00161" summary="BRDF LUT broken">
+      <option name="closed" value="true" />
+      <created>1778665050283</created>
+      <option name="number" value="00161" />
+      <option name="presentableId" value="LOCAL-00161" />
+      <option name="project" value="LOCAL" />
+      <updated>1778665050283</updated>
+    </task>
+    <task id="LOCAL-00162" summary="BRDF LUT fixed?">
+      <option name="closed" value="true" />
+      <created>1778671690964</created>
+      <option name="number" value="00162" />
+      <option name="presentableId" value="LOCAL-00162" />
+      <option name="project" value="LOCAL" />
+      <updated>1778671690964</updated>
+    </task>
+    <task id="LOCAL-00163" summary="BRDF LUT fixed">
+      <option name="closed" value="true" />
+      <created>1778676573281</created>
+      <option name="number" value="00163" />
+      <option name="presentableId" value="LOCAL-00163" />
+      <option name="project" value="LOCAL" />
+      <updated>1778676573281</updated>
+    </task>
+    <task id="LOCAL-00164" summary="IBLGenerator -&gt; cleans up IBL Environment setup that was in SandboxMain.init">
+      <option name="closed" value="true" />
+      <created>1778678271316</created>
+      <option name="number" value="00164" />
+      <option name="presentableId" value="LOCAL-00164" />
+      <option name="project" value="LOCAL" />
+      <updated>1778678271317</updated>
+    </task>
+    <task id="LOCAL-00165" summary="Skybox rendering initial">
+      <option name="closed" value="true" />
+      <created>1778683194922</created>
+      <option name="number" value="00165" />
+      <option name="presentableId" value="LOCAL-00165" />
+      <option name="project" value="LOCAL" />
+      <updated>1778683194922</updated>
+    </task>
+    <task id="LOCAL-00166" summary="Basic skybox rendering">
+      <option name="closed" value="true" />
+      <created>1778684053815</created>
+      <option name="number" value="00166" />
+      <option name="presentableId" value="LOCAL-00166" />
+      <option name="project" value="LOCAL" />
+      <updated>1778684053815</updated>
+    </task>
+    <option name="localTasksCounter" value="167" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Testing cubemaps... but erroring" />
+    <MESSAGE value="create1x1 -&gt; using CUBEMAP instead of TEXTURE_2D" />
+    <MESSAGE value="debugViewMode 7" />
+    <MESSAGE value="AI cleanup" />
+    <MESSAGE value="debugviewmodes up to 9" />
+    <MESSAGE value="corrections and setup for HDR texture loading for actual IBL texturing" />
+    <MESSAGE value="Huge amount of Env CubeMap code" />
+    <MESSAGE value="refactoring" />
+    <MESSAGE value="refactoring and introducing IrradianceMap" />
+    <MESSAGE value="changes to irradiance_convolution.frag" />
+    <MESSAGE value="AI tidy up" />
+    <MESSAGE value="mipmap levels -&gt; stored in Texture" />
+    <MESSAGE value="Prefilter mapping" />
+    <MESSAGE value="BRDF LUT initial" />
+    <MESSAGE value="BRDF LUT further" />
+    <MESSAGE value="BRDF LUT visualisation better" />
+    <MESSAGE value="EnvironmentMapGenerator.GLStateSnapshot" />
+    <MESSAGE value="Miplevels" />
+    <MESSAGE value="ai tidyup" />
+    <MESSAGE value="BRDF LUT broken" />
+    <MESSAGE value="BRDF LUT fixed?" />
+    <MESSAGE value="BRDF LUT fixed" />
+    <MESSAGE value="IBLGenerator -&gt; cleans up IBL Environment setup that was in SandboxMain.init" />
+    <MESSAGE value="Skybox rendering initial" />
+    <MESSAGE value="Basic skybox rendering" />
+    <option name="LAST_COMMIT_MESSAGE" value="Basic skybox rendering" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/crystal-sandbox/src/main/java/org/example/Main.java</url>
+          <line>13</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/Mesh.java</url>
+          <line>80</line>
+          <option name="timeStamp" value="21" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/mesh/Mesh.java</url>
+          <line>83</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/render/gl/VertexArray.java</url>
+          <line>10</line>
+          <option name="timeStamp" value="26" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/crystal-engine/src/main/java/com/crystal/engine/window/Window.java</url>
+          <line>123</line>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/Crystal$Crystal__wrapper_.ic" NAME="Crystal [wrapper] Coverage Results" MODIFIED="1777899960320" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
+  </component>
+</project>
