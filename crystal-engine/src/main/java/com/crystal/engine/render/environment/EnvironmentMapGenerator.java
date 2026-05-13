@@ -185,7 +185,7 @@ public final class EnvironmentMapGenerator implements Disposable {
             Texture output = TextureFactory.createRenderTexture2D(
                     size,
                     size,
-                    TextureSettings.defaultData(),
+                    TextureSettings.defaultBrdfLut(),
                     "<generated:brdf-lut>"
             );
 

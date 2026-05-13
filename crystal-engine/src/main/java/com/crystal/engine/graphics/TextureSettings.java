@@ -55,6 +55,16 @@ public final class TextureSettings {
                 .setWrapT(TextureWrap.CLAMP_TO_EDGE);
     }
 
+    public static TextureSettings defaultBrdfLut() {
+        return new TextureSettings()
+                .setFormat(TextureFormat.RG16F)
+                .setGenerateMipmaps(false)
+                .setMinFilter(TextureFilter.LINEAR)
+                .setMagFilter(TextureFilter.LINEAR)
+                .setWrapS(TextureWrap.CLAMP_TO_EDGE)
+                .setWrapT(TextureWrap.CLAMP_TO_EDGE);
+    }
+
     public static TextureSettings forType(TextureType type) {
         if (type == null) throw new IllegalArgumentException("TextureType cannot be null");
 

@@ -5,7 +5,8 @@ import static org.lwjgl.opengl.GL30.*;
 public enum TextureFormat {
     RGBA8(GL_RGBA8),
     SRGBA8(GL_SRGB8_ALPHA8),
-    RGBA16F(GL_RGBA16F);
+    RGBA16F(GL_RGBA16F),
+    RG16F(GL_RG16F);
 
     public final int glValue;
 
