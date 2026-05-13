@@ -143,13 +143,19 @@ public class Engine implements WindowEventListener, Application {
                 if (statsTitleTimer >= 0.25) {
                     statsTitleTimer = 0.0;
 
+                    var renderStats = renderer.getStats();
+
                     window.setTitle(String.format(
-                            "%s | FPS: %d | Frame: %.2fms | Update: %.2fms | Render: %.2fms",
+                            "%s | FPS: %d | Frame: %.2fms | Update: %.2fms | Render: %.2fms" +
+                                    " | Visible: %d | Culled: %d | Draws: %d",
                             config.getWindowConfig().getTitle(),
                             time.getFps(),
                             time.getFrameTimeMs(),
                             time.getUpdateTimeMs(),
-                            time.getRenderTimeMs()
+                            time.getRenderTimeMs(),
+                            renderStats.getVisibleObjectCount(),
+                            renderStats.getCulledObjectCount(),
+                            renderStats.getSceneDrawCount()
                     ));
                 }
             }

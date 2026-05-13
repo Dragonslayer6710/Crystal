@@ -2,24 +2,45 @@ package com.crystal.engine.render;
 
 public class RenderStats {
 
+    private int renderableObjectCount;
     private int visibleObjectCount;
+    private int culledObjectCount;
     private int sceneDrawCount;
 
+
     public void reset() {
+        renderableObjectCount = 0;
         visibleObjectCount = 0;
+        culledObjectCount = 0;
         sceneDrawCount = 0;
+    }
+
+    public int getRenderableObjectCount() {
+        return renderableObjectCount;
     }
 
     public int getVisibleObjectCount() {
         return visibleObjectCount;
     }
 
+    public int getCulledObjectCount() {
+        return culledObjectCount;
+    }
+
     public int getSceneDrawCount() {
         return sceneDrawCount;
     }
 
+    void setRenderableObjectCount(int renderableObjectCount) {
+        this.renderableObjectCount = renderableObjectCount;
+    }
+
     public void setVisibleObjectCount(int visibleObjectCount) {
         this.visibleObjectCount = visibleObjectCount;
+    }
+
+    void setCulledObjectCount(int culledObjectCount) {
+        this.culledObjectCount = culledObjectCount;
     }
 
     public void incrementDrawCommandCount() {

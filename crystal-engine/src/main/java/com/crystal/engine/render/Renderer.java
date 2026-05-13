@@ -28,6 +28,7 @@ public class Renderer {
 
     private final RenderQueue queue = new RenderQueue();
     private final RenderStats stats = new RenderStats();
+    private int renderableObjectCount;
 
     private boolean frustumCullingEnabled;
 
@@ -72,8 +73,10 @@ public class Renderer {
 
     // Called at start of frame
     public void beginFrame() {
-        queue.clear();
         stats.reset();
+        renderableObjectCount = 0;
+
+        queue.clear();
         context.beginFrame();
         context.setDebugViewMode(debugViewMode);
         context.setExposure(exposure);
@@ -115,7 +118,9 @@ public class Renderer {
         for (SceneObject root : scene.getRootObjects())
             collectVisibleObjects(root, visibleObjects, camera);
 
+        stats.setRenderableObjectCount(renderableObjectCount);
         stats.setVisibleObjectCount(visibleObjects.size());
+        stats.setCulledObjectCount(renderableObjectCount - visibleObjects.size());
 
         return visibleObjects;
     }
@@ -149,6 +154,7 @@ public class Renderer {
             return;
 
         if (object.isVisible() && object.isRenderable()) {
+            renderableObjectCount++;
             if (!frustumCullingEnabled || camera.canSee(
                     object.getWorldBoundsCenter(),
                     object.getWorldBoundingRadius()
@@ -226,6 +232,10 @@ public class Renderer {
             case 9 -> "BRDF LUT";
             default -> "Unknown";
         };
+    }
+
+    public RenderStats getStats() {
+        return stats;
     }
 
     public void setDefaultTextures(Texture white, Texture normal, Texture blackCubemap, Texture brdfLut) {
