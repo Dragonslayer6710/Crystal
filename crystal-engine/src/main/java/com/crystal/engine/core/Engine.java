@@ -147,7 +147,7 @@ public class Engine implements WindowEventListener, Application {
 
                     window.setTitle(String.format(
                             "%s | FPS: %d | Frame: %.2fms | Update: %.2fms | Render: %.2fms" +
-                                    " | Visible: %d | Culled: %d | Draws: %d",
+                                    " | Visible: %d | Culled: %d | Draws: %d | Scene: %d | Skybox: %d",
                             config.getWindowConfig().getTitle(),
                             time.getFps(),
                             time.getFrameTimeMs(),
@@ -155,7 +155,9 @@ public class Engine implements WindowEventListener, Application {
                             time.getRenderTimeMs(),
                             renderStats.getVisibleObjectCount(),
                             renderStats.getCulledObjectCount(),
-                            renderStats.getSceneDrawCount()
+                            renderStats.getTotalDrawCount(),
+                            renderStats.getSceneDrawCount(),
+                            renderStats.getSkyboxDrawCount()
                     ));
                 }
             }

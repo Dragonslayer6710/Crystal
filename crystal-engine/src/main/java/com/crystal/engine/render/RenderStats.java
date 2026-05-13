@@ -38,6 +38,22 @@ public class RenderStats {
         return skyboxDrawCount;
     }
 
+    public int getTotalDrawCount() {
+        return sceneDrawCount + skyboxDrawCount;
+    }
+
+    public String summary() {
+        return String.format(
+                "renderable=%d, visible=%d, culled=%d, draws=%d, sceneDraws=%d, skyboxDraws=%d",
+                renderableObjectCount,
+                visibleObjectCount,
+                culledObjectCount,
+                getTotalDrawCount(),
+                sceneDrawCount,
+                skyboxDrawCount
+        );
+    }
+
     void setRenderableObjectCount(int renderableObjectCount) {
         this.renderableObjectCount = renderableObjectCount;
     }

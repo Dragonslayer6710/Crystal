@@ -110,6 +110,9 @@ public class SandboxMain implements Game {
         if (input.isKeyPressed(Key.F))
             renderer.setFrustumCullingEnabled(!renderer.isFrustumCullingEnabled());
 
+        if (input.isKeyPressed(Key.P))
+            logger.info("Renderer stats: {}", renderer.getStats().summary());
+
         if (input.isKeyPressed(Key.NUMPAD_0)) renderer.setDebugViewMode(0);
         if (input.isKeyPressed(Key.NUMPAD_1)) renderer.setDebugViewMode(1);
         if (input.isKeyPressed(Key.NUMPAD_2)) renderer.setDebugViewMode(2);

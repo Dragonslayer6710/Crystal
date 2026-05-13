@@ -28,6 +28,7 @@ public class Renderer {
 
     private final RenderQueue queue = new RenderQueue();
     private final RenderStats stats = new RenderStats();
+    private final VisibilityResult visibilityResult = new VisibilityResult();
 
     private boolean frustumCullingEnabled;
 
@@ -135,21 +136,21 @@ public class Renderer {
     }
 
     private List<SceneObject> collectVisibleObjects(Scene scene) {
-        VisibilityResult result = new VisibilityResult();
+        visibilityResult.reset();
 
         Camera camera = scene.getCamera();
 
         for (SceneObject root : scene.getRootObjects())
-            collectVisibleObjects(root, result, camera);
+            collectVisibleObjects(root, visibilityResult, camera);
 
-        stats.setRenderableObjectCount(result.renderableObjectCount);
-        stats.setVisibleObjectCount(result.visibleObjects.size());
+        stats.setRenderableObjectCount(visibilityResult.renderableObjectCount);
+        stats.setVisibleObjectCount(visibilityResult.visibleObjects.size());
         stats.setCulledObjectCount(Math.max(
                 0,
-                result.renderableObjectCount - result.visibleObjects.size()
+                visibilityResult.renderableObjectCount - visibilityResult.visibleObjects.size()
         ));
 
-        return result.visibleObjects;
+        return visibilityResult.visibleObjects;
     }
 
     private void collectVisibleObjects(SceneObject object, VisibilityResult result, Camera camera) {
@@ -254,7 +255,13 @@ public class Renderer {
     }
 
     private static final class VisibilityResult {
+
         private final List<SceneObject> visibleObjects = new ArrayList<>();
         private int renderableObjectCount;
+
+        private void reset() {
+            visibleObjects.clear();
+            renderableObjectCount = 0;
+        }
     }
 }
