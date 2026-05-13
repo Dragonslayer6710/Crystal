@@ -29,6 +29,8 @@ public class SandboxMain implements Game {
     private SceneObject cubeB;
     private SceneObject cubeC;
 
+    private Model helmet;
+
     private FlyCameraController cameraController;
 
     private void addCubes(Shader shader) {
@@ -65,11 +67,11 @@ public class SandboxMain implements Game {
 //                new ModelLoadOptions().setShader(shader)
 //        );
 
-        Model model = ctx.getResources().loadModel(
+        helmet = ctx.getResources().loadModel(
                 "/external/DamagedHelmet.glb",
                 new ModelLoadOptions().setShader(shader)
         );
-        model.logHierarchy();
+        helmet.logHierarchy();
 
         IBLGenerator iblGenerator = IBLGenerator.createDefault(ctx.getResources());
         iblGenerator.generateFromHDR(
@@ -77,7 +79,7 @@ public class SandboxMain implements Game {
                 "environment/studio_small_03_1k.hdr"
         );
 
-        for (SceneObject object : model.getRootObjects()) {
+        for (SceneObject object : helmet.getRootObjects()) {
             ctx.getScene().add(object);
 
             object.getTransform()
@@ -114,6 +116,12 @@ public class SandboxMain implements Game {
         if (input.isKeyPressed(Key.NUMPAD_ENTER))
             renderer.cycleDebugViewMode();
 
+        helmet.getRootObjects()
+                .get(0)
+                .getTransform()
+                .rotate(0.0f, 0.0f, (float) dt);
+
+//        cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
 
 //        for (SceneObject object : ctx.getScene().getRootObjects())
 //            object.getTransform().rotate((float) dt, (float) dt, 0.0f);

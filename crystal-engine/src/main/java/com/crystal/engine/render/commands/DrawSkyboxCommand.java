@@ -4,6 +4,7 @@ import com.crystal.engine.render.RenderContext;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
+import com.crystal.engine.render.shader.ShaderUniforms;
 import com.crystal.engine.render.texture.Texture;
 import org.joml.Matrix4f;
 
@@ -37,7 +38,7 @@ public class DrawSkyboxCommand implements RenderCommand {
 
         shader.bind();
 
-        shader.setInt("skybox", 0);
+        shader.setInt(ShaderUniforms.SKYBOX, 0);
 
         Matrix4f view = new Matrix4f(
                 scene.getCamera().getViewMatrix()
@@ -47,9 +48,9 @@ public class DrawSkyboxCommand implements RenderCommand {
         view.m31(0.0f);
         view.m32(0.0f);
 
-        shader.setMat4("view", view);
+        shader.setMat4(ShaderUniforms.VIEW, view);
         shader.setMat4(
-                "projection",
+                ShaderUniforms.PROJECTION,
                 scene.getCamera().getProjectionMatrix(
                         context.getAspectRatio()
                 )

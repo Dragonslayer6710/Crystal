@@ -2,6 +2,7 @@ package com.crystal.engine.render;
 
 import com.crystal.engine.render.commands.ClearCommand;
 import com.crystal.engine.render.commands.DrawSceneObjectCommand;
+import com.crystal.engine.render.commands.DrawSkyboxCommand;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
@@ -107,6 +108,11 @@ public class Renderer {
         var camera = scene.getCamera();
         camera.updateFrustum(aspectRatio);
         context.prepareScene(scene, aspectRatio);
+        queue.submit(new DrawSkyboxCommand(
+                scene,
+                skyboxShader,
+                skyboxCubeMesh
+        ));
 
         List<SceneObject> visibleObjects = new ArrayList<>();
 

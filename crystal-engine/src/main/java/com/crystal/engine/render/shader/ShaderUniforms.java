@@ -6,6 +6,9 @@ public final class ShaderUniforms {
     public static final String HAS_IBL = "hasIBL";
 
     public static final String MODEL = "model";
+    public static final String VIEW = "view";
+    public static final String PROJECTION = "projection";
+    public static final String SKYBOX = "skybox";
 
     public static final String ALBEDO_TEXTURE = "albedoTexture";
     public static final String NORMAL_MAP = "normalMap";
