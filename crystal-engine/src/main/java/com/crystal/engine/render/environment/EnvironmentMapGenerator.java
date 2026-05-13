@@ -185,11 +185,18 @@ public final class EnvironmentMapGenerator implements Disposable {
             Texture output = TextureFactory.createRenderTexture2D(
                     size,
                     size,
-                    TextureSettings.defaultAlbedo(),
+                    TextureSettings.defaultData(),
                     "<generated:brdf-lut>"
             );
 
             glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+
+            glNamedRenderbufferStorage(
+                    renderbuffer,
+                    GL_DEPTH_COMPONENT24,
+                    size,
+                    size
+            );
 
             glNamedFramebufferTexture(
                     framebuffer,
@@ -198,11 +205,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                     0
             );
 
-            int status = glCheckNamedFramebufferStatus(framebuffer, GL_FRAMEBUFFER);
-
-            if (status != GL_FRAMEBUFFER_COMPLETE) {
-                throw new IllegalStateException("BRDF LUT framebuffer incomplete: " + status);
-            }
+            glNamedFramebufferDrawBuffer(framebuffer, GL_COLOR_ATTACHMENT0);
 
             glViewport(0, 0, size, size);
 
