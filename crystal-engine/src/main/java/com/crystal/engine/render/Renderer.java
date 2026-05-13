@@ -108,11 +108,13 @@ public class Renderer {
         var camera = scene.getCamera();
         camera.updateFrustum(aspectRatio);
         context.prepareScene(scene, aspectRatio);
-        queue.submit(new DrawSkyboxCommand(
-                scene,
-                skyboxShader,
-                skyboxCubeMesh
-        ));
+        if (scene.getEnvironment().hasSkybox()) {
+            queue.submit(new DrawSkyboxCommand(
+                    scene,
+                    skyboxShader,
+                    skyboxCubeMesh
+            ));
+        }
 
         List<SceneObject> visibleObjects = new ArrayList<>();
 
