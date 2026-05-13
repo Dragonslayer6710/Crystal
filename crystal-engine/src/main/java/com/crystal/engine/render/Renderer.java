@@ -9,7 +9,6 @@ import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
-import com.crystal.engine.render.texture.TextureFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +27,7 @@ public class Renderer {
     private final RenderContext context = new RenderContext();
 
     private final RenderQueue queue = new RenderQueue();
+    private final RenderStats stats = new RenderStats();
 
     private boolean frustumCullingEnabled;
 
@@ -73,6 +73,7 @@ public class Renderer {
     // Called at start of frame
     public void beginFrame() {
         queue.clear();
+        stats.reset();
         context.beginFrame();
         context.setDebugViewMode(debugViewMode);
         context.setExposure(exposure);
@@ -114,6 +115,8 @@ public class Renderer {
         for (SceneObject root : scene.getRootObjects())
             collectVisibleObjects(root, visibleObjects, camera);
 
+        stats.setVisibleObjectCount(visibleObjects.size());
+
         return visibleObjects;
     }
 
@@ -135,8 +138,10 @@ public class Renderer {
     }
 
     private void submitVisibleObjects(List<SceneObject> visibleObjects) {
-        for (SceneObject object : visibleObjects)
+        for (SceneObject object : visibleObjects) {
             queue.submit(new DrawSceneObjectCommand(object));
+            stats.incrementDrawCommandCount();
+        }
     }
 
     private void collectVisibleObjects(SceneObject object, List<SceneObject> visibleObjects, Camera camera) {
