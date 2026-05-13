@@ -64,10 +64,22 @@ public class Engine implements WindowEventListener, Application {
         if (windowConfig.isDebugContext())
             GLDebug.init();
 
+        resourceManager = new ResourceManager(config.getAssetConfig());
+
         renderer = new Renderer(config.getRendererConfig());
         renderer.init(windowConfig.getWidth(), windowConfig.getHeight());
 
-        resourceManager = new ResourceManager(config.getAssetConfig());
+        renderer.setDefaultTextures(
+                resourceManager.getDefaultWhiteTexture(),
+                resourceManager.getDefaultNormalTexture(),
+                resourceManager.getDefaultBlackCubemap(),
+                resourceManager.getDefaultBrdfLut()
+        );
+
+        renderer.setSkyboxResources(
+                resourceManager.getSkyboxShader(),
+                resourceManager.getSkyboxCubeMesh()
+        );
 
         scene = new Scene();
 
@@ -174,8 +186,6 @@ public class Engine implements WindowEventListener, Application {
         if (scene != null) scene.dispose();
 
         if (resourceManager != null) resourceManager.disposeAll();
-
-        if (renderer != null) renderer.dispose();
 
         GLDebug.dispose();
 

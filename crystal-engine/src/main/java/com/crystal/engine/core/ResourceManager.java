@@ -7,9 +7,11 @@ import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.graphics.TextureType;
 import com.crystal.engine.render.mesh.Mesh;
+import com.crystal.engine.render.mesh.MeshFactory;
 import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
+import com.crystal.engine.render.texture.TextureFactory;
 import com.crystal.engine.render.texture.TextureLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +32,14 @@ public class ResourceManager {
 
     private final List<Disposable> resources = new ArrayList<>();
     private final Path assetRoot;
+
+    private Texture defaultWhiteTexture;
+    private Texture defaultNormalTexture;
+    private Texture defaultBlackCubemap;
+    private Texture defaultBrdfLut;
+
+    private Shader skyboxShader;
+    private Mesh skyboxCubeMesh;
 
     private final Map<String, Texture> textureCache = new HashMap<>();
     private final Map<String, Shader> shaderCache = new HashMap<>();
@@ -117,6 +127,63 @@ public class ResourceManager {
                 assetRoot.resolve("textures/" + path),
                 TextureSettings.defaultHDR()
         )));
+    }
+
+    public Texture getDefaultWhiteTexture() {
+        if (defaultWhiteTexture == null) {
+            defaultWhiteTexture = register(TextureFactory.create1x1(
+                    "default-white", 255, 255, 255, 255
+            ));
+        }
+
+        return defaultWhiteTexture;
+    }
+
+    public Texture getDefaultNormalTexture() {
+        if (defaultNormalTexture == null) {
+            defaultNormalTexture = register(TextureFactory.create1x1(
+                    "default-normal", 128, 128, 255, 255
+            ));
+        }
+
+        return defaultNormalTexture;
+    }
+
+    public Texture getDefaultBlackCubemap() {
+        if (defaultBlackCubemap == null) {
+            defaultBlackCubemap = register(TextureFactory.createCubemap(
+                    1,
+                    "default-black-cubemap"
+            ));
+        }
+
+        return defaultBlackCubemap;
+    }
+
+    public Texture getDefaultBrdfLut() {
+        if (defaultBrdfLut == null) {
+            defaultBrdfLut = register(TextureFactory.create1x1(
+                    "default-brdf-lut", 255, 255, 255, 255
+            ));
+        }
+
+        return defaultBrdfLut;
+    }
+
+    public Shader getSkyboxShader() {
+        if (skyboxShader == null) {
+            skyboxShader = createShaderProgram("skybox");
+        }
+
+        return skyboxShader;
+    }
+
+    public Mesh getSkyboxCubeMesh() {
+        if (skyboxCubeMesh == null) {
+            skyboxCubeMesh = MeshFactory.createPositionOnlyCube(this);
+        }
+
+        return skyboxCubeMesh;
     }
 
     public void disposeAll() {

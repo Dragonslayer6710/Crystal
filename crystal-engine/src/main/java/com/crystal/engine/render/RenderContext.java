@@ -19,6 +19,7 @@ public class RenderContext {
 
     private int debugViewMode = 0;
     private float exposure = 1.0f;
+    private float aspectRatio = 1.0f;
     private boolean hasIBL;
 
     private boolean currentDepthTest = true;
@@ -147,6 +148,8 @@ public class RenderContext {
     }
 
     public void prepareScene(Scene scene, float aspectRatio) {
+        this.aspectRatio = aspectRatio;
+
         float[] data = new float[48];
 
         var camera = scene.getCamera();
@@ -207,12 +210,9 @@ public class RenderContext {
         this.exposure = exposure;
     }
 
-    public void setDefaultTextures(Texture white, Texture normal) {
+    public void setDefaultTextures(Texture white, Texture normal, Texture blackCubemap, Texture brdfLut) {
         this.defaultWhiteTexture = white;
         this.defaultNormalTexture = normal;
-    }
-
-    public void setDefaultEnvironmentTextures(Texture blackCubemap, Texture brdfLut) {
         this.defaultBlackCubemap = blackCubemap;
         this.defaultBrdfLut = brdfLut;
     }
@@ -222,5 +222,9 @@ public class RenderContext {
             throw new IllegalArgumentException("Debug view mode must be between 0 and 9");
 
         this.debugViewMode = debugViewMode;
+    }
+
+    public float getAspectRatio() {
+        return aspectRatio;
     }
 }

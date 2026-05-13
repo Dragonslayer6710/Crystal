@@ -2,9 +2,11 @@ package com.crystal.engine.render;
 
 import com.crystal.engine.render.commands.ClearCommand;
 import com.crystal.engine.render.commands.DrawSceneObjectCommand;
+import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.texture.TextureFactory;
 import org.slf4j.Logger;
@@ -30,12 +32,10 @@ public class Renderer {
 
     private float exposure = 1.0f;
 
-    private Texture defaultWhiteTexture;
-    private Texture defaultNormalTexture;
-    private Texture defaultBlackCubemap;
-    private Texture defaultBrdfLut;
-
     private int debugViewMode = 0;
+
+    private Shader skyboxShader;
+    private Mesh skyboxCubeMesh;
 
     public Renderer(RendererConfig config) {
         if (config == null) throw new IllegalArgumentException("RendererConfig cannot be null");
@@ -49,14 +49,6 @@ public class Renderer {
     }
 
     public void init(int width, int height) {
-        defaultWhiteTexture = TextureFactory.create1x1("default-white",255, 255, 255, 255);
-        defaultNormalTexture = TextureFactory.create1x1("default-normal",128, 128, 255, 255);
-        context.setDefaultTextures(defaultWhiteTexture, defaultNormalTexture);
-
-        defaultBlackCubemap = TextureFactory.createCubemap(1, "default-black-cubemap");
-        defaultBrdfLut = TextureFactory.create1x1("default-brdf-lut", 255, 255, 255, 255);
-        context.setDefaultEnvironmentTextures(defaultBlackCubemap, defaultBrdfLut);
-
         resizeViewport(width, height);
 
         if (config.isDepthTest()) {
@@ -180,14 +172,6 @@ public class Renderer {
         return exposure;
     }
 
-    public Texture getDefaultWhiteTexture() {
-        return defaultWhiteTexture;
-    }
-
-    public Texture getDefaultNormalTexture() {
-        return defaultNormalTexture;
-    }
-
     public int getDebugViewMode() {
         return debugViewMode;
     }
@@ -208,25 +192,15 @@ public class Renderer {
         };
     }
 
-    public void dispose() {
-        if (defaultWhiteTexture != null) {
-            defaultWhiteTexture.dispose();
-            defaultWhiteTexture = null;
-        }
+    public void setDefaultTextures(Texture white, Texture normal, Texture blackCubemap, Texture brdfLut) {
+        context.setDefaultTextures(white, normal, blackCubemap, brdfLut);
+    }
 
-        if (defaultNormalTexture != null) {
-            defaultNormalTexture.dispose();
-            defaultNormalTexture = null;
-        }
+    public void setSkyboxResources(Shader shader, Mesh cubeMesh) {
+        if (shader == null) throw new IllegalArgumentException("Skybox shader cannot be null");
+        if (cubeMesh == null) throw new IllegalArgumentException("Skybox cube mesh cannot be null");
 
-        if (defaultBlackCubemap != null) {
-            defaultBlackCubemap.dispose();
-            defaultBlackCubemap = null;
-        }
-
-        if (defaultBrdfLut != null) {
-            defaultBrdfLut.dispose();
-            defaultBrdfLut = null;
-        }
+        this.skyboxShader = shader;
+        this.skyboxCubeMesh = cubeMesh;
     }
 }
