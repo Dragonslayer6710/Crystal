@@ -233,7 +233,15 @@ void main() {
             break;
 
         case 9:
-            f_Color = vec4(texture(brdfLut, v_UV).rgb, 1.0);
+            vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
+            float NdotV = max(dot(N, V), 0.0);
+
+            vec2 brdf = texture(
+            brdfLut,
+            vec2(NdotV, roughness)
+            ).rg;
+
+            f_Color = vec4(brdf, 0.0, 1.0);
             break;
         default:
             f_Color = vec4(1.0, 0.0, 1.0, 1.0);
