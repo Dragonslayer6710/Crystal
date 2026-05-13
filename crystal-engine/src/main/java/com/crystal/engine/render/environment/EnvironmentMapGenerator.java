@@ -166,7 +166,7 @@ public final class EnvironmentMapGenerator implements Disposable {
 
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-                    drawMesh(cube);;
+                    drawMesh(cube);
                 }
             }
 
@@ -331,7 +331,7 @@ public final class EnvironmentMapGenerator implements Disposable {
             if (depthTest) glEnable(GL_DEPTH_TEST);
             else glDisable(GL_DEPTH_TEST);
 
-            if (depthTest) glEnable(GL_CULL_FACE);
+            if (cullFace) glEnable(GL_CULL_FACE);
             else glDisable(GL_CULL_FACE);
         }
     }
