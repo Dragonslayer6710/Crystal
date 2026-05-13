@@ -5,14 +5,17 @@ public class RenderStats {
     private int renderableObjectCount;
     private int visibleObjectCount;
     private int culledObjectCount;
-    private int sceneDrawCount;
 
+    private int sceneDrawCount;
+    private int skyboxDrawCount;
 
     public void reset() {
         renderableObjectCount = 0;
         visibleObjectCount = 0;
         culledObjectCount = 0;
+
         sceneDrawCount = 0;
+        skyboxDrawCount = 0;
     }
 
     public int getRenderableObjectCount() {
@@ -31,6 +34,10 @@ public class RenderStats {
         return sceneDrawCount;
     }
 
+    public int getSkyboxDrawCount() {
+        return skyboxDrawCount;
+    }
+
     void setRenderableObjectCount(int renderableObjectCount) {
         this.renderableObjectCount = renderableObjectCount;
     }
@@ -43,7 +50,11 @@ public class RenderStats {
         this.culledObjectCount = culledObjectCount;
     }
 
-    public void incrementDrawCommandCount() {
+    public void incrementSceneDrawCommandCount() {
         sceneDrawCount++;
+    }
+
+    public void incrementSkyboxDrawCommandCount() {
+        skyboxDrawCount++;
     }
 }

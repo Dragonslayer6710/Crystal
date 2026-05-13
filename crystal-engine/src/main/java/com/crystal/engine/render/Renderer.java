@@ -28,7 +28,6 @@ public class Renderer {
 
     private final RenderQueue queue = new RenderQueue();
     private final RenderStats stats = new RenderStats();
-    private int renderableObjectCount;
 
     private boolean frustumCullingEnabled;
 
@@ -74,7 +73,6 @@ public class Renderer {
     // Called at start of frame
     public void beginFrame() {
         stats.reset();
-        renderableObjectCount = 0;
 
         queue.clear();
         context.beginFrame();
@@ -108,21 +106,8 @@ public class Renderer {
                 skyboxShader,
                 skyboxCubeMesh
         ));
-    }
 
-    private List<SceneObject> collectVisibleObjects(Scene scene) {
-        List<SceneObject> visibleObjects = new ArrayList<>();
-
-        Camera camera = scene.getCamera();
-
-        for (SceneObject root : scene.getRootObjects())
-            collectVisibleObjects(root, visibleObjects, camera);
-
-        stats.setRenderableObjectCount(renderableObjectCount);
-        stats.setVisibleObjectCount(visibleObjects.size());
-        stats.setCulledObjectCount(renderableObjectCount - visibleObjects.size());
-
-        return visibleObjects;
+        stats.incrementSkyboxDrawCommandCount();
     }
 
     private void sortVisibleObjects(List<SceneObject> visibleObjects) {
@@ -145,26 +130,44 @@ public class Renderer {
     private void submitVisibleObjects(List<SceneObject> visibleObjects) {
         for (SceneObject object : visibleObjects) {
             queue.submit(new DrawSceneObjectCommand(object));
-            stats.incrementDrawCommandCount();
+            stats.incrementSceneDrawCommandCount();
         }
     }
 
-    private void collectVisibleObjects(SceneObject object, List<SceneObject> visibleObjects, Camera camera) {
+    private List<SceneObject> collectVisibleObjects(Scene scene) {
+        VisibilityResult result = new VisibilityResult();
+
+        Camera camera = scene.getCamera();
+
+        for (SceneObject root : scene.getRootObjects())
+            collectVisibleObjects(root, result, camera);
+
+        stats.setRenderableObjectCount(result.renderableObjectCount);
+        stats.setVisibleObjectCount(result.visibleObjects.size());
+        stats.setCulledObjectCount(Math.max(
+                0,
+                result.renderableObjectCount - result.visibleObjects.size()
+        ));
+
+        return result.visibleObjects;
+    }
+
+    private void collectVisibleObjects(SceneObject object, VisibilityResult result, Camera camera) {
         if (!object.isActive())
             return;
 
         if (object.isVisible() && object.isRenderable()) {
-            renderableObjectCount++;
+            result.renderableObjectCount++;
             if (!frustumCullingEnabled || camera.canSee(
                     object.getWorldBoundsCenter(),
                     object.getWorldBoundingRadius()
             )) {
-                visibleObjects.add(object);
+                result.visibleObjects.add(object);
             }
         }
 
         for (SceneObject child : object.getChildren())
-            collectVisibleObjects(child, visibleObjects, camera);
+            collectVisibleObjects(child, result, camera);
     }
 
     public void render(Scene scene, float aspectRatio) {
@@ -248,5 +251,10 @@ public class Renderer {
 
         this.skyboxShader = shader;
         this.skyboxCubeMesh = cubeMesh;
+    }
+
+    private static final class VisibilityResult {
+        private final List<SceneObject> visibleObjects = new ArrayList<>();
+        private int renderableObjectCount;
     }
 }
