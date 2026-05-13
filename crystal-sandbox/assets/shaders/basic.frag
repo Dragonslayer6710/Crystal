@@ -233,15 +233,19 @@ void main() {
             break;
 
         case 9:
-            vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
-            float NdotV = max(dot(N, V), 0.0);
+            if (hasIBL == 1){
+                vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
+                float NdotV = max(dot(N, V), 0.0);
 
-            vec2 brdf = texture(
-            brdfLut,
-            vec2(NdotV, roughness)
-            ).rg;
+                vec2 brdf = texture(
+                brdfLut,
+                vec2(NdotV, roughness)
+                ).rg;
 
-            f_Color = vec4(brdf, 0.0, 1.0);
+                f_Color = vec4(brdf, 0.0, 1.0);
+            } else {
+                f_Color = vec4(1.0, 0.0, 1.0, 1.0);
+            }
             break;
         default:
             f_Color = vec4(1.0, 0.0, 1.0, 1.0);

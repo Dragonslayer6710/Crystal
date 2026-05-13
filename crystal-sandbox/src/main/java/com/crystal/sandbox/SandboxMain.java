@@ -23,6 +23,8 @@ public class SandboxMain implements Game {
     private static final Logger logger =
             LoggerFactory.getLogger(SandboxMain.class);
 
+    private static final boolean ENABLE_IBL = true;
+
     private EngineContext ctx;
 
     private SceneObject cubeA;
@@ -73,11 +75,17 @@ public class SandboxMain implements Game {
         );
         helmet.logHierarchy();
 
-        IBLGenerator iblGenerator = IBLGenerator.createDefault(ctx.getResources());
-        iblGenerator.generateFromHDR(
-                ctx.getScene().getEnvironment(),
-                "environment/studio_small_03_1k.hdr"
-        );
+        ctx.getScene().getEnvironment()
+                .setAmbientColor(0.03f, 0.03f, 0.03f)
+                .setAmbientIntensity(1.0f);
+
+        if (ENABLE_IBL) {
+            IBLGenerator iblGenerator = IBLGenerator.createDefault(ctx.getResources());
+            iblGenerator.generateFromHDR(
+                    ctx.getScene().getEnvironment(),
+                    "environment/studio_small_03_1k.hdr"
+            );
+        }
 
         for (SceneObject object : helmet.getRootObjects()) {
             ctx.getScene().add(object);
