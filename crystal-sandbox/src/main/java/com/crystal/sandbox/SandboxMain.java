@@ -92,24 +92,19 @@ public class SandboxMain implements Game {
 
         Mesh fullscreenQuad = MeshFactory.createFullscreenQuad(ctx.getResources());
 
-        EnvironmentMapGenerator generator = new EnvironmentMapGenerator(
+        EnvironmentMapGenerator generator = ctx.getResources().register(new EnvironmentMapGenerator(
                 envShader,
                 irradianceShader,
                 prefilterShader,
                 brdfLutShader,
                 envCube,
                 fullscreenQuad
-        );
+        ));
 
-        Texture environmentCubemap = generator.generateCubemap(hdr, 512);
-        Texture irradianceMap = generator.generateIrradianceMap(environmentCubemap);
-        Texture prefilterMap = generator.generatePrefilterMap(environmentCubemap);
-        Texture brdfLut = generator.generateBrdfLut();
-
-        ctx.getRenderer().resizeViewport(
-                ctx.getWindow().getWidth(),
-                ctx.getWindow().getHeight()
-        );
+        Texture environmentCubemap = ctx.getResources().register(generator.generateCubemap(hdr, 512));
+        Texture irradianceMap = ctx.getResources().register(generator.generateIrradianceMap(environmentCubemap));
+        Texture prefilterMap = ctx.getResources().register(generator.generatePrefilterMap(environmentCubemap));
+        Texture brdfLut = ctx.getResources().register(generator.generateBrdfLut());
 
         ctx.getScene().getEnvironment()
                 .setSkybox(environmentCubemap)
