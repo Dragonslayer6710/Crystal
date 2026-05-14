@@ -7,6 +7,7 @@ import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shader.ShaderUniforms;
+import com.crystal.engine.render.shadow.ShadowMap;
 import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.texture.TextureSlots;
 import com.crystal.engine.render.uniform.SceneUniformData;
@@ -38,8 +39,20 @@ public class RenderContext {
 
     private final SceneUniformData sceneUniformData = new SceneUniformData();
 
-    public RenderResources(ResourceManager resources) {
+    public RenderResources(ResourceManager resourceManager) {
+        if (resourceManager == null)
+            throw new IllegalArgumentException("ResourceManager cannot be null");
 
+        this.resources = new RenderResources(
+                resourceManager.getDefaultWhiteTexture(),
+                resourceManager.getDefaultNormalTexture(),
+                resourceManager.getDefaultBlackCubemap(),
+                resourceManager.getDefaultBrdfLut(),
+                resourceManager.getSkyboxShader(),
+                resourceManager.getSkyboxCubeMesh(),
+                resourceManager.createShaderProgram("shadow_depth"),
+                resourceManager.register(new ShadowMap(2048))
+        );
     }
 
     public void beginFrame() {
@@ -198,17 +211,7 @@ public class RenderContext {
         return aspectRatio;
     }
 
-    public void setResources(RenderResources resources) {
-        if (resources == null)
-            throw new IllegalArgumentException("RenderResources cannot be null");
-
-        this.resources = resources;
-    }
-
     public RenderResources getResources() {
-        if (resources == null)
-            throw new IllegalStateException("RenderResources have not been set");
-
         return resources;
     }
 }

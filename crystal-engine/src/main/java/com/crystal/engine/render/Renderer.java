@@ -6,12 +6,9 @@ import com.crystal.engine.render.commands.DrawSceneObjectCommand;
 import com.crystal.engine.render.commands.DrawSkyboxCommand;
 import com.crystal.engine.render.commands.RenderCommand;
 import com.crystal.engine.render.gl.RenderPass;
-import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
-import com.crystal.engine.render.shader.Shader;
-import com.crystal.engine.render.texture.Texture;
 import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,20 +42,13 @@ public class Renderer {
 
     private int debugViewMode = 0;
 
-    private Shader skyboxShader;
-    private Mesh skyboxCubeMesh;
-
-    public Renderer(RendererConfig config, ResourceManager resources) {
+    public Renderer(RendererConfig config, ResourceManager resourceManager) {
         if (config == null) throw new IllegalArgumentException("RendererConfig cannot be null");
 
         this.config = config;
         this.frustumCullingEnabled = config.isFrustumCulling();
 
-        this.context = new RenderContext(resources);
-    }
-
-    public Renderer() {
-        this(new RendererConfig());
+        this.context = new RenderContext(resourceManager);
     }
 
     public void init(int width, int height) {
@@ -117,6 +107,9 @@ public class Renderer {
     private void submitSkybox(Scene scene) {
         if (!scene.getEnvironment().hasSkybox())
             return;
+
+        var skyboxShader = context.getResources().getSkyboxShader();
+        var skyboxCubeMesh = context.getResources().getSkyboxCubeMesh();
 
         if (skyboxShader == null || skyboxCubeMesh == null) {
             logger.warn("Scene has skybox, but renderer skybox resources are not set");
@@ -298,22 +291,6 @@ public class Renderer {
 
     public RenderStats getStats() {
         return stats;
-    }
-
-    public void setDefaultTextures(Texture white, Texture normal, Texture blackCubemap, Texture brdfLut) {
-        context.setDefaultTextures(white, normal, blackCubemap, brdfLut);
-    }
-
-    public void setResources(RenderResources resources) {
-        context.setResources(resources);
-    }
-
-    public void setSkyboxResources(Shader shader, Mesh cubeMesh) {
-        if (shader == null) throw new IllegalArgumentException("Skybox shader cannot be null");
-        if (cubeMesh == null) throw new IllegalArgumentException("Skybox cube mesh cannot be null");
-
-        this.skyboxShader = shader;
-        this.skyboxCubeMesh = cubeMesh;
     }
 
     private static final class VisibilityResult {
