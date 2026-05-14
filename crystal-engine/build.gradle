@@ -27,4 +27,10 @@ dependencies {
 
     // Maths
     api "org.joml:joml:${jomlVersion}"
+
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+}
+
+test {
+    useJUnitPlatform()
 }

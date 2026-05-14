@@ -29,15 +29,15 @@ public class Transform {
     }
 
     public Vector3f getPosition() {
-        return position;
+        return new Vector3f(position);
     }
 
     public Vector3f getRotation() {
-        return rotation;
+        return new Vector3f(rotation);
     }
 
     public Vector3f getScale() {
-        return scale;
+        return new Vector3f(scale);
     }
 
     public Transform setParent(Transform parent) {

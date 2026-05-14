@@ -48,7 +48,6 @@ public class FlyCameraController {
     private void move(double dt) {
         var input = ctx.getInput();
         var camera = ctx.getScene().getCamera();
-        var position = camera.getTransform().getPosition();
 
         float speed = ((input.isKeyDown(Key.LEFT_SHIFT)) ? 2f : 1f) * (float) dt;
 
@@ -78,7 +77,7 @@ public class FlyCameraController {
         if (movement.lengthSquared() > 0.0f) {
             movement.normalize();
             movement.mul(speed);
-            position.add(movement);
+            camera.getTransform().translate(movement.x, movement.y, movement.z);
         }
     }
 
@@ -96,15 +95,8 @@ public class FlyCameraController {
 
         // clamp pitch to not flip upside down
         float maxPitch = (float) Math.toRadians(89.0f);
+        rotation.x = Math.max(-maxPitch, Math.min(maxPitch, rotation.x));
 
-        if (rotation.x > maxPitch) {
-            rotation.x = maxPitch;
-        }
-
-        if (rotation.x < -maxPitch) {
-            rotation.x = -maxPitch;
-        }
+        cameraTransform.setRotation(rotation.x, rotation.y, rotation.z);
     }
-
-
 }
