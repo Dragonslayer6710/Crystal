@@ -3,7 +3,7 @@ package com.crystal.engine.render.environment;
 import com.crystal.engine.core.Disposable;
 import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.render.gl.Framebuffer;
-import com.crystal.engine.render.gl.GLStateSnapshot;
+import com.crystal.engine.render.gl.RenderPass;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
@@ -99,18 +99,19 @@ public final class EnvironmentMapGenerator implements Disposable {
         if (environmentCubemap == null)
             throw new IllegalArgumentException("Environment cubemap cannot be null");
 
-        Texture output = TextureFactory.createCubemap(
-                128,
-                TextureSettings.defaultPrefilterCubemap(),
-                "<generated:prefilter-map>"
-        );
+        int size = 128;
 
-        Matrix4f projection = createCaptureProjection();
-        Matrix4f[] views = createCaptureViews();
+        try (RenderPass ignored = new RenderPass(framebuffer, size, size)) {
+            Texture output = TextureFactory.createCubemap(
+                    size,
+                    TextureSettings.defaultPrefilterCubemap(),
+                    "<generated:prefilter-map>"
+            );
 
-        GLStateSnapshot state = new GLStateSnapshot();
+            Matrix4f projection = createCaptureProjection();
+            Matrix4f[] views = createCaptureViews();
 
-        try {
+
             framebuffer.bind();
 
             prefilterEnvironmentShader.bind();
@@ -148,17 +149,13 @@ public final class EnvironmentMapGenerator implements Disposable {
             }
 
             return output;
-        } finally {
-            state.restore();
         }
     }
 
     public Texture generateBrdfLut() {
-        GLStateSnapshot state = new GLStateSnapshot();
+        int size = 512;
 
-        try {
-            int size = 512;
-
+        try (RenderPass ignored = new RenderPass(framebuffer, size, size)) {
             Texture output = TextureFactory.createRenderTexture2D(
                     size,
                     size,
@@ -181,16 +178,13 @@ public final class EnvironmentMapGenerator implements Disposable {
             drawMesh(fullscreenQuad);
 
             return output;
-        } finally {
-            state.restore();
         }
     }
 
     private Texture renderToCubemap(String debugname, int size, TextureSettings settings, Shader shader,
                                     Texture inputTexture, String inputSamplerName, Mesh mesh) {
-        GLStateSnapshot state = new GLStateSnapshot();
 
-        try {
+        try (RenderPass ignored = new RenderPass(framebuffer, size, size)) {
             Texture output = TextureFactory.createCubemap(
                     size,
                     settings,
@@ -229,8 +223,6 @@ public final class EnvironmentMapGenerator implements Disposable {
 
 
             return output;
-        } finally {
-            state.restore();
         }
     }
 
