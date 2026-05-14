@@ -7,7 +7,12 @@ import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.TextureSlots;
 import org.joml.Vector3f;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 public class Material {
+
+    private static final AtomicInteger NEXT_ID = new AtomicInteger();
+    private final int id = NEXT_ID.incrementAndGet();
 
     private final Shader shader;
 
@@ -25,9 +30,6 @@ public class Material {
     private final Vector3f emissive = new Vector3f(0.0f);
 
     private final RenderState renderState = new RenderState();
-
-    private static int nextId = 1;
-    private final int id = nextId++;
 
     public Material(Shader shader) {
         this.shader = shader;
