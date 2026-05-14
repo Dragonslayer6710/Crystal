@@ -39,7 +39,7 @@ public class RenderContext {
 
     private final SceneUniformData sceneUniformData = new SceneUniformData();
 
-    public RenderResources(ResourceManager resourceManager) {
+    public RenderContext(ResourceManager resourceManager) {
         if (resourceManager == null)
             throw new IllegalArgumentException("ResourceManager cannot be null");
 
