@@ -51,6 +51,17 @@ class SceneObjectTest {
     }
 
     @Test
+    void childrenListCannotBeMutatedDirectly() {
+        SceneObject parent = object("parent");
+        SceneObject child = object("child");
+
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> parent.getChildren().add(child)
+        );
+    }
+
+    @Test
     void addChildRejectsSelfParenting() {
         SceneObject object = object("object");
 

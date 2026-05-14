@@ -16,22 +16,22 @@ public final class IBLGenerator {
     public static IBLGenerator createDefault(ResourceManager resources) {
         if (resources == null) throw new IllegalArgumentException("ResourceManager cannot be null");
 
-        Shader envShader = resources.createShaderProgram(
+        Shader envShader = resources.createEngineShaderProgram(
                 "cubemap_capture",
                 "equirectangular_to_cubemap"
         );
 
-        Shader irradianceShader = resources.createShaderProgram(
+        Shader irradianceShader = resources.createEngineShaderProgram(
                 "cubemap_capture",
                 "irradiance_convolution"
         );
 
-        Shader prefilterShader = resources.createShaderProgram(
+        Shader prefilterShader = resources.createEngineShaderProgram(
                 "cubemap_capture",
                 "prefilter_environment"
         );
 
-        Shader brdfLutShader = resources.createShaderProgram("brdf_lut");
+        Shader brdfLutShader = resources.createEngineShaderProgram("brdf_lut");
 
         Mesh envCube = MeshFactory.createPositionOnlyCube(resources);
         Mesh fullscreenQuad = MeshFactory.createFullscreenQuad(resources);

@@ -5,6 +5,7 @@ import com.crystal.engine.render.mesh.Mesh;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SceneObject {
@@ -64,7 +65,7 @@ public class SceneObject {
     }
 
     public List<SceneObject> getChildren() {
-        return children;
+        return Collections.unmodifiableList(children);
     }
 
     private boolean isAncestorOf(SceneObject object) {

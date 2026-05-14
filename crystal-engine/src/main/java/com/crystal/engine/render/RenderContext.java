@@ -50,7 +50,7 @@ public class RenderContext {
                 resourceManager.getDefaultBrdfLut(),
                 resourceManager.getSkyboxShader(),
                 resourceManager.getSkyboxCubeMesh(),
-                resourceManager.createShaderProgram("shadow_depth"),
+                resourceManager.createEngineShaderProgram("shadow_depth"),
                 resourceManager.register(new ShadowMap(2048))
         );
     }

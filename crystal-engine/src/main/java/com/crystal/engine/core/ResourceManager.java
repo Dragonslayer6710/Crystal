@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -29,6 +30,7 @@ import java.util.Map;
 public class ResourceManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
+    private static final String ENGINE_ASSET_ROOT = "engine-assets";
 
     private final List<Disposable> resources = new ArrayList<>();
     private final Path assetRoot;
@@ -96,6 +98,27 @@ public class ResourceManager {
 
     public Shader createShaderProgram(String name) {
         return  createShaderProgram(name, name);
+    }
+
+    public Shader createEngineShaderProgram(String vName, String fName) {
+        String cacheKey = ENGINE_ASSET_ROOT + "/shaders/" + vName + ".vert|"
+                + ENGINE_ASSET_ROOT + "/shaders/" + fName + ".frag";
+
+        return shaderCache.computeIfAbsent(cacheKey, key -> {
+            String[] paths = cacheKey.split("\\|");
+
+            String vs = loadEngineAssetAsString(paths[0]);
+            String fs = loadEngineAssetAsString(paths[1]);
+
+            Shader shader = new Shader(vs, fs, paths[0], paths[1]);
+            shader.setDebugLabel(cacheKey);
+
+            return register(shader);
+        });
+    }
+
+    public Shader createEngineShaderProgram(String name) {
+        return createEngineShaderProgram(name, name);
     }
 
     public Texture createTexture(String path, TextureSettings settings) {
@@ -172,7 +195,7 @@ public class ResourceManager {
 
     public Shader getSkyboxShader() {
         if (skyboxShader == null) {
-            skyboxShader = createShaderProgram("skybox");
+            skyboxShader = createEngineShaderProgram("skybox");
         }
 
         return skyboxShader;
@@ -210,6 +233,17 @@ public class ResourceManager {
             return Files.readString(fullPath, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException("Failed to load asset: " + fullPath.toAbsolutePath(), e);
+        }
+    }
+
+    private String loadEngineAssetAsString(String path) {
+        try (InputStream stream = ResourceManager.class.getClassLoader().getResourceAsStream(path)) {
+            if (stream == null)
+                throw new RuntimeException("Failed to load engine asset: " + path);
+
+            return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load engine asset: " + path, e);
         }
     }
 
