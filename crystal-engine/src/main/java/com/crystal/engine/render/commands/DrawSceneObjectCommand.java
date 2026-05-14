@@ -1,6 +1,7 @@
 package com.crystal.engine.render.commands;
 
 import com.crystal.engine.render.RenderContext;
+import com.crystal.engine.render.gl.MeshRenderer;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shader.ShaderUniforms;
@@ -28,19 +29,6 @@ public class DrawSceneObjectCommand implements RenderCommand {
 
         shader.setMat4(ShaderUniforms.MODEL, transform.getWorldMatrix());
 
-        if (mesh.isIndexed()) {
-            glDrawElements(
-                    mesh.getPrimTypeValue(),
-                    mesh.getIndexCount(),
-                    GL_UNSIGNED_INT,
-                    0
-            );
-        } else {
-            glDrawArrays(
-                    mesh.getPrimTypeValue(),
-                    0,
-                    mesh.getVertexCount()
-            );
-        }
+        MeshRenderer.draw(mesh);
     }
 }

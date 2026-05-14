@@ -3,6 +3,7 @@ package com.crystal.engine.render.environment;
 import com.crystal.engine.core.Disposable;
 import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.render.gl.Framebuffer;
+import com.crystal.engine.render.gl.MeshRenderer;
 import com.crystal.engine.render.gl.RenderPass;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.shader.Shader;
@@ -140,7 +141,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                     framebuffer.attachCubemapFace(output, mip, face);
 
                     pass.clearColorDepth();
-                    drawMesh(cube);
+                    MeshRenderer.draw(cube);
                 }
             }
 
@@ -168,7 +169,7 @@ public final class EnvironmentMapGenerator implements Disposable {
             brdfLutShader.bind();
 
             pass.clearColor();
-            drawMesh(fullscreenQuad);
+            MeshRenderer.draw(fullscreenQuad);
 
             return output;
         }
@@ -204,7 +205,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                 framebuffer.attachCubemapFace(output, 0, face);
 
                 pass.clearColorDepth();
-                drawMesh(mesh);
+                MeshRenderer.draw(mesh);
             }
 
             if (output.hasMipmaps())
@@ -229,26 +230,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                 new Matrix4f().lookAt(0, 0, 0,  0,  0, -1,  0, -1,  0)
         };
     }
-
-    private void drawMesh(Mesh mesh) {
-        mesh.bind();
-
-        if (mesh.isIndexed()) {
-            glDrawElements(
-                    mesh.getPrimTypeValue(),
-                    mesh.getIndexCount(),
-                    GL_UNSIGNED_INT,
-                    0
-            );
-        } else {
-            glDrawArrays(
-                    mesh.getPrimTypeValue(),
-                    0,
-                    mesh.getVertexCount()
-            );
-        }
-    }
-
+    
     @Override
     public void dispose() {
         if (disposed) return;

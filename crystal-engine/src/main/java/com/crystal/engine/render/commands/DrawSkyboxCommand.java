@@ -1,6 +1,7 @@
 package com.crystal.engine.render.commands;
 
 import com.crystal.engine.render.RenderContext;
+import com.crystal.engine.render.gl.MeshRenderer;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
@@ -61,20 +62,7 @@ public class DrawSkyboxCommand implements RenderCommand {
 
             cubeMesh.bind();
 
-            if (cubeMesh.isIndexed()) {
-                glDrawElements(
-                        cubeMesh.getPrimTypeValue(),
-                        cubeMesh.getIndexCount(),
-                        GL_UNSIGNED_INT,
-                        0
-                );
-            } else {
-                glDrawArrays(
-                        cubeMesh.getPrimTypeValue(),
-                        0,
-                        cubeMesh.getVertexCount()
-                );
-            }
+            MeshRenderer.draw(cubeMesh);
         } finally {
             glDepthMask(true);
             glDepthFunc(GL_LESS);
