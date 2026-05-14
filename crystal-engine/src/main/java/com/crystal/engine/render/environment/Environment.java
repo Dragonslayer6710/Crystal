@@ -13,6 +13,8 @@ public class Environment {
     private Texture prefilterMap;
     private Texture brdfLut;
 
+    private float iblIntensity = 1.0f;
+
     public Vector3f getAmbientColor() {
         return ambientColor;
     }
@@ -35,6 +37,10 @@ public class Environment {
 
     public Texture getBrdfLut() {
         return brdfLut;
+    }
+
+    public float getIblIntensity() {
+        return iblIntensity;
     }
 
     public Environment setAmbientColor(float r, float g, float b) {
@@ -64,6 +70,11 @@ public class Environment {
 
     public Environment setBrdfLut(Texture brdfLut) {
         this.brdfLut = brdfLut;
+        return this;
+    }
+
+    public Environment setIblIntensity(float iblIntensity) {
+        this.iblIntensity = iblIntensity;
         return this;
     }
 

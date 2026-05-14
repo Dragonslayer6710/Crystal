@@ -22,10 +22,15 @@ public class RenderContext {
 
     private final RenderResources resources;
 
+    private float aspectRatio = 1.0f;
+
     private int debugViewMode = 0;
     private float exposure = 1.0f;
-    private float aspectRatio = 1.0f;
+
     private boolean hasIBL;
+    private float iblIntensity = 1.0f;
+
+    private float shadowStrength = 0.6f;
 
     private boolean currentDepthTest = true;
     private boolean currentCullFace = true;
@@ -124,6 +129,13 @@ public class RenderContext {
         shader.setInt(ShaderUniforms.DEBUG_VIEW_MODE, debugViewMode);
         shader.setFloat(ShaderUniforms.EXPOSURE, exposure);
         shader.setInt(ShaderUniforms.HAS_IBL, hasIBL ? 1 : 0);
+        shader.setFloat(ShaderUniforms.IBL_INTENSITY, iblIntensity);
+
+        shader.setInt(ShaderUniforms.SHADOW_MAP, TextureSlots.SHADOW_MAP);
+        shader.setFloat(ShaderUniforms.SHADOW_STRENGTH, shadowStrength);
+
+        shader.setInt(ShaderUniforms.HAS_SHADOWS, 1);
+
 
         if (material.getId() != currentMaterialId) {
             material.bindProperties();
@@ -155,6 +167,8 @@ public class RenderContext {
         bindTextureIfNeeded(metallicRoughness, TextureSlots.METALLIC_ROUGHNESS);
         bindTextureIfNeeded(ambientOcclusion, TextureSlots.AMBIENT_OCCLUSION);
         bindTextureIfNeeded(emissiveMap, TextureSlots.EMISSIVE);
+
+        bindTextureIfNeeded(resources.getDirectionalShadowMap().getDepthTexture(), TextureSlots.SHADOW_MAP);
     }
 
     public void bindMesh(Mesh mesh) {
@@ -194,6 +208,10 @@ public class RenderContext {
                         resources.getDefaultBrdfLut(),
                 TextureSlots.BRDF_LUT
         );
+
+        shadowStrength = scene.getDirectionalLight().getShadowStrength();
+
+        iblIntensity = environment.getIblIntensity();
     }
 
     public void setExposure(float exposure) {
@@ -201,8 +219,8 @@ public class RenderContext {
     }
 
     public void setDebugViewMode(int debugViewMode) {
-        if (debugViewMode < 0 || debugViewMode > 9)
-            throw new IllegalArgumentException("Debug view mode must be between 0 and 9");
+        if (debugViewMode < 0 || debugViewMode > 10)
+            throw new IllegalArgumentException("Debug view mode must be between 0 and 10");
 
         this.debugViewMode = debugViewMode;
     }

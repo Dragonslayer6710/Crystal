@@ -56,6 +56,25 @@ public class SandboxMain implements Game {
         this.ctx.getScene().add(cubeA);
     }
 
+    private void addFloor(Shader shader) {
+        Mesh floorMesh = MeshFactory.createTexturedCube(ctx.getResources());
+
+        Material floorMaterial = new Material(shader);
+        floorMaterial.setAlbedo(ctx.getResources().createTexture("bricks_albedo.png"));
+        floorMaterial.setNormalMap(ctx.getResources().createDataTexture("bricks_normal.png"));
+
+        SceneObject floor = new SceneObject(
+                "Floor",
+                floorMesh,
+                floorMaterial,
+                new Transform()
+                        .setPosition(0.0f, -1.0f, -2.5f)
+                        .setScale(8.0f, 0.1f, 8.0f)
+        );
+
+        ctx.getScene().add(floor);
+    }
+
     @Override
     public void init(EngineContext ctx) {
         this.ctx = ctx;
@@ -69,15 +88,22 @@ public class SandboxMain implements Game {
 //                new ModelLoadOptions().setShader(shader)
 //        );
 
+        addFloor(shader);
+
         helmet = ctx.getResources().loadModel(
                 "/external/DamagedHelmet.glb",
                 new ModelLoadOptions().setShader(shader)
         );
         helmet.logHierarchy();
 
+        ctx.getScene().getDirectionalLight()
+                .setIntensity(3.0f)
+                .setShadowStrength(1.0f);
+
         ctx.getScene().getEnvironment()
-                .setAmbientColor(0.03f, 0.03f, 0.03f)
-                .setAmbientIntensity(1.0f);
+                .setAmbientColor(0.01f, 0.01f, 0.01f)
+                .setAmbientIntensity(0.2f)
+                .setIblIntensity(0.4f);
 
         if (ENABLE_IBL) {
             IBLGenerator iblGenerator = IBLGenerator.createDefault(ctx.getResources());

@@ -11,5 +11,7 @@ public final class TextureSlots {
     public static final int PREFILTER = 6;
     public static final int BRDF_LUT = 7;
 
+    public static final int SHADOW_MAP = 8;
+
     private TextureSlots() {}
 }

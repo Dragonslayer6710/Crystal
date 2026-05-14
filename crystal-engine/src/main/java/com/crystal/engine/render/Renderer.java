@@ -1,14 +1,14 @@
 package com.crystal.engine.render;
 
 import com.crystal.engine.core.ResourceManager;
-import com.crystal.engine.render.commands.ClearCommand;
-import com.crystal.engine.render.commands.DrawSceneObjectCommand;
-import com.crystal.engine.render.commands.DrawSkyboxCommand;
-import com.crystal.engine.render.commands.RenderCommand;
+import com.crystal.engine.render.commands.*;
 import com.crystal.engine.render.gl.RenderPass;
 import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.render.shader.Shader;
+import com.crystal.engine.render.shadow.ShadowMap;
+import org.joml.Matrix4f;
 import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,7 +27,9 @@ public class Renderer {
 
     private final RenderContext context;
 
-    private final RenderQueue queue = new RenderQueue();
+    private final RenderQueue mainQueue = new RenderQueue();
+    private final RenderQueue shadowQueue = new RenderQueue();
+
     private final RenderStats stats = new RenderStats();
     private final VisibilityResult visibilityResult = new VisibilityResult();
 
@@ -71,29 +73,7 @@ public class Renderer {
 
         glEnable(GL_FRAMEBUFFER_SRGB);
     }
-
-    // Called at start of frame
-    public void beginFrame() {
-        stats.reset();
-
-        queue.clear();
-        context.beginFrame();
-        context.setDebugViewMode(debugViewMode);
-        context.setExposure(exposure);
-
-        submitCommand(new ClearCommand(
-                clearColor.x,
-                clearColor.y,
-                clearColor.z,
-                clearColor.w
-        ));
-    }
-
-    // Called at end of frame
-    public void renderFrame() {
-        queue.execute(context);
-    }
-
+    
     private void prepareFrame(Scene scene, float aspectRatio) {
         beginFrame();
 
@@ -104,49 +84,15 @@ public class Renderer {
         context.prepareScene(scene, aspectRatio);
     }
 
-    private void submitSkybox(Scene scene) {
-        if (!scene.getEnvironment().hasSkybox())
-            return;
+    // Called at start of frame
+    public void beginFrame() {
+        stats.reset();
+        mainQueue.clear();
+        shadowQueue.clear();
 
-        var skyboxShader = context.getResources().getSkyboxShader();
-        var skyboxCubeMesh = context.getResources().getSkyboxCubeMesh();
-
-        if (skyboxShader == null || skyboxCubeMesh == null) {
-            logger.warn("Scene has skybox, but renderer skybox resources are not set");
-            return;
-        }
-
-        submitCommand(new DrawSkyboxCommand(
-                scene,
-                skyboxShader,
-                skyboxCubeMesh
-        ));
-
-        stats.incrementSkyboxDrawCommandCount();
-    }
-
-    private void sortVisibleObjects(List<SceneObject> visibleObjects) {
-        visibleObjects.sort(Comparator.
-                comparingInt((SceneObject object) ->
-                        object.getMaterial().getRenderState().getSortKey()
-                )
-                .thenComparingInt(object ->
-                        object.getMaterial().getShader().getId()
-                )
-                .thenComparingInt(object ->
-                        object.getMaterial().getId()
-                )
-                .thenComparingInt(object ->
-                        object.getMesh().getId()
-                )
-        );
-    }
-
-    private void submitVisibleObjects(List<SceneObject> visibleObjects) {
-        for (SceneObject object : visibleObjects) {
-            submitCommand(new DrawSceneObjectCommand(object));
-            stats.incrementSceneDrawCommandCount();
-        }
+        context.beginFrame();
+        context.setDebugViewMode(debugViewMode);
+        context.setExposure(exposure);
     }
 
     private List<SceneObject> collectVisibleObjects(Scene scene) {
@@ -185,9 +131,123 @@ public class Renderer {
             collectVisibleObjects(child, result, camera);
     }
 
-    private void submitCommand(RenderCommand command) {
-        queue.submit(command);
+    private void sortVisibleObjects(List<SceneObject> visibleObjects) {
+        visibleObjects.sort(Comparator.
+                comparingInt((SceneObject object) ->
+                        object.getMaterial().getRenderState().getSortKey()
+                )
+                .thenComparingInt(object ->
+                        object.getMaterial().getShader().getId()
+                )
+                .thenComparingInt(object ->
+                        object.getMaterial().getId()
+                )
+                .thenComparingInt(object ->
+                        object.getMesh().getId()
+                )
+        );
+    }
+
+    private List<SceneObject> collectShadowCasters(Scene scene) {
+        List<SceneObject> casters = new ArrayList<>();
+
+        for (SceneObject root : scene.getRootObjects())
+            collectShadowCasters(root, casters);
+
+        return casters;
+    }
+
+    private void collectShadowCasters(SceneObject object, List<SceneObject> casters) {
+        if (!object.isActive())
+            return;
+
+        if (object.isVisible() && object.isRenderable())
+            casters.add(object);
+
+        for (SceneObject child : object.getChildren())
+            collectShadowCasters(child, casters);
+    }
+
+    private void executeShadowPass(Scene scene, List<SceneObject> shadowCasters) {
+        ShadowMap shadowMap = context.getResources().getDirectionalShadowMap();
+        Shader shadowShader = context.getResources().getShadowShader();
+        Matrix4f lightSpace = scene.getDirectionalLight().getLightSpaceMatrix();
+
+        shadowQueue.clear();
+
+        for (SceneObject object : shadowCasters)
+            submitShadowCommand(new DrawShadowCommand(object, shadowShader, lightSpace));
+
+        int size = shadowMap.getSize();
+
+        try (RenderPass ignored = new RenderPass(shadowMap.getFramebuffer(), size, size)) {
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LESS);
+            glDepthMask(true);
+            glDisable(GL_CULL_FACE);
+            glColorMask(false, false, false, false);
+
+            glClear(GL_DEPTH_BUFFER_BIT);
+
+            shadowQueue.execute(context);
+
+            glColorMask(true, true, true, true);
+        }
+    }
+
+    private void submitSkybox(Scene scene) {
+        if (!scene.getEnvironment().hasSkybox())
+            return;
+
+        var skyboxShader = context.getResources().getSkyboxShader();
+        var skyboxCubeMesh = context.getResources().getSkyboxCubeMesh();
+
+        if (skyboxShader == null || skyboxCubeMesh == null) {
+            logger.warn("Scene has skybox, but renderer skybox resources are not set");
+            return;
+        }
+
+        submitMainCommand(new DrawSkyboxCommand(
+                scene,
+                skyboxShader,
+                skyboxCubeMesh
+        ));
+
+        stats.incrementSkyboxDrawCommandCount();
+    }
+
+    private void submitVisibleObjects(List<SceneObject> visibleObjects) {
+        for (SceneObject object : visibleObjects) {
+            submitMainCommand(new DrawSceneObjectCommand(object));
+            stats.incrementSceneDrawCommandCount();
+        }
+    }
+
+    private void executeMainPass(Scene scene, List<SceneObject> visibleObjects) {
+        try (RenderPass ignored = new RenderPass(viewportWidth, viewportHeight)) {
+            mainQueue.clear();
+
+            submitMainCommand(new ClearCommand(
+                    clearColor.x,
+                    clearColor.y,
+                    clearColor.z,
+                    clearColor.w
+            ));
+
+            submitSkybox(scene);
+            submitVisibleObjects(visibleObjects);
+
+            mainQueue.execute(context);
+        }
+    }
+
+    private void submitMainCommand(RenderCommand command) {
+        mainQueue.submit(command);
         stats.incrementSubmittedCommandCount();
+    }
+
+    private void submitShadowCommand(RenderCommand command) {
+        shadowQueue.submit(command);
     }
 
     public void render(Scene scene, float aspectRatio) {
@@ -196,14 +256,18 @@ public class Renderer {
         if (aspectRatio <= 0.0f || Float.isNaN(aspectRatio) || Float.isInfinite(aspectRatio))
             throw new IllegalArgumentException("Invalid aspect ratio: " + aspectRatio);
 
-        try (RenderPass ignored = new RenderPass(viewportWidth, viewportHeight)) {
-            prepareFrame(scene, aspectRatio);
-            submitSkybox(scene);
-            List<SceneObject> visibleObjects = collectVisibleObjects(scene);
-            sortVisibleObjects(visibleObjects);
-            submitVisibleObjects(visibleObjects);
-            renderFrame();
-        }
+        beginFrame();
+
+        scene.getCamera().updateFrustum(aspectRatio);
+        context.prepareScene(scene, aspectRatio);
+
+        List<SceneObject> visibleObjects = collectVisibleObjects(scene);
+        sortVisibleObjects(visibleObjects);
+
+        List<SceneObject> shadowCasters = collectShadowCasters(scene);
+
+        executeShadowPass(scene, visibleObjects);
+        executeMainPass(scene, shadowCasters);
     }
 
     public void resizeViewport(int width, int height) {
@@ -246,8 +310,8 @@ public class Renderer {
     }
 
     public void setDebugViewMode(int debugViewMode) {
-        if (debugViewMode < 0 || debugViewMode > 9)
-            throw new IllegalArgumentException("Debug view mode must be between 0 and 9");
+        if (debugViewMode < 0 || debugViewMode > 10)
+            throw new IllegalArgumentException("Debug view mode must be between 0 and 10");
 
         if (this.debugViewMode == debugViewMode)
             return;
@@ -258,7 +322,7 @@ public class Renderer {
     }
 
     public void cycleDebugViewMode() {
-        setDebugViewMode((debugViewMode + 1) % 10);
+        setDebugViewMode((debugViewMode + 1) % 11);
     }
 
     public boolean isFrustumCullingEnabled() {
@@ -285,6 +349,7 @@ public class Renderer {
             case 7 -> "Irradiance";
             case 8 -> "Prefilter";
             case 9 -> "BRDF LUT";
+            case 10 -> "Shadow";
             default -> "Unknown";
         };
     }

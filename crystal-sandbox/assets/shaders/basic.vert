@@ -17,6 +17,8 @@ layout (std140, binding = 0) uniform SceneData {
 
     vec4 sunDirection;   // xyz = direction
     vec4 sunColor;       // rgb = color, a = intensity
+
+    mat4 lightSpaceMatrix;
 };
 
 out vec3 v_WorldPosition;
@@ -24,6 +26,7 @@ out vec3 v_Color;
 out vec2 v_UV;
 out vec3 v_Normal;
 out vec3 v_Tangent;
+out vec4 v_LightSpacePosition;
 
 void main() {
     vec4 worldPosition = model * vec4(a_Position, 1.0);
@@ -36,6 +39,8 @@ void main() {
 
     v_Normal = normalMatrix * a_Normal;
     v_Tangent = normalMatrix * a_Tangent;
+
+    v_LightSpacePosition = lightSpaceMatrix * model * vec4(a_Position, 1.0);
 
     gl_Position = projection * view * worldPosition;
 }

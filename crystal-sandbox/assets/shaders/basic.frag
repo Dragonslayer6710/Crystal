@@ -5,11 +5,12 @@ in vec3 v_Color;
 in vec2 v_UV;
 in vec3 v_Normal;
 in vec3 v_Tangent;
-
+in vec4 v_LightSpacePosition;
 
 uniform int debugViewMode;
 uniform float exposure;
 uniform int hasIBL;
+uniform float iblIntensity;
 
 uniform sampler2D albedoTexture;
 uniform sampler2D normalMap;
@@ -21,6 +22,8 @@ uniform samplerCube irradianceMap;
 uniform samplerCube prefilterMap;
 uniform sampler2D brdfLut;
 
+uniform sampler2D shadowMap;
+
 layout (std140, binding = 0) uniform SceneData {
     mat4 view;
     mat4 projection;
@@ -30,6 +33,8 @@ layout (std140, binding = 0) uniform SceneData {
 
     vec4 sunDirection;   // xyz = direction
     vec4 sunColor;       // rgb = color, a = intensity
+
+    mat4 lightSpaceMatrix;
 };
 
 uniform vec3 materialTint;
@@ -42,6 +47,8 @@ uniform int hasNormalMap;
 uniform int hasMetallicRoughnessMap;
 uniform int hasAoMap;
 uniform int hasEmissiveMap;
+
+uniform float shadowStrength;
 
 out vec4 f_Color;
 
@@ -111,6 +118,21 @@ vec2 getMetallicRoughness() {
     return vec2(metallic, roughness);
 }
 
+float calculateShadow(vec4 lightSpacePosition, vec3 normal, vec3 lightDirection) {
+    vec3 projected = lightSpacePosition.xyz / lightSpacePosition.w;
+    projected = projected * 0.5 + 0.5;
+
+    if (projected.z > 1.0)
+    return 0.0;
+
+    float closestDepth = texture(shadowMap, projected.xy).r;
+    float currentDepth = projected.z;
+
+    float bias = max(0.005 * (1.0 - dot(normal, lightDirection)), 0.0005);
+
+    return currentDepth - bias > closestDepth ? 1.0 : 0.0;
+}
+
 vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness, float ao) {
     vec3 L = normalize(-sunDirection.xyz);
     vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
@@ -139,6 +161,9 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
     vec3 diffuseBRDF = kD * albedo / PI;
 
     vec3 directLighting = (diffuseBRDF + specular) * radiance * NdotL;
+    float shadow = calculateShadow(v_LightSpacePosition, normal, L);
+    directLighting *= (1.0 - shadow * shadowStrength);
+
     vec3 ambientLighting;
 
     if (hasIBL == 1) {
@@ -152,7 +177,7 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
         vec2 brdf = texture(brdfLut, vec2(max(dot(normal, V), 0.0), roughness)).rg;
         vec3 specularIBL = prefilteredColor * (F * brdf.x + brdf.y);
 
-        ambientLighting = (diffuseIBL * kD + specularIBL) * ao;
+        ambientLighting = (diffuseIBL * kD + specularIBL) * ao * iblIntensity;
     } else {
         ambientLighting = ambient.rgb * ambient.a * albedo * ao;
     }
@@ -246,6 +271,15 @@ void main() {
             } else {
                 f_Color = vec4(1.0, 0.0, 1.0, 1.0);
             }
+            break;
+        case 10:
+            float shadow = calculateShadow(
+            v_LightSpacePosition,
+            N,
+            normalize(-sunDirection.xyz)
+            );
+
+            f_Color = vec4(vec3(shadow), 1.0);
             break;
         default:
             f_Color = vec4(1.0, 0.0, 1.0, 1.0);

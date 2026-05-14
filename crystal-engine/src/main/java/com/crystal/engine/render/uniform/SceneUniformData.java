@@ -5,7 +5,7 @@ import com.crystal.engine.render.scene.Scene;
 public final class SceneUniformData {
 
     public static final int BINDING_POINT = UniformBindings.SCENE;
-    public static final int FLOAT_COUNT = 48;
+    public static final int FLOAT_COUNT = 64;
     public static final int BYTE_SIZE = FLOAT_COUNT * Float.BYTES;
 
     /*
@@ -18,6 +18,7 @@ public final class SceneUniformData {
      *     vec4 u_CameraPosition;    // offset 144 / floats 36-39
      *     vec4 u_LightDirection;    // offset 160 / floats 40-43
      *     vec4 u_LightColor;        // offset 176 / floats 44-47
+     *     mat4 u_lightSpaceMatrix;  // offset 192 / floats 48-63
      * };
      */
 
@@ -27,6 +28,7 @@ public final class SceneUniformData {
     private static final int CAMERA_POSITION_OFFSET = 36;
     private static final int LIGHT_DIRECTION_OFFSET = 40;
     private static final int LIGHT_COLOR_OFFSET = 44;
+    private static final int LIGHT_SPACE_MATRIX_OFFSET = 48;
 
     private final float[] data = new float[FLOAT_COUNT];
 
@@ -65,6 +67,8 @@ public final class SceneUniformData {
         data[LIGHT_COLOR_OFFSET + 1] = lightColor.y;
         data[LIGHT_COLOR_OFFSET + 2] = lightColor.z;
         data[LIGHT_COLOR_OFFSET + 3] = light.getIntensity();
+
+        light.getLightSpaceMatrix().get(data, LIGHT_SPACE_MATRIX_OFFSET);
 
         return data;
     }
