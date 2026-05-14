@@ -73,10 +73,26 @@ public final class IBLGenerator {
         Texture prefilterMap = resources.register(generator.generatePrefilterMap(environmentCubemap));
         Texture brdfLut = resources.register(generator.generateBrdfLut());
 
+        validateGeneratedTexture("environment cubemap", environmentCubemap);
+        validateGeneratedTexture("irradiance map", irradianceMap);
+        validateGeneratedTexture("prefilter map", prefilterMap);
+        validateGeneratedTexture("BRDF LUT", brdfLut);
+
         environment.setSkybox(environmentCubemap)
                 .setIrradianceMap(irradianceMap)
                 .setPrefilterMap(prefilterMap)
                 .setBrdfLut(brdfLut);
+    }
+
+    private static void validateGeneratedTexture(String name, Texture texture) {
+        if (texture == null) throw new IllegalStateException("Generated " + name + " is null");
+
+        if (texture.getId() == 0)
+            throw new IllegalStateException("Generated " + name + " has invalid OpenGL texture id 0");
+
+        if (texture.getWidth() <= 0 || texture.getHeight() <= 0)
+            throw new IllegalStateException("Generated " + name + " has invalid size: "
+                    + texture.getWidth() + "x" + texture.getHeight());
     }
 
     public void generateFromHDR(Environment environment, String hdrTexturePath) {
