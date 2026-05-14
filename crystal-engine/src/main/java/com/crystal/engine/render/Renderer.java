@@ -4,6 +4,7 @@ import com.crystal.engine.render.commands.ClearCommand;
 import com.crystal.engine.render.commands.DrawSceneObjectCommand;
 import com.crystal.engine.render.commands.DrawSkyboxCommand;
 import com.crystal.engine.render.commands.RenderCommand;
+import com.crystal.engine.render.gl.RenderPass;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
@@ -31,6 +32,9 @@ public class Renderer {
     private final RenderQueue queue = new RenderQueue();
     private final RenderStats stats = new RenderStats();
     private final VisibilityResult visibilityResult = new VisibilityResult();
+
+    private int viewportWidth;
+    private int viewportHeight;
 
     private boolean frustumCullingEnabled;
 
@@ -196,15 +200,23 @@ public class Renderer {
         if (aspectRatio <= 0.0f || Float.isNaN(aspectRatio) || Float.isInfinite(aspectRatio))
             throw new IllegalArgumentException("Invalid aspect ratio: " + aspectRatio);
 
-        prepareFrame(scene, aspectRatio);
-        submitSkybox(scene);
-        List<SceneObject> visibleObjects = collectVisibleObjects(scene);
-        sortVisibleObjects(visibleObjects);
-        submitVisibleObjects(visibleObjects);
-        renderFrame();
+        try (RenderPass ignored = new RenderPass(viewportWidth, viewportHeight)) {
+            prepareFrame(scene, aspectRatio);
+            submitSkybox(scene);
+            List<SceneObject> visibleObjects = collectVisibleObjects(scene);
+            sortVisibleObjects(visibleObjects);
+            submitVisibleObjects(visibleObjects);
+            renderFrame();
+        }
     }
 
     public void resizeViewport(int width, int height) {
+        if (width <= 0 || height <= 0)
+            throw new IllegalArgumentException("Viewport size must be greater than 0");
+
+        viewportWidth = width;
+        viewportHeight = height;
+
         glViewport(0, 0, width, height);
     }
 

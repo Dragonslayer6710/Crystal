@@ -79,6 +79,10 @@ public final class Framebuffer implements Disposable {
         glBindFramebuffer(GL_FRAMEBUFFER, id);
     }
 
+    public static void bindDefault() {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
     public int getId() {
         return id;
     }

@@ -4,7 +4,7 @@ import com.crystal.engine.render.RenderContext;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class ClearCommand implements RenderCommand {
+public final class ClearCommand implements RenderCommand {
 
     private final float r, g, b, a;
 

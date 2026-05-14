@@ -17,6 +17,7 @@ public class RenderStats {
 
         sceneDrawCount = 0;
         skyboxDrawCount = 0;
+        submittedCommandCount = 0;
     }
 
     public int getRenderableObjectCount() {
@@ -49,13 +50,14 @@ public class RenderStats {
 
     public String summary() {
         return String.format(
-                "renderable=%d, visible=%d, culled=%d, draws=%d, sceneDraws=%d, skyboxDraws=%d",
+                "renderable=%d, visible=%d, culled=%d, draws=%d, sceneDraws=%d, skyboxDraws=%d, submittedCommands=%d",
                 renderableObjectCount,
                 visibleObjectCount,
                 culledObjectCount,
                 getTotalDrawCount(),
                 sceneDrawCount,
-                skyboxDrawCount
+                skyboxDrawCount,
+                submittedCommandCount
         );
     }
 

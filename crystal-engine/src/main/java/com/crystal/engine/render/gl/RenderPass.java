@@ -16,6 +16,16 @@ public final class RenderPass implements AutoCloseable {
         glViewport(0, 0, width, height);
     }
 
+    public RenderPass(int width, int height) {
+        if (width <= 0 || height <= 0)
+            throw new IllegalArgumentException("RenderPass size must be greater than 0");
+
+        this.snapshot = new GLStateSnapshot();
+
+        Framebuffer.bindDefault();
+        glViewport(0, 0, width, height);
+    }
+
     public void clearColor() {
         glClear(GL_COLOR_BUFFER_BIT);
     }
