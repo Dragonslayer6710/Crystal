@@ -66,20 +66,8 @@ public class Engine implements WindowEventListener, Application {
 
         resourceManager = new ResourceManager(config.getAssetConfig());
 
-        renderer = new Renderer(config.getRendererConfig());
+        renderer = new Renderer(config.getRendererConfig(), resourceManager);
         renderer.init(windowConfig.getWidth(), windowConfig.getHeight());
-
-        renderer.setDefaultTextures(
-                resourceManager.getDefaultWhiteTexture(),
-                resourceManager.getDefaultNormalTexture(),
-                resourceManager.getDefaultBlackCubemap(),
-                resourceManager.getDefaultBrdfLut()
-        );
-
-        renderer.setSkyboxResources(
-                resourceManager.getSkyboxShader(),
-                resourceManager.getSkyboxCubeMesh()
-        );
 
         scene = new Scene();
 

@@ -1,5 +1,6 @@
 package com.crystal.engine.render;
 
+import com.crystal.engine.core.ResourceManager;
 import com.crystal.engine.render.commands.ClearCommand;
 import com.crystal.engine.render.commands.DrawSceneObjectCommand;
 import com.crystal.engine.render.commands.DrawSkyboxCommand;
@@ -27,7 +28,7 @@ public class Renderer {
 
     private final RendererConfig config;
 
-    private final RenderContext context = new RenderContext();
+    private final RenderContext context;
 
     private final RenderQueue queue = new RenderQueue();
     private final RenderStats stats = new RenderStats();
@@ -47,11 +48,13 @@ public class Renderer {
     private Shader skyboxShader;
     private Mesh skyboxCubeMesh;
 
-    public Renderer(RendererConfig config) {
+    public Renderer(RendererConfig config, ResourceManager resources) {
         if (config == null) throw new IllegalArgumentException("RendererConfig cannot be null");
 
         this.config = config;
         this.frustumCullingEnabled = config.isFrustumCulling();
+
+        this.context = new RenderContext(resources);
     }
 
     public Renderer() {

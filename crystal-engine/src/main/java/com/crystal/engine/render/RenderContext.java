@@ -1,5 +1,6 @@
 package com.crystal.engine.render;
 
+import com.crystal.engine.core.ResourceManager;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.mesh.Mesh;
@@ -18,7 +19,7 @@ public class RenderContext {
 
     private static final int MAX_TEXTURE_UNITS = 16;
 
-    private RenderResources resources;
+    private final RenderResources resources;
 
     private int debugViewMode = 0;
     private float exposure = 1.0f;
@@ -37,11 +38,9 @@ public class RenderContext {
 
     private final SceneUniformData sceneUniformData = new SceneUniformData();
 
-    private Texture defaultWhiteTexture;
-    private Texture defaultNormalTexture;
+    public RenderResources(ResourceManager resources) {
 
-    private Texture defaultBlackCubemap;
-    private Texture defaultBrdfLut;
+    }
 
     public void beginFrame() {
         currentShaderId = 0;
@@ -120,23 +119,23 @@ public class RenderContext {
 
         Texture albedo = material.getAlbedo() != null
                 ? material.getAlbedo()
-                : defaultWhiteTexture;
+                : resources.getDefaultWhiteTexture();
 
         Texture normalMap = material.getNormalMap() != null
                 ? material.getNormalMap()
-                : defaultNormalTexture;
+                : resources.getDefaultNormalTexture();
 
         Texture metallicRoughness = material.getMetallicRoughnessMap() != null
                 ? material.getMetallicRoughnessMap()
-                : defaultWhiteTexture;
+                : resources.getDefaultWhiteTexture();
 
         Texture ambientOcclusion = material.getAmbientOcclusionMap() != null
                 ? material.getAmbientOcclusionMap()
-                : defaultWhiteTexture;
+                : resources.getDefaultWhiteTexture();
 
         Texture emissiveMap = material.getEmissiveMap() != null
                 ? material.getEmissiveMap()
-                : defaultWhiteTexture;
+                : resources.getDefaultWhiteTexture();
 
         bindTextureIfNeeded(albedo, TextureSlots.ALBEDO);
         bindTextureIfNeeded(normalMap, TextureSlots.NORMAL);
@@ -166,35 +165,26 @@ public class RenderContext {
         sceneUBO.bind();
 
         bindTextureIfNeeded(
-                environment.getIrradianceMap() != null ? environment.getIrradianceMap() : defaultBlackCubemap,
+                environment.getIrradianceMap() != null ? environment.getIrradianceMap() :
+                        resources.getDefaultBlackCubemap(),
                 TextureSlots.IRRADIANCE
         );
 
         bindTextureIfNeeded(
-                environment.getPrefilterMap() != null ? environment.getPrefilterMap() : defaultBlackCubemap,
+                environment.getPrefilterMap() != null ? environment.getPrefilterMap() :
+                        resources.getDefaultBlackCubemap(),
                 TextureSlots.PREFILTER
         );
 
         bindTextureIfNeeded(
-                environment.getBrdfLut() != null ? environment.getBrdfLut() : defaultBrdfLut,
+                environment.getBrdfLut() != null ? environment.getBrdfLut() :
+                        resources.getDefaultBrdfLut(),
                 TextureSlots.BRDF_LUT
         );
     }
 
     public void setExposure(float exposure) {
         this.exposure = exposure;
-    }
-
-    public void setDefaultTextures(Texture white, Texture normal, Texture blackCubemap, Texture brdfLut) {
-        if (white == null) throw new IllegalArgumentException("Default white texture cannot be null");
-        if (normal == null) throw new IllegalArgumentException("Default normal texture cannot be null");
-        if (blackCubemap == null) throw new IllegalArgumentException("Default black cubemap cannot be null");
-        if (brdfLut == null) throw new IllegalArgumentException("Default BRDF LUT cannot be null");
-
-        this.defaultWhiteTexture = white;
-        this.defaultNormalTexture = normal;
-        this.defaultBlackCubemap = blackCubemap;
-        this.defaultBrdfLut = brdfLut;
     }
 
     public void setDebugViewMode(int debugViewMode) {
@@ -216,6 +206,9 @@ public class RenderContext {
     }
 
     public RenderResources getResources() {
+        if (resources == null)
+            throw new IllegalStateException("RenderResources have not been set");
+
         return resources;
     }
 }
