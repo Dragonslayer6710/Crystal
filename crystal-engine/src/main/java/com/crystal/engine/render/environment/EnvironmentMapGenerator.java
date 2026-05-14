@@ -139,7 +139,7 @@ public final class EnvironmentMapGenerator implements Disposable {
 
                     framebuffer.attachCubemapFace(output, mip, face);
 
-                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                    framebuffer.clearColorDepth();
 
                     drawMesh(cube);
                 }
@@ -168,7 +168,7 @@ public final class EnvironmentMapGenerator implements Disposable {
 
             brdfLutShader.bind();
 
-            glClear(GL_COLOR_BUFFER_BIT);
+            framebuffer.clearColor();
             drawMesh(fullscreenQuad);
 
             return output;
@@ -204,7 +204,7 @@ public final class EnvironmentMapGenerator implements Disposable {
 
                 framebuffer.attachCubemapFace(output, 0, face);
 
-                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                framebuffer.clearColorDepth();
                 drawMesh(mesh);
             }
 
