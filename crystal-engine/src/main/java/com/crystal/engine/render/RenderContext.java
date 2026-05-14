@@ -160,6 +160,7 @@ public class RenderContext {
         sceneUBO.bind();
 
         var environment = scene.getEnvironment();
+        this.hasIBL = environment.hasIBL();
 
         bindTextureIfNeeded(
                 environment.getIrradianceMap() != null ? environment.getIrradianceMap() : defaultBlackCubemap,
