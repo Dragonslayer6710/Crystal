@@ -153,14 +153,15 @@ public class RenderContext {
     public void prepareScene(Scene scene, float aspectRatio) {
         this.aspectRatio = aspectRatio;
 
+        var environment = scene.getEnvironment();
+
+        this.hasIBL = environment.hasIBL();
+
         float[] data = sceneUniformData.from(scene, aspectRatio);
 
         var sceneUBO = scene.getSceneUBO();
         sceneUBO.setData(0, data);
         sceneUBO.bind();
-
-        var environment = scene.getEnvironment();
-        this.hasIBL = environment.hasIBL();
 
         bindTextureIfNeeded(
                 environment.getIrradianceMap() != null ? environment.getIrradianceMap() : defaultBlackCubemap,
