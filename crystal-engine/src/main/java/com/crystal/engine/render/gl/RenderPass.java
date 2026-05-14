@@ -16,6 +16,14 @@ public final class RenderPass implements AutoCloseable {
         glViewport(0, 0, width, height);
     }
 
+    public void clearColor() {
+        glClear(GL_COLOR_BUFFER_BIT);
+    }
+
+    public void clearColorDepth() {
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
     @Override
     public void close() {
         snapshot.restore();

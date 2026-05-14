@@ -101,7 +101,7 @@ public final class EnvironmentMapGenerator implements Disposable {
 
         int size = 128;
 
-        try (RenderPass ignored = new RenderPass(framebuffer, size, size)) {
+        try (RenderPass pass = new RenderPass(framebuffer, size, size)) {
             Texture output = TextureFactory.createCubemap(
                     size,
                     TextureSettings.defaultPrefilterCubemap(),
@@ -139,8 +139,7 @@ public final class EnvironmentMapGenerator implements Disposable {
 
                     framebuffer.attachCubemapFace(output, mip, face);
 
-                    framebuffer.clearColorDepth();
-
+                    pass.clearColorDepth();
                     drawMesh(cube);
                 }
             }
@@ -152,7 +151,7 @@ public final class EnvironmentMapGenerator implements Disposable {
     public Texture generateBrdfLut() {
         int size = 512;
 
-        try (RenderPass ignored = new RenderPass(framebuffer, size, size)) {
+        try (RenderPass pass = new RenderPass(framebuffer, size, size)) {
             Texture output = TextureFactory.createRenderTexture2D(
                     size,
                     size,
@@ -168,7 +167,7 @@ public final class EnvironmentMapGenerator implements Disposable {
 
             brdfLutShader.bind();
 
-            framebuffer.clearColor();
+            pass.clearColor();
             drawMesh(fullscreenQuad);
 
             return output;
@@ -178,7 +177,7 @@ public final class EnvironmentMapGenerator implements Disposable {
     private Texture renderToCubemap(String debugname, int size, TextureSettings settings, Shader shader,
                                     Texture inputTexture, String inputSamplerName, Mesh mesh) {
 
-        try (RenderPass ignored = new RenderPass(framebuffer, size, size)) {
+        try (RenderPass pass = new RenderPass(framebuffer, size, size)) {
             Texture output = TextureFactory.createCubemap(
                     size,
                     settings,
@@ -204,7 +203,7 @@ public final class EnvironmentMapGenerator implements Disposable {
 
                 framebuffer.attachCubemapFace(output, 0, face);
 
-                framebuffer.clearColorDepth();
+                pass.clearColorDepth();
                 drawMesh(mesh);
             }
 

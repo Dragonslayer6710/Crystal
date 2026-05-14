@@ -90,14 +90,6 @@ public final class Framebuffer implements Disposable {
             throw new IllegalStateException("Framebuffer is incomplete: 0x" + Integer.toHexString(status));
     }
 
-    public void clearColor() {
-        glClear(GL_COLOR_BUFFER_BIT);
-    }
-
-    public void clearColorDepth() {
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
     @Override
     public void dispose() {
         if (disposed)
