@@ -113,6 +113,7 @@ public class Renderer {
 
         if (skyboxShader == null || skyboxCubeMesh == null) {
             logger.warn("Scene has skybox, but renderer skybox resources are not set");
+            return;
         }
 
         submitCommand(new DrawSkyboxCommand(
