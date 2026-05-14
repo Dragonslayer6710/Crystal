@@ -111,9 +111,6 @@ public final class EnvironmentMapGenerator implements Disposable {
             Matrix4f projection = createCaptureProjection();
             Matrix4f[] views = createCaptureViews();
 
-
-            framebuffer.bind();
-
             prefilterEnvironmentShader.bind();
             prefilterEnvironmentShader.setInt("environmentMap", 0);
             prefilterEnvironmentShader.setMat4("projection", projection);
@@ -163,11 +160,8 @@ public final class EnvironmentMapGenerator implements Disposable {
                     "<generated:brdf-lut>"
             );
 
-            framebuffer.bind();
             framebuffer.detachDepthBuffer();
             framebuffer.attachTexture2D(output, 0);
-
-            glViewport(0, 0, size, size);
 
             glDisable(GL_DEPTH_TEST);
             glDisable(GL_CULL_FACE);
@@ -196,10 +190,6 @@ public final class EnvironmentMapGenerator implements Disposable {
 
             Matrix4f projection = createCaptureProjection();
             Matrix4f[] views = createCaptureViews();
-
-            glViewport(0, 0, size, size);
-
-            framebuffer.bind();
 
             shader.bind();
             shader.setInt(inputSamplerName, 0);
