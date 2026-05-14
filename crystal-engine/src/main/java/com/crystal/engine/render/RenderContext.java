@@ -8,6 +8,7 @@ import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shader.ShaderUniforms;
 import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.texture.TextureSlots;
+import com.crystal.engine.render.uniform.SceneUniformData;
 
 import java.util.Arrays;
 
@@ -150,45 +151,13 @@ public class RenderContext {
     public void prepareScene(Scene scene, float aspectRatio) {
         this.aspectRatio = aspectRatio;
 
-        float[] data = new float[48];
-
-        var camera = scene.getCamera();
-
-        camera.getViewMatrix().get(data, 0);
-        camera.getProjectionMatrix(aspectRatio).get(data, 16);
-
-        var environment = scene.getEnvironment();
-
-        this.hasIBL = environment.hasIBL();
-
-        var ambientColor = environment.getAmbientColor();
-
-        data[32] = ambientColor.x;
-        data[33] = ambientColor.y;
-        data[34] = ambientColor.z;
-        data[35] = environment.getAmbientIntensity();
-
-        var cameraPosition = camera.getTransform().getWorldPosition();
-        data[36] = cameraPosition.x;
-        data[37] = cameraPosition.y;
-        data[38] = cameraPosition.z;
-        data[39] = 0.0f;
-
-        var lightDirection = scene.getDirectionalLight().getDirection();
-        data[40] = lightDirection.x;
-        data[41] = lightDirection.y;
-        data[42] = lightDirection.z;
-        data[43] = 0.0f;
-
-        var lightColor = scene.getDirectionalLight().getColor();
-        data[44] = lightColor.x;
-        data[45] = lightColor.y;
-        data[46] = lightColor.z;
-        data[47] = scene.getDirectionalLight().getIntensity();
+        float[] data = SceneUniformData.from(scene, aspectRatio);
 
         var sceneUBO = scene.getSceneUBO();
         sceneUBO.setData(0, data);
         sceneUBO.bind();
+
+        var environment = scene.getEnvironment();
 
         bindTextureIfNeeded(
                 environment.getIrradianceMap() != null ? environment.getIrradianceMap() : defaultBlackCubemap,
