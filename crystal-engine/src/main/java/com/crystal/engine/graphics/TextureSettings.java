@@ -65,6 +65,15 @@ public final class TextureSettings {
                 .setWrapT(TextureWrap.CLAMP_TO_EDGE);
     }
 
+    public static TextureSettings defaultDepth() {
+        return new TextureSettings()
+                .setFormat(TextureFormat.DEPTH24)
+                .setMinFilter(TextureFilter.NEAREST)
+                .setMagFilter(TextureFilter.NEAREST)
+                .setWrapS(TextureWrap.CLAMP_TO_BORDER)
+                .setWrapT(TextureWrap.CLAMP_TO_BORDER);
+    }
+
     public static TextureSettings forType(TextureType type) {
         if (type == null) throw new IllegalArgumentException("TextureType cannot be null");
 

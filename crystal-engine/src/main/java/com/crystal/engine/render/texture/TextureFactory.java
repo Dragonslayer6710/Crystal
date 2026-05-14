@@ -257,6 +257,12 @@ public final class TextureFactory {
         glTextureParameteri(textureId, GL_TEXTURE_WRAP_S, settings.getWrapS().glValue);
         glTextureParameteri(textureId, GL_TEXTURE_WRAP_T, settings.getWrapT().glValue);
 
+        if (settings.getWrapS() == TextureWrap.CLAMP_TO_BORDER ||
+                settings.getWrapT() == TextureWrap.CLAMP_TO_BORDER) {
+            float[] borderColor = {1.0f, 1.0f, 1.0f, 1.0f};
+            glTextureParameterfv(textureId, GL_TEXTURE_BORDER_COLOR, borderColor);
+        }
+
         return new Texture(
                 textureId,
                 TextureTarget.TEXTURE_2D,
@@ -265,5 +271,18 @@ public final class TextureFactory {
                 levels,
                 debugName
         );
+    }
+
+    public static Texture createDepthTexture2D(int width, int height, TextureSettings settings, String debugName) {
+        return createRenderTexture2D(
+                width,
+                height,
+                settings != null ? settings : TextureSettings.defaultDepth(),
+                debugName
+        );
+    }
+
+    public static Texture createDepthTexture2D(int width, int height, String debugName) {
+        return createDepthTexture2D(width, height, TextureSettings.defaultDepth(), debugName);
     }
 }

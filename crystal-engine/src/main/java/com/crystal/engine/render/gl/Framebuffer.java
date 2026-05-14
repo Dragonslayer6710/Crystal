@@ -75,6 +75,23 @@ public final class Framebuffer implements Disposable {
         );
     }
 
+    public void attachDepthTexture(Texture texture) {
+        if (texture == null)
+            throw new IllegalArgumentException("Depth texture cannot be null");
+
+        glNamedFramebufferTexture(
+                id,
+                GL_DEPTH_ATTACHMENT,
+                texture.getId(),
+                0
+        );
+
+        glNamedFramebufferDrawBuffer(id, GL_NONE);
+        glNamedFramebufferReadBuffer(id, GL_NONE);
+
+        checkComplete();
+    }
+
     public void bind() {
         glBindFramebuffer(GL_FRAMEBUFFER, id);
     }
