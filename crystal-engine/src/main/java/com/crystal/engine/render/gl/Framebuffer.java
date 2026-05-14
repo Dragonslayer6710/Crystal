@@ -1,6 +1,7 @@
 package com.crystal.engine.render.gl;
 
 import com.crystal.engine.core.Disposable;
+import com.crystal.engine.render.GLObjectLabel;
 import com.crystal.engine.render.texture.Texture;
 
 import static org.lwjgl.opengl.GL46.*;
@@ -18,8 +19,8 @@ public class Framebuffer implements Disposable {
         this.id = glCreateFramebuffers();
         this.depthRenderbuffer = glCreateRenderbuffers();
 
-        // Optional later: GLObjectLabel.labelFramebuffer(id, debugName);
-        // Optional later: GLObjectLabel.labelRenderbuffer(depthRenderbuffer, debugName + ":depth");
+        GLObjectLabel.labelFramebuffer(id, debugName);
+        GLObjectLabel.labelRenderbuffer(depthRenderbuffer, debugName + ":depth");
 
         glNamedFramebufferRenderbuffer(id, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, depthRenderbuffer);
     }
