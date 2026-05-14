@@ -127,4 +127,9 @@ public class Transform {
     public Vector3f getWorldPosition() {
         return getWorldMatrix().getTranslation(new Vector3f());
     }
+
+    public Vector3f getWorldScale() {
+        return getWorldMatrix().getScale(new Vector3f());
+    }
+
 }

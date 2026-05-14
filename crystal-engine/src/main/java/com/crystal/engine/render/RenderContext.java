@@ -184,6 +184,11 @@ public class RenderContext {
     }
 
     public void setDefaultTextures(Texture white, Texture normal, Texture blackCubemap, Texture brdfLut) {
+        if (white == null) throw new IllegalArgumentException("Default white texture cannot be null");
+        if (normal == null) throw new IllegalArgumentException("Default normal texture cannot be null");
+        if (blackCubemap == null) throw new IllegalArgumentException("Default black cubemap cannot be null");
+        if (brdfLut == null) throw new IllegalArgumentException("Default BRDF LUT cannot be null");
+
         this.defaultWhiteTexture = white;
         this.defaultNormalTexture = normal;
         this.defaultBlackCubemap = blackCubemap;

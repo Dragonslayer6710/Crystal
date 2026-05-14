@@ -23,6 +23,11 @@ public class SceneObject {
     private float boundingRadius = 1.0f;
 
     public SceneObject(String name, Mesh mesh, Material material, Transform transform) {
+        if ((mesh == null) != (material == null))
+            throw new IllegalArgumentException("Mesh and material must either both be present or both be null");
+
+        if (transform == null) throw new IllegalArgumentException("Transform cannot be null");
+
         this.name = name;
         this.mesh = mesh;
         this.material = material;
@@ -129,11 +134,12 @@ public class SceneObject {
         return transform.getWorldMatrix()
                 .transformPosition(mesh.getBounds().center(), new Vector3f());
     }
+
     public float getWorldBoundingRadius() {
         if (mesh == null)
             return boundingRadius;
 
-        Vector3f scale = transform.getScale();
+        Vector3f scale = transform.getWorldScale();
 
         float maxScale = Math.max(
                 Math.abs(scale.x),

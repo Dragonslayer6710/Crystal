@@ -22,9 +22,8 @@ public class Scene implements Disposable {
     );
 
     public void add(SceneObject object) {
-        if (object.getParent() != null) {
-            throw new IllegalArgumentException("Only root objects can be added to Scene");
-        }
+        if (object == null) throw new IllegalArgumentException("SceneObject cannot be null");
+        if (object.getParent() != null) throw new IllegalArgumentException("Only root objects can be added to Scene");
 
         rootObjects.add(object);
     }
