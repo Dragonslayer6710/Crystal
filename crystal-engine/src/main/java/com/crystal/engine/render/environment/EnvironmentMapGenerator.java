@@ -2,6 +2,8 @@ package com.crystal.engine.render.environment;
 
 import com.crystal.engine.core.Disposable;
 import com.crystal.engine.graphics.TextureSettings;
+import com.crystal.engine.render.gl.Framebuffer;
+import com.crystal.engine.render.gl.GLStateSnapshot;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
@@ -21,8 +23,7 @@ public final class EnvironmentMapGenerator implements Disposable {
     private final Mesh cube;
     private final Mesh fullscreenQuad;
 
-    private final int framebuffer;
-    private final int renderbuffer;
+    private final Framebuffer framebuffer;
 
     private boolean disposed;
 
@@ -56,22 +57,8 @@ public final class EnvironmentMapGenerator implements Disposable {
         this.cube = cube;
         this.fullscreenQuad = fullscreenQuad;
 
-        framebuffer = glCreateFramebuffers();
-        renderbuffer = glCreateRenderbuffers();
-
-        glNamedRenderbufferStorage(
-                renderbuffer,
-                GL_DEPTH_COMPONENT24,
-                DEFAULT_CUBEMAP_SIZE,
-                DEFAULT_CUBEMAP_SIZE
-        );
-
-        glNamedFramebufferRenderbuffer(
-                framebuffer,
-                GL_DEPTH_ATTACHMENT,
-                GL_RENDERBUFFER,
-                renderbuffer
-        );
+        this.framebuffer = new Framebuffer("environment-map-generator");
+        this.framebuffer.resizeDepthBuffer(DEFAULT_CUBEMAP_SIZE, DEFAULT_CUBEMAP_SIZE);
     }
 
     public Texture generateCubemap(Texture equirectangularTexture, int size) {
@@ -124,7 +111,7 @@ public final class EnvironmentMapGenerator implements Disposable {
         GLStateSnapshot state = new GLStateSnapshot();
 
         try {
-            glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+            framebuffer.bind();
 
             prefilterEnvironmentShader.bind();
             prefilterEnvironmentShader.setInt("environmentMap", 0);
@@ -140,12 +127,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                 int mipWidth = 128 >> mip;
                 int mipHeight = 128 >> mip;
 
-                glNamedRenderbufferStorage(
-                        renderbuffer,
-                        GL_DEPTH_COMPONENT24,
-                        mipWidth,
-                        mipHeight
-                );
+                framebuffer.resizeDepthBuffer(mipWidth, mipHeight);
 
                 glViewport(0, 0, mipWidth, mipHeight);
 
@@ -156,13 +138,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                 for (int face = 0; face < 6; face++) {
                     prefilterEnvironmentShader.setMat4("view", views[face]);
 
-                    glNamedFramebufferTextureLayer(
-                            framebuffer,
-                            GL_COLOR_ATTACHMENT0,
-                            output.getId(),
-                            mip,
-                            face
-                    );
+                    framebuffer.attachCubemapFace(output, mip, face);
 
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -189,23 +165,9 @@ public final class EnvironmentMapGenerator implements Disposable {
                     "<generated:brdf-lut>"
             );
 
-            glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-
-            glNamedRenderbufferStorage(
-                    renderbuffer,
-                    GL_DEPTH_COMPONENT24,
-                    size,
-                    size
-            );
-
-            glNamedFramebufferTexture(
-                    framebuffer,
-                    GL_COLOR_ATTACHMENT0,
-                    output.getId(),
-                    0
-            );
-
-            glNamedFramebufferDrawBuffer(framebuffer, GL_COLOR_ATTACHMENT0);
+            framebuffer.bind();
+            framebuffer.resizeDepthBuffer(size, size);
+            framebuffer.attachTexture2D(output, 0);
 
             glViewport(0, 0, size, size);
 
@@ -234,14 +196,14 @@ public final class EnvironmentMapGenerator implements Disposable {
                     debugname
             );
 
-            glNamedRenderbufferStorage(renderbuffer, GL_DEPTH_COMPONENT24, size, size);
+            framebuffer.resizeDepthBuffer(size, size);
 
             Matrix4f projection = createCaptureProjection();
             Matrix4f[] views = createCaptureViews();
 
             glViewport(0, 0, size, size);
 
-            glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
+            framebuffer.bind();
 
             shader.bind();
             shader.setInt(inputSamplerName, 0);
@@ -254,13 +216,7 @@ public final class EnvironmentMapGenerator implements Disposable {
             for (int face = 0; face < 6; face++) {
                 shader.setMat4("view", views[face]);
 
-                glNamedFramebufferTextureLayer(
-                        framebuffer,
-                        GL_COLOR_ATTACHMENT0,
-                        output.getId(),
-                        0,
-                        face
-                );
+                framebuffer.attachCubemapFace(output, 0, face);
 
                 glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 drawMesh(mesh);
@@ -310,47 +266,11 @@ public final class EnvironmentMapGenerator implements Disposable {
         }
     }
 
-    private static final class GLStateSnapshot {
-        final int viewportX;
-        final int viewportY;
-        final int viewportWidth;
-        final int viewportHeight;
-        final int framebuffer;
-        final boolean depthTest;
-        final boolean cullFace;
-
-        GLStateSnapshot() {
-            int[] viewport = new int[4];
-            glGetIntegerv(GL_VIEWPORT, viewport);
-
-            this.viewportX = viewport[0];
-            this.viewportY = viewport[1];
-            this.viewportWidth = viewport[2];
-            this.viewportHeight = viewport[3];
-
-            this.framebuffer = glGetInteger(GL_DRAW_FRAMEBUFFER_BINDING);
-            this.depthTest = glIsEnabled(GL_DEPTH_TEST);
-            this.cullFace = glIsEnabled(GL_CULL_FACE);
-        }
-
-        void restore() {
-            glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-            glViewport(viewportX, viewportY, viewportWidth, viewportHeight);
-
-            if (depthTest) glEnable(GL_DEPTH_TEST);
-            else glDisable(GL_DEPTH_TEST);
-
-            if (cullFace) glEnable(GL_CULL_FACE);
-            else glDisable(GL_CULL_FACE);
-        }
-    }
-
     @Override
     public void dispose() {
         if (disposed) return;
 
-        glDeleteFramebuffers(framebuffer);
-        glDeleteRenderbuffers(renderbuffer);
+        framebuffer.dispose();
 
         disposed = true;
     }
