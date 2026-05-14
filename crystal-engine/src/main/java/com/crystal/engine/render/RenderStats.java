@@ -8,6 +8,7 @@ public class RenderStats {
 
     private int sceneDrawCount;
     private int skyboxDrawCount;
+    private int submittedCommandCount;
 
     public void reset() {
         renderableObjectCount = 0;
@@ -42,6 +43,10 @@ public class RenderStats {
         return sceneDrawCount + skyboxDrawCount;
     }
 
+    public int getSubmittedCommandCount() {
+        return submittedCommandCount;
+    }
+
     public String summary() {
         return String.format(
                 "renderable=%d, visible=%d, culled=%d, draws=%d, sceneDraws=%d, skyboxDraws=%d",
@@ -72,5 +77,9 @@ public class RenderStats {
 
     public void incrementSkyboxDrawCommandCount() {
         skyboxDrawCount++;
+    }
+
+    public void incrementSubmittedCommandCount() {
+        submittedCommandCount++;
     }
 }

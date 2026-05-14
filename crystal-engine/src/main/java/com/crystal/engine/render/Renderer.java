@@ -3,12 +3,14 @@ package com.crystal.engine.render;
 import com.crystal.engine.render.commands.ClearCommand;
 import com.crystal.engine.render.commands.DrawSceneObjectCommand;
 import com.crystal.engine.render.commands.DrawSkyboxCommand;
+import com.crystal.engine.render.commands.RenderCommand;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
+import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +35,8 @@ public class Renderer {
     private boolean frustumCullingEnabled;
 
     private float exposure = 1.0f;
+
+    private final Vector4f clearColor = new Vector4f(0.1f, 0.1f, 0.15f, 1.0f);
 
     private int debugViewMode = 0;
 
@@ -80,7 +84,12 @@ public class Renderer {
         context.setDebugViewMode(debugViewMode);
         context.setExposure(exposure);
 
-        queue.submit(new ClearCommand(0.1f, 0.1f, 0.15f, 1.0f));
+        submitCommand(new ClearCommand(
+                clearColor.x,
+                clearColor.y,
+                clearColor.z,
+                clearColor.w
+        ));
     }
 
     // Called at end of frame
@@ -102,7 +111,11 @@ public class Renderer {
         if (!scene.getEnvironment().hasSkybox())
             return;
 
-        queue.submit(new DrawSkyboxCommand(
+        if (skyboxShader == null || skyboxCubeMesh == null) {
+            logger.warn("Scene has skybox, but renderer skybox resources are not set");
+        }
+
+        submitCommand(new DrawSkyboxCommand(
                 scene,
                 skyboxShader,
                 skyboxCubeMesh
@@ -130,7 +143,7 @@ public class Renderer {
 
     private void submitVisibleObjects(List<SceneObject> visibleObjects) {
         for (SceneObject object : visibleObjects) {
-            queue.submit(new DrawSceneObjectCommand(object));
+            submitCommand(new DrawSceneObjectCommand(object));
             stats.incrementSceneDrawCommandCount();
         }
     }
@@ -171,7 +184,17 @@ public class Renderer {
             collectVisibleObjects(child, result, camera);
     }
 
+    private void submitCommand(RenderCommand command) {
+        queue.submit(command);
+        stats.incrementSubmittedCommandCount();
+    }
+
     public void render(Scene scene, float aspectRatio) {
+        if (scene == null) throw new IllegalArgumentException("Scene cannot be null");
+
+        if (aspectRatio <= 0.0f || Float.isNaN(aspectRatio) || Float.isInfinite(aspectRatio))
+            throw new IllegalArgumentException("Invalid aspect ratio: " + aspectRatio);
+
         prepareFrame(scene, aspectRatio);
         submitSkybox(scene);
         List<SceneObject> visibleObjects = collectVisibleObjects(scene);
@@ -192,6 +215,25 @@ public class Renderer {
         if (exposure <= 0.0f) throw new IllegalArgumentException("Exposure must be greater than 0");
 
         this.exposure = exposure;
+    }
+
+    public void setClearColor(float r, float g, float b, float a) {
+        if (isInvalidColorChannel(r) ||
+                isInvalidColorChannel(g) ||
+                isInvalidColorChannel(b) ||
+                isInvalidColorChannel(a)) {
+            throw new IllegalArgumentException(
+                    "Clear color channels must be finite values between 0 and 1"
+            );
+        }
+
+        clearColor.set(r, g, b, a);
+    }
+
+    private boolean isInvalidColorChannel(float value) {
+        return !Float.isFinite(value) ||
+                value < 0.0f ||
+                value > 1.0f;
     }
 
     public void setDebugViewMode(int debugViewMode) {
