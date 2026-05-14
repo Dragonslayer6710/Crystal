@@ -31,6 +31,18 @@ public class Scene implements Disposable {
         rootObjects.add(object);
     }
 
+    public boolean remove(SceneObject object) {
+        if (object == null)
+            return false;
+
+        boolean removed = rootObjects.remove(object);
+
+        if (removed)
+            object.getTransform().setParent(null);
+
+        return removed;
+    }
+
     public List<SceneObject> getRootObjects() {
         return rootObjects;
     }
@@ -49,6 +61,13 @@ public class Scene implements Disposable {
 
     public UniformBuffer getSceneUBO() {
         return sceneUBO;
+    }
+
+    public void clear() {
+        for (SceneObject object : rootObjects)
+            object.getTransform().setParent(null);
+
+        rootObjects.clear();
     }
 
     @Override

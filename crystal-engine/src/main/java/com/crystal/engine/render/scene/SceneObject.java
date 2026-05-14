@@ -99,11 +99,11 @@ public class SceneObject {
         if (child == this)
             throw new IllegalArgumentException("SceneObject cannot be parented to itself");
 
-        if (child.isAncestorOf(this))
-            throw new IllegalArgumentException("Cannot create circular scene hierarchy");
-
         if (children.contains(child))
             return this;
+
+        if (child.isAncestorOf(this))
+            throw new IllegalArgumentException("Cannot create circular scene hierarchy");
 
         if (child.parent != null)
             child.parent.removeChild(child);
