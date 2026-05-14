@@ -30,6 +30,10 @@ public final class RenderPass implements AutoCloseable {
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
+    public void clearDepth() {
+        glClear(GL_DEPTH_BUFFER_BIT);
+    }
+
     public void clearColorDepth() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }

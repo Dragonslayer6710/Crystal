@@ -31,5 +31,7 @@ public final class ShaderUniforms {
     public static final String HAS_AO_MAP = "hasAoMap";
     public static final String HAS_EMISSIVE_MAP = "hasEmissiveMap";
 
+    public static final String LIGHT_SPACE_MATRIX = "lightSpaceMatrix";
+
     private ShaderUniforms() {}
 }
