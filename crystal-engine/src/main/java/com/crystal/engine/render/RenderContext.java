@@ -33,6 +33,8 @@ public class RenderContext {
 
     private int currentMeshId = 0;
 
+    private final SceneUniformData sceneUniformData = new SceneUniformData();
+
     private Texture defaultWhiteTexture;
     private Texture defaultNormalTexture;
 
@@ -151,7 +153,7 @@ public class RenderContext {
     public void prepareScene(Scene scene, float aspectRatio) {
         this.aspectRatio = aspectRatio;
 
-        float[] data = SceneUniformData.from(scene, aspectRatio);
+        float[] data = sceneUniformData.from(scene, aspectRatio);
 
         var sceneUBO = scene.getSceneUBO();
         sceneUBO.setData(0, data);

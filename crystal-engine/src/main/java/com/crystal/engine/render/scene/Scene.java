@@ -16,10 +16,10 @@ public class Scene implements Disposable {
     private final DirectionalLight directionalLight = new DirectionalLight();
     private final Environment environment = new Environment();
 
-    private static final int SCENE_UBO_BINDING_POINT = 0;
-    private static final int SCENE_UBO_SIZE_BYTES = SceneUniformData.BYTE_SIZE;
-    
-    private final UniformBuffer sceneUBO = new UniformBuffer(SCENE_UBO_BINDING_POINT, SCENE_UBO_SIZE_BYTES);
+    private final UniformBuffer sceneUBO = new UniformBuffer(
+            SceneUniformData.BINDING_POINT,
+            SceneUniformData.BYTE_SIZE
+    );
 
     public void add(SceneObject object) {
         if (object.getParent() != null) {
