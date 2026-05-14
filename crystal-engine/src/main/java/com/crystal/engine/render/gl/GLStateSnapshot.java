@@ -1,13 +1,6 @@
 package com.crystal.engine.render.gl;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_CULL_FACE;
-import static org.lwjgl.opengl.GL11.GL_DEPTH_TEST;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glIsEnabled;
-import static org.lwjgl.opengl.GL11.glViewport;
-import static org.lwjgl.opengl.GL30.*;
+import static org.lwjgl.opengl.GL46.*;
 
 public final class GLStateSnapshot {
 
