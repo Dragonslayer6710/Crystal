@@ -8,7 +8,7 @@ import com.crystal.engine.render.shader.ShaderUniforms;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class DrawSceneObjectCommand implements RenderCommand {
+public final class DrawSceneObjectCommand implements RenderCommand {
 
     private final SceneObject object;
 

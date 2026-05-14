@@ -11,7 +11,7 @@ import org.joml.Matrix4f;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class DrawSkyboxCommand implements RenderCommand {
+public final class DrawSkyboxCommand implements RenderCommand {
 
     private final Scene scene;
     private final Shader shader;
@@ -59,8 +59,6 @@ public class DrawSkyboxCommand implements RenderCommand {
             );
 
             skybox.bind(0);
-
-            cubeMesh.bind();
 
             MeshRenderer.draw(cubeMesh);
         } finally {
