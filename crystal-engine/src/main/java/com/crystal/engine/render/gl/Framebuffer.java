@@ -6,7 +6,7 @@ import com.crystal.engine.render.texture.Texture;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class Framebuffer implements Disposable {
+public final class Framebuffer implements Disposable {
 
     private final int id;
     private final int depthRenderbuffer;

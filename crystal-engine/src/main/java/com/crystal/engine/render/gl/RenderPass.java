@@ -2,7 +2,7 @@ package com.crystal.engine.render.gl;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public final class RenderPass implements AutoCloseable{
+public final class RenderPass implements AutoCloseable {
 
     private final GLStateSnapshot snapshot;
 
