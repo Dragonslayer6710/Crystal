@@ -127,6 +127,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                 int mipWidth = 128 >> mip;
                 int mipHeight = 128 >> mip;
 
+                framebuffer.attachDepthBuffer();
                 framebuffer.resizeDepthBuffer(mipWidth, mipHeight);
 
                 glViewport(0, 0, mipWidth, mipHeight);
@@ -166,7 +167,7 @@ public final class EnvironmentMapGenerator implements Disposable {
             );
 
             framebuffer.bind();
-            framebuffer.resizeDepthBuffer(size, size);
+            framebuffer.detachDepthBuffer();
             framebuffer.attachTexture2D(output, 0);
 
             glViewport(0, 0, size, size);
@@ -196,6 +197,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                     debugname
             );
 
+            framebuffer.attachDepthBuffer();
             framebuffer.resizeDepthBuffer(size, size);
 
             Matrix4f projection = createCaptureProjection();

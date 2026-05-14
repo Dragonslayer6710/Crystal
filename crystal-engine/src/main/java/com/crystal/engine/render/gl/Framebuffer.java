@@ -56,6 +56,24 @@ public class Framebuffer implements Disposable {
         checkComplete();
     }
 
+    public void attachDepthBuffer() {
+        glNamedFramebufferRenderbuffer(
+                id,
+                GL_DEPTH_ATTACHMENT,
+                GL_RENDERBUFFER,
+                depthRenderbuffer
+        );
+    }
+
+    public void detachDepthBuffer() {
+        glNamedFramebufferRenderbuffer(
+                id,
+                GL_DEPTH_ATTACHMENT,
+                GL_RENDERBUFFER,
+                0
+        );
+    }
+
     public void bind() {
         glBindFramebuffer(GL_FRAMEBUFFER, id);
     }
