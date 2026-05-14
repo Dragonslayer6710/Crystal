@@ -18,6 +18,8 @@ public class RenderContext {
 
     private static final int MAX_TEXTURE_UNITS = 16;
 
+    private RenderResources resources;
+
     private int debugViewMode = 0;
     private float exposure = 1.0f;
     private float aspectRatio = 1.0f;
@@ -204,5 +206,16 @@ public class RenderContext {
 
     public float getAspectRatio() {
         return aspectRatio;
+    }
+
+    public void setResources(RenderResources resources) {
+        if (resources == null)
+            throw new IllegalArgumentException("RenderResources cannot be null");
+
+        this.resources = resources;
+    }
+
+    public RenderResources getResources() {
+        return resources;
     }
 }

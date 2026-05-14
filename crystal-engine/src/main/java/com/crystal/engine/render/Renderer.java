@@ -301,6 +301,10 @@ public class Renderer {
         context.setDefaultTextures(white, normal, blackCubemap, brdfLut);
     }
 
+    public void setResources(RenderResources resources) {
+        context.setResources(resources);
+    }
+
     public void setSkyboxResources(Shader shader, Mesh cubeMesh) {
         if (shader == null) throw new IllegalArgumentException("Skybox shader cannot be null");
         if (cubeMesh == null) throw new IllegalArgumentException("Skybox cube mesh cannot be null");
