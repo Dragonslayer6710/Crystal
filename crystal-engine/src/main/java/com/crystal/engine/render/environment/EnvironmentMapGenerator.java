@@ -119,11 +119,11 @@ public final class EnvironmentMapGenerator implements Disposable {
 
             glDisable(GL_CULL_FACE);
 
-            final int maxMipLevels = 5;
+            final int maxMipLevels = output.getMipLevels();
 
             for (int mip = 0; mip < maxMipLevels; mip++) {
-                int mipWidth = 128 >> mip;
-                int mipHeight = 128 >> mip;
+                int mipWidth = Math.max(1, size >> mip);
+                int mipHeight = Math.max(1, size >> mip);
 
                 framebuffer.attachDepthBuffer();
                 framebuffer.resizeDepthBuffer(mipWidth, mipHeight);
