@@ -40,7 +40,7 @@ public class RenderContext {
     private int currentMeshId = 0;
     private final int[] boundTextures = new int[MAX_TEXTURE_UNITS];
 
-    public RenderContext(ResourceManager resourceManager, ShadowMap directionalShadowMap) {
+    RenderContext(ResourceManager resourceManager, ShadowMap directionalShadowMap) {
         if (resourceManager == null)
             throw new IllegalArgumentException("ResourceManager cannot be null");
 
@@ -59,11 +59,11 @@ public class RenderContext {
         );
     }
 
-    public void beginFrame() {
+    void beginFrame() {
         resetBindingCache();
     }
 
-    public void prepareScene(Scene scene, float aspectRatio) {
+    void prepareScene(Scene scene, float aspectRatio) {
         this.aspectRatio = aspectRatio;
 
         var environment = scene.getEnvironment();
@@ -99,7 +99,7 @@ public class RenderContext {
         iblIntensity = environment.getIblIntensity();
     }
 
-    public void resetStateCache() {
+    void resetStateCache() {
         currentDepthTest = null;
         currentCullFace = null;
         currentWireframe = null;
@@ -164,18 +164,18 @@ public class RenderContext {
         }
     }
 
-    public void setExposure(float exposure) {
+    void setExposure(float exposure) {
         this.exposure = exposure;
     }
 
-    public void setDebugViewMode(int debugViewMode) {
+    void setDebugViewMode(int debugViewMode) {
         if (debugViewMode < 0 || debugViewMode > 10)
             throw new IllegalArgumentException("Debug view mode must be between 0 and 10");
 
         this.debugViewMode = debugViewMode;
     }
 
-    public void setShadowsEnabled(boolean shadowsEnabled) {
+    void setShadowsEnabled(boolean shadowsEnabled) {
         this.shadowsEnabled = shadowsEnabled;
     }
 
@@ -183,7 +183,7 @@ public class RenderContext {
         return aspectRatio;
     }
 
-    public RenderResources getResources() {
+    RenderResources getResources() {
         return resources;
     }
 

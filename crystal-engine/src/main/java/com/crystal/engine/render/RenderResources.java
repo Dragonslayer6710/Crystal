@@ -5,7 +5,7 @@ import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shadow.ShadowMap;
 import com.crystal.engine.render.texture.Texture;
 
-public final class RenderResources {
+final class RenderResources {
 
     private final Texture defaultWhiteTexture;
     private final Texture defaultNormalTexture;
@@ -18,7 +18,7 @@ public final class RenderResources {
     private final Shader shadowShader;
     private final ShadowMap directionalShadowMap;
 
-    public RenderResources(
+    RenderResources(
             Texture defaultWhiteTexture,
             Texture defaultNormalTexture,
             Texture defaultBlackCubemap,
@@ -49,35 +49,35 @@ public final class RenderResources {
         this.directionalShadowMap = directionalShadowMap;
     }
 
-    public Texture getDefaultWhiteTexture() {
+    Texture getDefaultWhiteTexture() {
         return defaultWhiteTexture;
     }
 
-    public Texture getDefaultNormalTexture() {
+    Texture getDefaultNormalTexture() {
         return defaultNormalTexture;
     }
 
-    public Texture getDefaultBlackCubemap() {
+    Texture getDefaultBlackCubemap() {
         return defaultBlackCubemap;
     }
 
-    public Texture getDefaultBrdfLut() {
+    Texture getDefaultBrdfLut() {
         return defaultBrdfLut;
     }
 
-    public Shader getSkyboxShader() {
+    Shader getSkyboxShader() {
         return skyboxShader;
     }
 
-    public Mesh getSkyboxCubeMesh() {
+    Mesh getSkyboxCubeMesh() {
         return skyboxCubeMesh;
     }
 
-    public Shader getShadowShader() {
+    Shader getShadowShader() {
         return shadowShader;
     }
 
-    public ShadowMap getDirectionalShadowMap() {
+    ShadowMap getDirectionalShadowMap() {
         return directionalShadowMap;
     }
 }

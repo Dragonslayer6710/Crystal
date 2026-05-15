@@ -5,21 +5,21 @@ import com.crystal.engine.render.commands.RenderCommand;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RenderQueue {
+final class RenderQueue {
 
     private final List<RenderCommand> commands = new ArrayList<>();
 
-    public void submit(RenderCommand command) {
+    void submit(RenderCommand command) {
         commands.add(command);
     }
 
-    public void execute(RenderContext context) {
+    void execute(RenderContext context) {
         for (RenderCommand command : commands) {
             command.execute(context);
         }
     }
 
-    public void clear() {
+    void clear() {
         commands.clear();
     }
 }
