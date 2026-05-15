@@ -25,13 +25,19 @@ public class SandboxMain implements Game {
 
     private static final boolean ENABLE_IBL = true;
 
+    private static final boolean SHOW_CUBES = true;
+    private static final boolean SHOW_HELMET = true;
+    private static final boolean SHOW_FLOOR = true;
+
     private EngineContext ctx;
 
     private SceneObject cubeA;
     private SceneObject cubeB;
     private SceneObject cubeC;
 
-    private Model helmet;
+    private SceneObject boxTextured;
+
+    private SceneObject helmet;
 
     private FlyCameraController cameraController;
 
@@ -52,8 +58,34 @@ public class SandboxMain implements Game {
 
         cubeA.addChild(cubeB);
         cubeB.addChild(cubeC);
-
         this.ctx.getScene().add(cubeA);
+
+
+        Model cubeModel = ctx.getResources().loadModel(
+                "/external/BoxTextured.glb",
+                new ModelLoadOptions().setShader(shader)
+        );
+        cubeModel.logHierarchy();
+        boxTextured = cubeModel.getRootObjects().getFirst();
+
+        boxTextured.getTransform().setPosition(2, 0, -1f);
+
+        this.ctx.getScene().add(boxTextured);
+    }
+
+    private void addHelmet(Shader shader) {
+        Model damagedHelmetModel = ctx.getResources().loadModel(
+                "/external/DamagedHelmet.glb",
+                new ModelLoadOptions().setShader(shader)
+        );
+        damagedHelmetModel.logHierarchy();
+        helmet = damagedHelmetModel.getRootObjects().getFirst();
+
+        ctx.getScene().add(helmet);
+
+        helmet.getTransform()
+                .setPosition(0.75f, 1.0f, -2.5f)
+                .setRotationDegrees(90.0f, 0.0f, -15.0f);
     }
 
     private void addFloor(Shader shader) {
@@ -81,20 +113,24 @@ public class SandboxMain implements Game {
         logger.info("Game init");
 
         Shader shader = this.ctx.getResources()
-                .createShaderProgram("basic");
+                .createShaderProgram("pbr");
 
-//        Model model = ctx.getResources().loadModel(
-//                "/external/BoxTextured.glb",
-//                new ModelLoadOptions().setShader(shader)
-//        );
+        if (SHOW_CUBES)
+            addCubes(shader);
 
-        addFloor(shader);
+        if (SHOW_HELMET)
+            addHelmet(shader);
 
-        helmet = ctx.getResources().loadModel(
-                "/external/DamagedHelmet.glb",
-                new ModelLoadOptions().setShader(shader)
-        );
-        helmet.logHierarchy();
+        if (SHOW_FLOOR)
+            addFloor(shader);
+
+        if (ENABLE_IBL) {
+            IBLGenerator iblGenerator = IBLGenerator.createDefault(ctx.getResources());
+            iblGenerator.generateFromHDR(
+                    ctx.getScene().getEnvironment(),
+                    "environment/studio_small_03_1k.hdr"
+            );
+        }
 
         ctx.getScene().getDirectionalLight()
                 .setIntensity(3.0f)
@@ -105,25 +141,9 @@ public class SandboxMain implements Game {
                 .setAmbientIntensity(0.2f)
                 .setIblIntensity(0.4f);
 
-        if (ENABLE_IBL) {
-            IBLGenerator iblGenerator = IBLGenerator.createDefault(ctx.getResources());
-            iblGenerator.generateFromHDR(
-                    ctx.getScene().getEnvironment(),
-                    "environment/studio_small_03_1k.hdr"
-            );
-        }
-
-        for (SceneObject object : helmet.getRootObjects()) {
-            ctx.getScene().add(object);
-
-            object.getTransform()
-                    .setPosition(0.75f, 0.0f, -2.5f)
-                    .setRotationDegrees(90.0f, 0.0f, -15.0f);
-        }
-
-//        addCubes(shader);
-
         cameraController = new FlyCameraController(ctx);
+
+        ctx.getScene().getCamera().getTransform().translate(0, 0, 2.0f);
     }
 
     @Override
@@ -153,19 +173,18 @@ public class SandboxMain implements Game {
         if (input.isKeyPressed(Key.NUMPAD_ENTER))
             renderer.cycleDebugViewMode();
 
-        helmet.getRootObjects()
-                .get(0)
-                .getTransform()
-                .rotate(0.0f, 0.0f, (float) dt);
+        if (SHOW_CUBES){
+            cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
 
-//        cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
+            cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
+            cubeB.getTransform().rotate((float) dt, 0.0f, 0.0f);
+            cubeC.getTransform().rotate(0.0f, 0.0f, (float) dt);
 
-//        for (SceneObject object : ctx.getScene().getRootObjects())
-//            object.getTransform().rotate((float) dt, (float) dt, 0.0f);
 
-//        cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
-//        cubeB.getTransform().rotate((float) dt, 0.0f, 0.0f);
-//        cubeC.getTransform().rotate(0.0f, 0.0f, (float) dt);
+        }
+
+        if (SHOW_HELMET)
+            helmet.getTransform().rotate(0.0f, 0.0f, (float) dt);
 
     }
 

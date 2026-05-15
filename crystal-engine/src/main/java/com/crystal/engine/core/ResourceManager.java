@@ -7,6 +7,7 @@ import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.graphics.TextureType;
 import com.crystal.engine.render.mesh.Mesh;
+import com.crystal.engine.render.mesh.MeshData;
 import com.crystal.engine.render.mesh.MeshFactory;
 import com.crystal.engine.render.mesh.VertexLayout;
 import com.crystal.engine.render.shader.Shader;
@@ -70,6 +71,17 @@ public class ResourceManager {
 
     public Mesh createMesh(PrimitiveType type, float[] vertices, int[] indices, VertexLayout layout) {
         return register(new Mesh(type, vertices, indices, layout));
+    }
+
+    public Mesh createMesh(MeshData data) {
+        if (data == null) throw new IllegalArgumentException("MeshData cannot be null");
+
+        return createMesh(
+                PrimitiveType.TRIANGLES,
+                data.vertices(),
+                data.indices(),
+                data.layout()
+        );
     }
 
     public Shader createShaderProgram(String vName, String fName) {

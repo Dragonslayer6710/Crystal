@@ -37,7 +37,7 @@ Project/demo assets live in the sandbox:
 crystal-sandbox/assets/
 ```
 
-This keeps required engine shaders, such as skybox and IBL generation shaders, separate from game-specific shaders like the sandbox `basic` shader.
+This keeps required engine shaders, such as skybox and IBL generation shaders, separate from game-specific shaders like the sandbox `pbr` shader.
 
 ## Running The Sandbox
 

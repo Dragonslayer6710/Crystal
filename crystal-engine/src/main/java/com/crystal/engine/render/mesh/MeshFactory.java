@@ -1,7 +1,6 @@
 package com.crystal.engine.render.mesh;
 
 import com.crystal.engine.core.ResourceManager;
-import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.render.mesh.primitive.MeshPrimitives;
 
 public final class MeshFactory {
@@ -25,11 +24,6 @@ public final class MeshFactory {
         if (resources == null) throw new IllegalArgumentException("ResourceManager cannot be null");
         if (data == null) throw new IllegalArgumentException("MeshData cannot be null");
 
-        return resources.createMesh(
-                PrimitiveType.TRIANGLES,
-                data.vertices(),
-                data.indices(),
-                data.layout()
-        );
+        return resources.createMesh(data);
     }
 }
