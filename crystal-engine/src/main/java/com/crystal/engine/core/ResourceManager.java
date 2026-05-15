@@ -86,15 +86,15 @@ public class ResourceManager {
     }
 
     public Shader createShaderProgram(String vName, String fName) {
-        String cacheKey = "shaders/" + vName + ".vert|shaders/" + fName + ".frag";
+        String vertexPath = projectShaderPath(vName, "vert");
+        String fragmentPath = projectShaderPath(fName, "frag");
+        String cacheKey = shaderCacheKey(vertexPath, fragmentPath);
 
-        return shaderCache.computeIfAbsent(cacheKey, key -> {
-            String[] paths = cacheKey.split("\\|");
+        return shaderCache.computeIfAbsent(cacheKey, ignored -> {
+            String vs = loadAssetAsString(vertexPath);
+            String fs = loadAssetAsString(fragmentPath);
 
-            String vs = loadAssetAsString(paths[0]);
-            String fs = loadAssetAsString(paths[1]);
-
-            Shader shader = new Shader(vs, fs, paths[0], paths[1]);
+            Shader shader = new Shader(vs, fs, vertexPath, fragmentPath);
             shader.setDebugLabel(cacheKey);
 
             return register(shader);
@@ -102,20 +102,19 @@ public class ResourceManager {
     }
 
     public Shader createShaderProgram(String name) {
-        return  createShaderProgram(name, name);
+        return createShaderProgram(name, name);
     }
 
     public Shader createEngineShaderProgram(String vName, String fName) {
-        String cacheKey = ENGINE_ASSET_ROOT + "/shaders/" + vName + ".vert|"
-                + ENGINE_ASSET_ROOT + "/shaders/" + fName + ".frag";
+        String vertexPath = engineShaderPath(vName, "vert");
+        String fragmentPath = engineShaderPath(fName, "frag");
+        String cacheKey = shaderCacheKey(vertexPath, fragmentPath);
 
-        return shaderCache.computeIfAbsent(cacheKey, key -> {
-            String[] paths = cacheKey.split("\\|");
+        return shaderCache.computeIfAbsent(cacheKey, ignored -> {
+            String vs = loadEngineAssetAsString(vertexPath);
+            String fs = loadEngineAssetAsString(fragmentPath);
 
-            String vs = loadEngineAssetAsString(paths[0]);
-            String fs = loadEngineAssetAsString(paths[1]);
-
-            Shader shader = new Shader(vs, fs, paths[0], paths[1]);
+            Shader shader = new Shader(vs, fs, vertexPath, fragmentPath);
             shader.setDebugLabel(cacheKey);
 
             return register(shader);
@@ -129,10 +128,11 @@ public class ResourceManager {
     public Texture createTexture(String path, TextureSettings settings) {
         if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
 
-        String cacheKey = "textures/" + path + "|" + settings.cacheKey();
+        String texturePath = texturePath(path);
+        String cacheKey = textureCacheKey(texturePath, settings);
 
-        return textureCache.computeIfAbsent(cacheKey, key -> register(TextureLoader.load(
-                assetRoot.resolve("textures/" + path), settings)
+        return textureCache.computeIfAbsent(cacheKey, ignored -> register(TextureLoader.load(
+                assetRoot.resolve(texturePath), settings)
         ));
     }
 
@@ -149,11 +149,13 @@ public class ResourceManager {
     }
 
     public Texture createHDRTexture(String path) {
-        String cacheKey = "textures/" + path + "|" + TextureSettings.defaultHDR().cacheKey();
+        TextureSettings settings = TextureSettings.defaultHDR();
+        String texturePath = texturePath(path);
+        String cacheKey = textureCacheKey(texturePath, settings);
 
-        return textureCache.computeIfAbsent(cacheKey, key -> register(TextureLoader.loadHDR(
-                assetRoot.resolve("textures/" + path),
-                TextureSettings.defaultHDR()
+        return textureCache.computeIfAbsent(cacheKey, ignored -> register(TextureLoader.loadHDR(
+                assetRoot.resolve(texturePath),
+                settings
         )));
     }
 
@@ -255,7 +257,7 @@ public class ResourceManager {
     }
 
     public Model loadModel(String path, ModelLoadOptions options) {
-        return AssimpModelLoader.load(assetRoot.resolve("models/" + path), this, options);
+        return AssimpModelLoader.load(modelPath(path), this, options);
     }
 
     public Texture loadTexture(Path path, TextureSettings settings) {
@@ -279,5 +281,29 @@ public class ResourceManager {
         return textureCache.computeIfAbsent(cacheKey, ignored ->
                 register(TextureLoader.loadFromMemory(encodedImage, settings, cacheKey))
         );
+    }
+
+    private String projectShaderPath(String name, String extension) {
+        return "shaders/" + name + "." + extension;
+    }
+
+    private String engineShaderPath(String name, String extension) {
+        return ENGINE_ASSET_ROOT + "/shaders/" + name + "." + extension;
+    }
+
+    private String shaderCacheKey(String vertexPath, String fragmentPath) {
+        return vertexPath + "|" + fragmentPath;
+    }
+
+    private String texturePath(String path) {
+        return "textures/" + path;
+    }
+
+    private String textureCacheKey(String path, TextureSettings settings) {
+        return path + "|" + settings.cacheKey();
+    }
+
+    private Path modelPath(String path) {
+        return assetRoot.resolve("models/" + path);
     }
 }
