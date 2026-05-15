@@ -26,4 +26,8 @@ public final class MeshFactory {
 
         return resources.createMesh(data);
     }
+
+    public static Mesh createLitTexturedPlane(ResourceManager resources) {
+        return createMesh(resources, MeshPrimitives.planePositionUvNormalTangent());
+    }
 }

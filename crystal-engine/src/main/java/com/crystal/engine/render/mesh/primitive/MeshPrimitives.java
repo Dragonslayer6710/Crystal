@@ -96,4 +96,40 @@ public final class MeshPrimitives {
 
         return builder.build();
     }
+
+    public static MeshData planePositionUvNormalTangent() {
+        MeshDataBuilder builder = new MeshDataBuilder(VertexLayout.POSITION_UV_NORMAL_TANGENT);
+
+        int topLeft = builder.addVertex(
+                -0.5f, 0.0f, -0.5f,
+                0.0f, 1.0f,
+                0.0f, 1.0f, 0.0f,
+                1.0f, 0.0f, 0.0f
+        );
+
+        int bottomLeft = builder.addVertex(
+                -0.5f, 0.0f, 0.5f,
+                0.0f, 0.0f,
+                0.0f, 1.0f, 0.0f,
+                1.0f, 0.0f, 0.0f
+        );
+
+        int bottomRight = builder.addVertex(
+                0.5f, 0.0f, 0.5f,
+                1.0f, 0.0f,
+                0.0f, 1.0f, 0.0f,
+                1.0f, 0.0f, 0.0f
+        );
+
+        int topRight = builder.addVertex(
+                0.5f, 0.0f, -0.5f,
+                1.0f, 1.0f,
+                0.0f, 1.0f, 0.0f,
+                1.0f, 0.0f, 0.0f
+        );
+
+        builder.addQuad(topLeft, bottomLeft, bottomRight, topRight);
+
+        return builder.build();
+    }
 }

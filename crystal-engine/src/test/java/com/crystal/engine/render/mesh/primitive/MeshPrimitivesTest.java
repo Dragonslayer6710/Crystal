@@ -35,6 +35,15 @@ class MeshPrimitivesTest {
         assertArrayLength(6, data.indices());
     }
 
+    @Test
+    void planePositionUvNormalTangentCreatesLitTexturedPlaneData() {
+        MeshData data = MeshPrimitives.planePositionUvNormalTangent();
+
+        assertEquals(VertexLayout.POSITION_UV_NORMAL_TANGENT, data.layout());
+        assertEquals(4, data.vertexCount());
+        assertArrayLength(6, data.indices());
+    }
+
     private static void assertArrayLength(int expectedLength, int[] values) {
         assertNotNull(values);
         assertEquals(expectedLength, values.length);

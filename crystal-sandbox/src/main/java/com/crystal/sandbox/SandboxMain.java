@@ -91,7 +91,7 @@ public class SandboxMain implements Game {
     }
 
     private void addFloor(Shader shader) {
-        Mesh floorMesh = MeshFactory.createLitTexturedCube(ctx.getResources());
+        Mesh floorMesh = MeshFactory.createLitTexturedPlane(ctx.getResources());
 
         Material floorMaterial = new Material(shader);
         floorMaterial.setAlbedo(ctx.getResources().createTexture("bricks_albedo.png"));
@@ -103,7 +103,7 @@ public class SandboxMain implements Game {
                 floorMaterial,
                 new Transform()
                         .setPosition(0.0f, -1.0f, -2.5f)
-                        .setScale(8.0f, 0.1f, 8.0f)
+                        .setScale(8.0f, 1.0f, 8.0f)
         );
 
         ctx.getScene().add(floor);
