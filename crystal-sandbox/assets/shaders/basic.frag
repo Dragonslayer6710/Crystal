@@ -1,7 +1,6 @@
 #version 460 core
 
 in vec3 v_WorldPosition;
-in vec3 v_Color;
 in vec2 v_UV;
 in vec3 v_Normal;
 in vec3 v_Tangent;
@@ -189,8 +188,8 @@ void main() {
     vec3 N = hasNormalMap == 1 ? getNormal() : normalize(v_Normal);
 
     vec3 albedo = hasAlbedoTexture == 1
-    ? texture(albedoTexture, v_UV).rgb * v_Color * materialTint
-    : v_Color * materialTint;
+    ? texture(albedoTexture, v_UV).rgb * materialTint
+    : materialTint;
 
     vec2 mr = hasMetallicRoughnessMap == 1
     ? getMetallicRoughness()

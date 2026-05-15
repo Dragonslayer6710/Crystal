@@ -72,14 +72,6 @@ public class ResourceManager {
         return register(new Mesh(type, vertices, indices, layout));
     }
 
-    public Mesh createMesh(PrimitiveType type, float[] vertices, int[] indices) {
-        return register(new Mesh(type, vertices, indices));
-    }
-
-    public Mesh createMesh(PrimitiveType type, float[] vertices) {
-        return createMesh(type, vertices, null);
-    }
-
     public Shader createShaderProgram(String vName, String fName) {
         String cacheKey = "shaders/" + vName + ".vert|shaders/" + fName + ".frag";
 

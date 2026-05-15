@@ -85,14 +85,6 @@ public class Mesh implements Disposable {
         }
     }
 
-    public Mesh(PrimitiveType type, float[] vertices) {
-        this(type, vertices, null, VertexLayout.POSITION_COLOR);
-    }
-
-    public Mesh(PrimitiveType type, float[] vertices, int[] indices) {
-        this(type, vertices, indices, VertexLayout.POSITION_COLOR);
-    }
-
     private static MeshBounds calculateBounds(float[] vertices, VertexLayout layout) {
         int stride = layout.getFloatsPerVertex();
 

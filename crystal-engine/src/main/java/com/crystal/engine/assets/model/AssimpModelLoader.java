@@ -169,7 +169,7 @@ public final class AssimpModelLoader {
         var tangents = aiMesh.mTangents();
         var texCoords = aiMesh.mTextureCoords(0);
 
-        float[] vertices = new float[vertexCount * VertexLayout.POSITION_COLOR_UV_NORMAL_TANGENT.getFloatsPerVertex()];
+        float[] vertices = new float[vertexCount * VertexLayout.POSITION_UV_NORMAL_TANGENT.getFloatsPerVertex()];
 
         int offset = 0;
 
@@ -179,11 +179,6 @@ public final class AssimpModelLoader {
             vertices[offset++] = position.x();
             vertices[offset++] = position.y();
             vertices[offset++] = position.z();
-
-            // Vertex colour fallback: white
-            vertices[offset++] = 1.0f;
-            vertices[offset++] = 1.0f;
-            vertices[offset++] = 1.0f;
 
             if (texCoords != null) {
                 var uv = texCoords.get(i);
@@ -223,7 +218,7 @@ public final class AssimpModelLoader {
                 PrimitiveType.TRIANGLES,
                 vertices,
                 indices,
-                VertexLayout.POSITION_COLOR_UV_NORMAL_TANGENT
+                VertexLayout.POSITION_UV_NORMAL_TANGENT
         );
     }
 

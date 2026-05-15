@@ -6,42 +6,26 @@ public enum VertexLayout {
             new VertexAttribute(0, 3, 0)
     ),
 
-    POSITION_COLOR(
-            6,
-            new VertexAttribute(0, 3, 0),
-            new VertexAttribute(1, 3, 3 * Float.BYTES)
-    ),
-
-    POSITION_COLOR_UV(
-            8,
-            new VertexAttribute(0, 3, 0),
-            new VertexAttribute(1, 3, 3 * Float.BYTES),
-            new VertexAttribute(2, 2, 6 * Float.BYTES)
-    ),
-
-    POSITION_COLOR_UV_NORMAL(
-            11,
-            new VertexAttribute(0, 3, 0),
-            new VertexAttribute(1, 3, 3 * Float.BYTES),
-            new VertexAttribute(2, 2, 6 * Float.BYTES),
-            new VertexAttribute(3, 3, 8 * Float.BYTES)
-    ),
-
-    POSITION_COLOR_UV_NORMAL_TANGENT(
-            14,
-            new VertexAttribute(0, 3, 0),
-            new VertexAttribute(1, 3, 3 * Float.BYTES),
-            new VertexAttribute(2, 2, 6 * Float.BYTES),
-            new VertexAttribute(3, 3, 8 * Float.BYTES),
-            new VertexAttribute(4, 3, 11 * Float.BYTES)
-    ),
-
     POSITION_UV(
             5,
             new VertexAttribute(0, 3, 0),
             new VertexAttribute(1, 2, 3 * Float.BYTES)
-    );
+    ),
 
+    POSITION_UV_NORMAL(
+            8,
+            new VertexAttribute(0, 3, 0),
+            new VertexAttribute(1, 2, 3 * Float.BYTES),
+            new VertexAttribute(2, 3, 5 * Float.BYTES)
+    ),
+
+    POSITION_UV_NORMAL_TANGENT(
+            11,
+            new VertexAttribute(0, 3, 0),
+            new VertexAttribute(1, 2, 3 * Float.BYTES),
+            new VertexAttribute(2, 3, 5 * Float.BYTES),
+            new VertexAttribute(3, 3, 8 * Float.BYTES)
+    );
 
 
     private final int floatsPerVertex;
