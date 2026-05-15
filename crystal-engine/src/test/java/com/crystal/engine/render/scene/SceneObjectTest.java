@@ -3,6 +3,7 @@ package com.crystal.engine.render.scene;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -86,6 +87,38 @@ class SceneObjectTest {
                 IllegalArgumentException.class,
                 () -> new SceneObject("invalid", null, null, null)
         );
+    }
+
+    @Test
+    void castsShadowDefaultsToTrue() {
+        SceneObject object = object("object");
+
+        assertTrue(object.castsShadow());
+    }
+
+    @Test
+    void setCastsShadowUpdatesShadowCasting() {
+        SceneObject object = object("object");
+
+        object.setCastsShadow(false);
+
+        assertFalse(object.castsShadow());
+    }
+
+    @Test
+    void setCastsShadowRecursiveUpdatesChildren() {
+        SceneObject parent = object("parent");
+        SceneObject child = object("child");
+        SceneObject grandchild = object("grandchild");
+
+        parent.addChild(child);
+        child.addChild(grandchild);
+
+        parent.setCastsShadowRecursive(false);
+
+        assertFalse(parent.castsShadow());
+        assertFalse(child.castsShadow());
+        assertFalse(grandchild.castsShadow());
     }
 
     private static SceneObject object(String name) {

@@ -9,6 +9,7 @@ public class RenderStats {
     private int sceneDrawCount;
     private int skyboxDrawCount;
     private int submittedCommandCount;
+    private int shadowDrawCount;
 
     public void reset() {
         renderableObjectCount = 0;
@@ -18,6 +19,7 @@ public class RenderStats {
         sceneDrawCount = 0;
         skyboxDrawCount = 0;
         submittedCommandCount = 0;
+        shadowDrawCount = 0;
     }
 
     public int getRenderableObjectCount() {
@@ -50,14 +52,16 @@ public class RenderStats {
 
     public String summary() {
         return String.format(
-                "renderable=%d, visible=%d, culled=%d, draws=%d, sceneDraws=%d, skyboxDraws=%d, submittedCommands=%d",
+                "renderable=%d, visible=%d, culled=%d, draws=%d, " +
+                "sceneDraws=%d, skyboxDraws=%d, submittedCommands=%d, shadowDraws=%d",
                 renderableObjectCount,
                 visibleObjectCount,
                 culledObjectCount,
                 getTotalDrawCount(),
                 sceneDrawCount,
                 skyboxDrawCount,
-                submittedCommandCount
+                submittedCommandCount,
+                shadowDrawCount
         );
     }
 
@@ -83,5 +87,9 @@ public class RenderStats {
 
     public void incrementSubmittedCommandCount() {
         submittedCommandCount++;
+    }
+
+    public void incrementShadowDrawCount() {
+        shadowDrawCount++;
     }
 }

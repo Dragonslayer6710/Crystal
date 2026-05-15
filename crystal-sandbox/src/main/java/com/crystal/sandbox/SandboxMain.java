@@ -86,6 +86,8 @@ public class SandboxMain implements Game {
         helmet.getTransform()
                 .setPosition(0.75f, 1.0f, -2.5f)
                 .setRotationDegrees(90.0f, 0.0f, -15.0f);
+
+        helmet.setCastsShadowRecursive(false);
     }
 
     private void addFloor(Shader shader) {

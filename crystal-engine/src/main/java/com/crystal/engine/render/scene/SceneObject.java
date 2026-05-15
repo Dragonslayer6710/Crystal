@@ -20,6 +20,7 @@ public class SceneObject {
 
     private boolean active = true;
     private boolean visible = true;
+    private boolean castsShadow = true;
 
     private float boundingRadius = 1.0f;
 
@@ -124,6 +125,10 @@ public class SceneObject {
         return visible;
     }
 
+    public boolean castsShadow() {
+        return castsShadow;
+    }
+
     public float getBoundingRadius() {
         return boundingRadius;
     }
@@ -157,6 +162,20 @@ public class SceneObject {
 
     public SceneObject setVisible(boolean visible) {
         this.visible = visible;
+        return this;
+    }
+
+    public SceneObject setCastsShadow(boolean castsShadow) {
+        this.castsShadow = castsShadow;
+        return this;
+    }
+
+    public SceneObject setCastsShadowRecursive(boolean castsShadow) {
+        setCastsShadow(castsShadow);
+
+        for (SceneObject child : children)
+            child.setCastsShadowRecursive(castsShadow);
+
         return this;
     }
 

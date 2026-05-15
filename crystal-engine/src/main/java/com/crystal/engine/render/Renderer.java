@@ -150,7 +150,7 @@ public class Renderer {
         if (!object.isActive())
             return;
 
-        if (object.isVisible() && object.isRenderable())
+        if (object.isVisible() && object.isRenderable() && object.castsShadow())
             casters.add(object);
 
         for (SceneObject child : object.getChildren())
@@ -161,8 +161,10 @@ public class Renderer {
         Shader shadowShader = context.getResources().getShadowShader();
         Matrix4f lightSpace = scene.getDirectionalLight().getLightSpaceMatrix();
 
-        for (SceneObject object : shadowCasters)
+        for (SceneObject object : shadowCasters) {
             submitShadowCommand(new DrawShadowCommand(object, shadowShader, lightSpace));
+            stats.incrementShadowDrawCount();
+        }
     }
 
     private void executeShadowPass() {
