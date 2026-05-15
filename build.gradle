@@ -1,3 +1,5 @@
+import java.util.Locale
+
 allprojects {
     repositories {
         mavenCentral()
@@ -11,6 +13,26 @@ allprojects {
     }
 }
 
+def detectLwjglNatives = {
+    String os = System.getProperty("os.name").toLowerCase(Locale.ROOT)
+    String arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT)
+    boolean arm64 = arch == "aarch64" || arch == "arm64"
+
+    if (os.contains("windows")) {
+        return "natives-windows"
+    }
+
+    if (os.contains("linux")) {
+        return "natives-linux"
+    }
+
+    if (os.contains("mac") || os.contains("darwin")) {
+        return arm64 ? "natives-macos-arm64" : "natives-macos"
+    }
+
+    throw new GradleException("Unsupported OS for LWJGL native selection: ${System.getProperty("os.name")}")
+}
+
 ext {
     versions = [
             joml   : providers.gradleProperty("jomlVersion").get(),
@@ -20,7 +42,7 @@ ext {
             lwjgl  : providers.gradleProperty("lwjglVersion").get(),
             slf4j  : providers.gradleProperty("slf4jVersion").get()
     ]
-    lwjglNatives = providers.gradleProperty("lwjglNatives").get()
+    lwjglNatives = providers.gradleProperty("lwjglNatives").orElse(detectLwjglNatives()).get()
 }
 
 subprojects {

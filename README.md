@@ -19,10 +19,13 @@ Use the root Gradle wrapper for all builds:
 ## Requirements
 
 - Java 21
-- Windows runtime for now
 
-LWJGL native dependencies are currently configured for Windows through the
-`lwjglNatives` value in `gradle.properties`.
+LWJGL native dependencies are selected automatically for Windows, Linux, and
+macOS. Override the detected classifier when needed:
+
+```powershell
+.\gradlew.bat build -PlwjglNatives=natives-windows
+```
 
 ## Assets
 
