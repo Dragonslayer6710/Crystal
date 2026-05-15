@@ -2,11 +2,8 @@ plugins {
     id 'java-library'
 }
 
-def lwjglVersion = "3.3.3"
-def natives = "natives-windows"
-
 dependencies {
-    implementation platform("org.lwjgl:lwjgl-bom:$lwjglVersion")
+    implementation platform("org.lwjgl:lwjgl-bom:${versions.lwjgl}")
 
     implementation "org.lwjgl:lwjgl"
     implementation "org.lwjgl:lwjgl-glfw"
@@ -14,23 +11,19 @@ dependencies {
     implementation "org.lwjgl:lwjgl-stb"
     implementation "org.lwjgl:lwjgl-assimp"
 
-    runtimeOnly "org.lwjgl:lwjgl::$natives"
-    runtimeOnly "org.lwjgl:lwjgl-glfw::$natives"
-    runtimeOnly "org.lwjgl:lwjgl-opengl::$natives"
-    runtimeOnly "org.lwjgl:lwjgl-stb::$natives"
-    runtimeOnly "org.lwjgl:lwjgl-assimp::$natives"
+    runtimeOnly "org.lwjgl:lwjgl::${lwjglNatives}"
+    runtimeOnly "org.lwjgl:lwjgl-glfw::${lwjglNatives}"
+    runtimeOnly "org.lwjgl:lwjgl-opengl::${lwjglNatives}"
+    runtimeOnly "org.lwjgl:lwjgl-stb::${lwjglNatives}"
+    runtimeOnly "org.lwjgl:lwjgl-assimp::${lwjglNatives}"
 
     // Logging
-    implementation "org.slf4j:slf4j-api:2.0.13"
-    runtimeOnly 'ch.qos.logback:logback-classic:1.5.13'
-    runtimeOnly "org.fusesource.jansi:jansi:2.4.1"
+    implementation "org.slf4j:slf4j-api:${versions.slf4j}"
+    runtimeOnly "ch.qos.logback:logback-classic:${versions.logback}"
+    runtimeOnly "org.fusesource.jansi:jansi:${versions.jansi}"
 
     // Maths
-    api "org.joml:joml:${jomlVersion}"
+    api "org.joml:joml:${versions.joml}"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
-}
-
-test {
-    useJUnitPlatform()
+    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junit}"
 }
