@@ -217,11 +217,13 @@ public class ResourceManager {
         if (disposed) return;
         disposed = true;
 
-        for (Disposable r : resources) {
+        for (int i = resources.size() - 1; i >= 0; i--) {
+            Disposable resource = resources.get(i);
+
             try {
-                r.dispose();
+                resource.dispose();
             } catch (Exception e) {
-                logger.error(e.getMessage());
+                logger.warn("Failed to dispose resource {}", resource.getClass().getName(), e);
             }
         }
 
