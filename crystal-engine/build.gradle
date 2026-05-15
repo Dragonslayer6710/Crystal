@@ -25,5 +25,7 @@ dependencies {
     // Maths
     api "org.joml:joml:${versions.joml}"
 
-    testImplementation "org.junit.jupiter:junit-jupiter:${versions.junit}"
+    testImplementation platform("org.junit:junit-bom:${versions.junit}")
+    testImplementation "org.junit.jupiter:junit-jupiter"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
