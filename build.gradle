@@ -1,6 +1,10 @@
-import java.util.Locale
+plugins {
+    id 'com.diffplug.spotless' version '7.1.0' apply false
+}
 
 allprojects {
+    apply plugin: 'com.diffplug.spotless'
+
     repositories {
         mavenCentral()
 
@@ -14,8 +18,8 @@ allprojects {
 }
 
 def detectLwjglNatives = {
-    String os = System.getProperty("os.name").toLowerCase(Locale.ROOT)
-    String arch = System.getProperty("os.arch").toLowerCase(Locale.ROOT)
+    String os = System.getProperty("os.name").toLowerCase(java.util.Locale.ROOT)
+    String arch = System.getProperty("os.arch").toLowerCase(java.util.Locale.ROOT)
     boolean arm64 = arch == "aarch64" || arch == "arm64"
 
     if (os.contains("windows")) {
@@ -64,6 +68,30 @@ subprojects {
         testLogging {
             events = ["failed"]
             exceptionFormat = "full"
+        }
+    }
+}
+
+allprojects {
+    spotless {
+        java {
+            target 'src/**/*.java'
+            removeUnusedImports()
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+
+        groovyGradle {
+            target '*.gradle'
+            trimTrailingWhitespace()
+            endWithNewline()
+        }
+
+        format 'misc', {
+            target '.editorconfig', '.gitattributes', '.gitignore',
+                    'gradle.properties', 'gradle/wrapper/gradle-wrapper.properties'
+            trimTrailingWhitespace()
+            endWithNewline()
         }
     }
 }

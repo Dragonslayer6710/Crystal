@@ -237,7 +237,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                 new Matrix4f().lookAt(0, 0, 0,  0,  0, -1,  0, -1,  0)
         };
     }
-    
+
     @Override
     public void dispose() {
         if (disposed) return;

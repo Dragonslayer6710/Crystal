@@ -75,4 +75,3 @@ public final class GLStateSnapshot {
         glColorMask(colorMaskR, colorMaskG, colorMaskB, colorMaskA);
     }
 }
-

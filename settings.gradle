@@ -2,4 +2,3 @@ rootProject.name = 'Crystal'
 
 include 'crystal-engine'
 include 'crystal-sandbox'
-
