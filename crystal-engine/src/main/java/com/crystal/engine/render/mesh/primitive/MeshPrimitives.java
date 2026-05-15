@@ -3,7 +3,6 @@ package com.crystal.engine.render.mesh.primitive;
 import com.crystal.engine.render.mesh.MeshData;
 import com.crystal.engine.render.mesh.MeshDataBuilder;
 import com.crystal.engine.render.mesh.VertexLayout;
-import org.joml.Vector3f;
 
 public final class MeshPrimitives {
 
@@ -85,7 +84,7 @@ public final class MeshPrimitives {
         return builder.build();
     }
 
-    public static MeshData fullscreenQuad() {
+    public static MeshData fullscreenQuadPositionUv() {
         MeshDataBuilder builder = new MeshDataBuilder(VertexLayout.POSITION_UV);
 
         int topLeft = builder.addVertex(-1.0f, 1.0f, 0.0f, 0.0f, 1.0f);

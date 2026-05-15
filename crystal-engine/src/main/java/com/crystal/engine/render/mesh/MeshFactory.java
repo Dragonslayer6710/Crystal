@@ -9,7 +9,7 @@ public final class MeshFactory {
     private MeshFactory() {
     }
 
-    public static Mesh createTexturedCube(ResourceManager resources) {
+    public static Mesh createLitTexturedCube(ResourceManager resources) {
         return createMesh(resources, MeshPrimitives.cubePositionUvNormalTangent());
     }
 
@@ -18,7 +18,7 @@ public final class MeshFactory {
     }
 
     public static Mesh createFullscreenQuad(ResourceManager resources) {
-        return createMesh(resources, MeshPrimitives.fullscreenQuad());
+        return createMesh(resources, MeshPrimitives.fullscreenQuadPositionUv());
     }
 
     public static Mesh createMesh(ResourceManager resources, MeshData data) {

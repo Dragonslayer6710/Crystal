@@ -36,7 +36,7 @@ public class SandboxMain implements Game {
     private FlyCameraController cameraController;
 
     private void addCubes(Shader shader) {
-        Mesh mesh = MeshFactory.createTexturedCube(ctx.getResources());
+        Mesh mesh = MeshFactory.createLitTexturedCube(ctx.getResources());
 
         Material material = new Material(shader);
         material.getRenderState()
@@ -57,7 +57,7 @@ public class SandboxMain implements Game {
     }
 
     private void addFloor(Shader shader) {
-        Mesh floorMesh = MeshFactory.createTexturedCube(ctx.getResources());
+        Mesh floorMesh = MeshFactory.createLitTexturedCube(ctx.getResources());
 
         Material floorMaterial = new Material(shader);
         floorMaterial.setAlbedo(ctx.getResources().createTexture("bricks_albedo.png"));
