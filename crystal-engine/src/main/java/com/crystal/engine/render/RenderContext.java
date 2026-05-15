@@ -27,7 +27,9 @@ public class RenderContext {
     private float exposure = 1.0f;
     private boolean hasIBL;
     private float iblIntensity = 1.0f;
+    private boolean shadowsEnabled = true;
     private float shadowStrength = 0.6f;
+
     private final SceneUniformData sceneUniformData = new SceneUniformData();
 
     private Boolean currentDepthTest;
@@ -173,6 +175,10 @@ public class RenderContext {
         this.debugViewMode = debugViewMode;
     }
 
+    public void setShadowsEnabled(boolean shadowsEnabled) {
+        this.shadowsEnabled = shadowsEnabled;
+    }
+
     public float getAspectRatio() {
         return aspectRatio;
     }
@@ -188,9 +194,8 @@ public class RenderContext {
         shader.setFloat(ShaderUniforms.IBL_INTENSITY, iblIntensity);
 
         shader.setInt(ShaderUniforms.SHADOW_MAP, TextureSlots.SHADOW_MAP);
+        shader.setInt(ShaderUniforms.HAS_SHADOWS, shadowsEnabled ? 1 : 0);
         shader.setFloat(ShaderUniforms.SHADOW_STRENGTH, shadowStrength);
-
-        shader.setInt(ShaderUniforms.HAS_SHADOWS, 1);
     }
 
     private void bindMaterialTextures(Material material) {

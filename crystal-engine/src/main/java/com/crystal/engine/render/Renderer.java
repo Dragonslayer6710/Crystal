@@ -46,7 +46,7 @@ public class Renderer implements Disposable {
         this.config = config;
         this.frustumCullingEnabled = config.isFrustumCulling();
 
-        this.directionalShadowMap = new ShadowMap(2048);
+        this.directionalShadowMap = new ShadowMap(config.getShadowMapSize());
 
         this.context = new RenderContext(resourceManager, directionalShadowMap);
     }
@@ -91,10 +91,12 @@ public class Renderer implements Disposable {
         List<SceneObject> visibleObjects = collectVisibleObjects(scene);
         sortVisibleObjects(visibleObjects);
 
-        List<SceneObject> shadowCasters = collectShadowCasters(scene);
+        if (config.isShadowsEnabled()) {
+            List<SceneObject> shadowCasters = collectShadowCasters(scene);
 
-        buildShadowQueue(scene, shadowCasters);
-        executeShadowPass();
+            buildShadowQueue(scene, shadowCasters);
+            executeShadowPass();
+        }
 
         buildMainQueue(scene, visibleObjects);
         executeMainPass();
@@ -190,6 +192,7 @@ public class Renderer implements Disposable {
         context.beginFrame();
         context.setDebugViewMode(debugViewMode);
         context.setExposure(exposure);
+        context.setShadowsEnabled(config.isShadowsEnabled());
     }
 
     private List<SceneObject> collectVisibleObjects(Scene scene) {
