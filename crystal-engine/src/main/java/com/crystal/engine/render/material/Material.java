@@ -32,6 +32,8 @@ public class Material {
     private final RenderState renderState = new RenderState();
 
     public Material(Shader shader) {
+        if (shader == null) throw new IllegalArgumentException("Shader cannot be null");
+
         this.shader = shader;
     }
 
@@ -85,31 +87,36 @@ public class Material {
         return id;
     }
 
-
     // ---------- SETTERS (explicit, no collections) ----------
 
-    public void setAlbedo(Texture texture) {
+    public Material setAlbedo(Texture texture) {
         albedo = texture;
+        return this;
     }
 
-    public void setNormalMap(Texture texture) {
+    public Material setNormalMap(Texture texture) {
         normalMap = texture;
+        return this;
     }
 
-    public void setMetallicRoughnessMap(Texture texture) {
+    public Material setMetallicRoughnessMap(Texture texture) {
         metallicRoughnessMap = texture;
+        return this;
     }
 
-    public void setAmbientOcclusionMap(Texture texture) {
+    public Material setAmbientOcclusionMap(Texture texture) {
         ambientOcclusionMap = texture;
+        return this;
     }
 
-    public void setEmissiveMap(Texture texture) {
+    public Material setEmissiveMap(Texture texture) {
         emissiveMap = texture;
+        return this;
     }
 
-    public void setUBO(UniformBuffer ubo) {
+    public Material setUBO(UniformBuffer ubo) {
         this.ubo = ubo;
+        return this;
     }
 
     public Material setTint(float r, float g, float b) {

@@ -117,14 +117,17 @@ public class SandboxMain implements Game {
         Shader shader = this.ctx.getResources()
                 .createShaderProgram("pbr");
 
-        if (SHOW_CUBES)
+        if (SHOW_CUBES) {
             addCubes(shader);
+        }
 
-        if (SHOW_HELMET)
+        if (SHOW_HELMET) {
             addHelmet(shader);
+        }
 
-        if (SHOW_FLOOR)
+        if (SHOW_FLOOR) {
             addFloor(shader);
+        }
 
         if (ENABLE_IBL) {
             IBLGenerator iblGenerator = IBLGenerator.createDefault(ctx.getResources());
@@ -177,16 +180,15 @@ public class SandboxMain implements Game {
 
         if (SHOW_CUBES){
             cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
-
-            cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
             cubeB.getTransform().rotate((float) dt, 0.0f, 0.0f);
             cubeC.getTransform().rotate(0.0f, 0.0f, (float) dt);
 
-
+            boxTextured.getTransform().rotate(0.0f, (float) dt, 0.0f);
         }
 
-        if (SHOW_HELMET)
+        if (SHOW_HELMET) {
             helmet.getTransform().rotate(0.0f, 0.0f, (float) dt);
+        }
 
     }
 
