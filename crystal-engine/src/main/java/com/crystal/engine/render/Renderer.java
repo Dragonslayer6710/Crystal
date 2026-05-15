@@ -4,7 +4,6 @@ import com.crystal.engine.core.Disposable;
 import com.crystal.engine.core.ResourceManager;
 import com.crystal.engine.render.commands.*;
 import com.crystal.engine.render.gl.RenderPass;
-import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
@@ -31,7 +30,6 @@ public class Renderer implements Disposable {
     private final RenderQueue mainQueue = new RenderQueue();
     private final RenderQueue shadowQueue = new RenderQueue();
     private final RenderStats stats = new RenderStats();
-    private final VisibilityResult visibilityResult = new VisibilityResult();
 
     private int viewportWidth;
     private int viewportHeight;
@@ -196,39 +194,13 @@ public class Renderer implements Disposable {
     }
 
     private List<SceneObject> collectVisibleObjects(Scene scene) {
-        visibilityResult.reset();
+        VisibilityCollector.Result result = VisibilityCollector.collect(scene, frustumCullingEnabled);
 
-        Camera camera = scene.getCamera();
+        stats.setRenderableObjectCount(result.getRenderableObjectCount());
+        stats.setVisibleObjectCount(result.getVisibleObjects().size());
+        stats.setCulledObjectCount(result.getCulledObjectCount());
 
-        for (SceneObject root : scene.getRootObjects())
-            collectVisibleObjects(root, visibilityResult, camera);
-
-        stats.setRenderableObjectCount(visibilityResult.renderableObjectCount);
-        stats.setVisibleObjectCount(visibilityResult.visibleObjects.size());
-        stats.setCulledObjectCount(Math.max(
-                0,
-                visibilityResult.renderableObjectCount - visibilityResult.visibleObjects.size()
-        ));
-
-        return visibilityResult.visibleObjects;
-    }
-
-    private void collectVisibleObjects(SceneObject object, VisibilityResult result, Camera camera) {
-        if (!object.isActive())
-            return;
-
-        if (object.isVisible() && object.isRenderable()) {
-            result.renderableObjectCount++;
-            if (!frustumCullingEnabled || camera.canSee(
-                    object.getWorldBoundsCenter(),
-                    object.getWorldBoundingRadius()
-            )) {
-                result.visibleObjects.add(object);
-            }
-        }
-
-        for (SceneObject child : object.getChildren())
-            collectVisibleObjects(child, result, camera);
+        return result.getVisibleObjects();
     }
 
     private void sortVisibleObjects(List<SceneObject> visibleObjects) {
@@ -355,14 +327,4 @@ public class Renderer implements Disposable {
                 value > 1.0f;
     }
 
-    private static final class VisibilityResult {
-
-        private final List<SceneObject> visibleObjects = new ArrayList<>();
-        private int renderableObjectCount;
-
-        private void reset() {
-            visibleObjects.clear();
-            renderableObjectCount = 0;
-        }
-    }
 }
