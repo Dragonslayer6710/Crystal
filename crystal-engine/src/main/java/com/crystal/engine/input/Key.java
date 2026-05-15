@@ -32,12 +32,16 @@ public enum Key {
 
     ESCAPE(GLFW_KEY_ESCAPE);
 
-    private static final Map<Integer, Key> LOOKUP = new HashMap<>();
+    private static final Map<Integer, Key> LOOKUP = createLookup();
 
-    static {
+    private static Map<Integer, Key> createLookup() {
+        Map<Integer, Key> lookup = new HashMap<>();
+
         for (Key key : values()) {
-            LOOKUP.put(key.code, key);
+            lookup.put(key.code, key);
         }
+
+        return Map.copyOf(lookup);
     }
 
     private final int code;

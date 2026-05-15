@@ -2,7 +2,7 @@ package com.crystal.engine.input;
 
 import java.util.EnumSet;
 
-public class Input implements InputListener{
+public class Input implements InputListener {
 
     private final EnumSet<Key> keysDown = EnumSet.noneOf(Key.class);
     private final EnumSet<Key> keysPressed = EnumSet.noneOf(Key.class);

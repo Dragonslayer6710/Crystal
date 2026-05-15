@@ -11,12 +11,16 @@ public enum MouseButton {
     RMB(GLFW_MOUSE_BUTTON_2),
     MMB(GLFW_MOUSE_BUTTON_3);
 
-    private static final Map<Integer, MouseButton> LOOKUP = new HashMap<>();
+    private static final Map<Integer, MouseButton> LOOKUP = createLookup();
 
-    static {
-        for (MouseButton btn : values()) {
-            LOOKUP.put(btn.code, btn);
+    private static Map<Integer, MouseButton> createLookup() {
+        Map<Integer, MouseButton> lookup = new HashMap<>();
+
+        for (MouseButton button : values()) {
+            lookup.put(button.code, button);
         }
+
+        return Map.copyOf(lookup);
     }
 
     private final int code;

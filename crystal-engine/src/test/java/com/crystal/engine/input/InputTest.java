@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InputTest {
@@ -93,5 +94,17 @@ class InputTest {
 
         assertEquals(0.0, input.getMouseDeltaX());
         assertEquals(0.0, input.getMouseDeltaY());
+    }
+
+    @Test
+    void keyCodesMapToKnownKeysAndIgnoreUnknownCodes() {
+        assertEquals(Key.W, Key.fromCode(Key.W.getCode()));
+        assertNull(Key.fromCode(Integer.MIN_VALUE));
+    }
+
+    @Test
+    void mouseButtonCodesMapToKnownButtonsAndIgnoreUnknownCodes() {
+        assertEquals(MouseButton.LMB, MouseButton.fromCode(MouseButton.LMB.getCode()));
+        assertNull(MouseButton.fromCode(Integer.MIN_VALUE));
     }
 }
