@@ -73,19 +73,8 @@ public class Renderer {
 
         glEnable(GL_FRAMEBUFFER_SRGB);
     }
-    
-    private void prepareFrame(Scene scene, float aspectRatio) {
-        beginFrame();
 
-        var camera = scene.getCamera();
-
-        camera.updateFrustum(aspectRatio);
-
-        context.prepareScene(scene, aspectRatio);
-    }
-
-    // Called at start of frame
-    public void beginFrame() {
+    private void beginFrame() {
         stats.reset();
         mainQueue.clear();
         shadowQueue.clear();
@@ -168,15 +157,16 @@ public class Renderer {
             collectShadowCasters(child, casters);
     }
 
-    private void executeShadowPass(Scene scene, List<SceneObject> shadowCasters) {
-        ShadowMap shadowMap = context.getResources().getDirectionalShadowMap();
+    private void buildShadowQueue(Scene scene, List<SceneObject> shadowCasters) {
         Shader shadowShader = context.getResources().getShadowShader();
         Matrix4f lightSpace = scene.getDirectionalLight().getLightSpaceMatrix();
 
-        shadowQueue.clear();
-
         for (SceneObject object : shadowCasters)
             submitShadowCommand(new DrawShadowCommand(object, shadowShader, lightSpace));
+    }
+
+    private void executeShadowPass() {
+        ShadowMap shadowMap = context.getResources().getDirectionalShadowMap();
 
         int size = shadowMap.getSize();
 
@@ -192,10 +182,27 @@ public class Renderer {
             shadowQueue.execute(context);
 
             glColorMask(true, true, true, true);
+
+            if (config.isFaceCulling()) {
+                glEnable(GL_CULL_FACE);
+                glCullFace(GL_BACK);
+                glFrontFace(GL_CCW);
+            } else {
+                glDisable(GL_CULL_FACE);
+            }
+
+            if (config.isDepthTest()) {
+                glEnable(GL_DEPTH_TEST);
+                glDepthFunc(GL_LESS);
+            } else {
+                glDisable(GL_DEPTH_TEST);
+            }
+
+            glDepthMask(true);
         }
     }
 
-    private void submitSkybox(Scene scene) {
+    private void submitSkyboxCommand(Scene scene) {
         if (!scene.getEnvironment().hasSkybox())
             return;
 
@@ -216,27 +223,27 @@ public class Renderer {
         stats.incrementSkyboxDrawCommandCount();
     }
 
-    private void submitVisibleObjects(List<SceneObject> visibleObjects) {
+    private void submitVisibleObjectCommands(List<SceneObject> visibleObjects) {
         for (SceneObject object : visibleObjects) {
             submitMainCommand(new DrawSceneObjectCommand(object));
             stats.incrementSceneDrawCommandCount();
         }
     }
 
-    private void executeMainPass(Scene scene, List<SceneObject> visibleObjects) {
+    private void buildMainQueue(Scene scene, List<SceneObject> visibleObjects) {
+        submitMainCommand(new ClearCommand(
+                clearColor.x,
+                clearColor.y,
+                clearColor.z,
+                clearColor.w
+        ));
+
+        submitSkyboxCommand(scene);
+        submitVisibleObjectCommands(visibleObjects);
+    }
+
+    private void executeMainPass() {
         try (RenderPass ignored = new RenderPass(viewportWidth, viewportHeight)) {
-            mainQueue.clear();
-
-            submitMainCommand(new ClearCommand(
-                    clearColor.x,
-                    clearColor.y,
-                    clearColor.z,
-                    clearColor.w
-            ));
-
-            submitSkybox(scene);
-            submitVisibleObjects(visibleObjects);
-
             mainQueue.execute(context);
         }
     }
@@ -266,8 +273,13 @@ public class Renderer {
 
         List<SceneObject> shadowCasters = collectShadowCasters(scene);
 
-        executeShadowPass(scene, visibleObjects);
-        executeMainPass(scene, shadowCasters);
+        buildShadowQueue(scene, shadowCasters);
+        executeShadowPass();
+
+        context.resetStateCache();
+
+        buildMainQueue(scene, visibleObjects);
+        executeMainPass();
     }
 
     public void resizeViewport(int width, int height) {
@@ -301,12 +313,6 @@ public class Renderer {
         }
 
         clearColor.set(r, g, b, a);
-    }
-
-    private boolean isInvalidColorChannel(float value) {
-        return !Float.isFinite(value) ||
-                value < 0.0f ||
-                value > 1.0f;
     }
 
     public void setDebugViewMode(int debugViewMode) {
@@ -356,6 +362,12 @@ public class Renderer {
 
     public RenderStats getStats() {
         return stats;
+    }
+
+    private boolean isInvalidColorChannel(float value) {
+        return !Float.isFinite(value) ||
+                value < 0.0f ||
+                value > 1.0f;
     }
 
     private static final class VisibilityResult {

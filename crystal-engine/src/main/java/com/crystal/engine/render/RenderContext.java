@@ -23,26 +23,20 @@ public class RenderContext {
     private final RenderResources resources;
 
     private float aspectRatio = 1.0f;
-
     private int debugViewMode = 0;
     private float exposure = 1.0f;
-
     private boolean hasIBL;
     private float iblIntensity = 1.0f;
-
     private float shadowStrength = 0.6f;
-
-    private boolean currentDepthTest = true;
-    private boolean currentCullFace = true;
-    private boolean currentWireframe = false;
-
-    private int currentShaderId = 0;
-    private final int[] boundTextures = new int[MAX_TEXTURE_UNITS];
-    private int currentMaterialId = 0;
-
-    private int currentMeshId = 0;
-
     private final SceneUniformData sceneUniformData = new SceneUniformData();
+
+    private Boolean currentDepthTest;
+    private Boolean currentCullFace;
+    private Boolean currentWireframe;
+    private int currentShaderId = 0;
+    private int currentMaterialId = 0;
+    private int currentMeshId = 0;
+    private final int[] boundTextures = new int[MAX_TEXTURE_UNITS];
 
     public RenderContext(ResourceManager resourceManager) {
         if (resourceManager == null)
@@ -61,121 +55,7 @@ public class RenderContext {
     }
 
     public void beginFrame() {
-        currentShaderId = 0;
-        Arrays.fill(boundTextures, 0);
-        currentMaterialId = 0;
-
-        currentMeshId = 0;
-    }
-
-    public void applyRenderState(RenderState state) {
-        if (state.isDepthTest() != currentDepthTest) {
-            currentDepthTest = state.isDepthTest();
-
-            if (currentDepthTest) {
-                glEnable(GL_DEPTH_TEST);
-            } else {
-                glDisable(GL_DEPTH_TEST);
-            }
-        }
-
-        if (state.isCullFace() != currentCullFace) {
-            currentCullFace = state.isCullFace();
-
-            if (currentCullFace) {
-                glEnable(GL_CULL_FACE);
-            } else {
-                glDisable(GL_CULL_FACE);
-            }
-        }
-
-        if (state.isWireframe() != currentWireframe) {
-            currentWireframe = state.isWireframe();
-
-            glPolygonMode(
-                    GL_FRONT_AND_BACK,
-                    currentWireframe ? GL_LINE : GL_FILL
-            );
-        }
-    }
-
-    private void bindTextureIfNeeded(Texture texture, int unit) {
-        if (unit < 0 || unit >= boundTextures.length)
-            throw new IllegalArgumentException("Texture unit out of range: " + unit);
-
-        int textureId = texture != null ? texture.getId() : 0;
-
-        if (boundTextures[unit] == textureId)
-            return;
-
-        boundTextures[unit] = textureId;
-
-        if (texture != null) {
-            texture.bind(unit);
-        } else {
-            glBindTextureUnit(unit, 0);
-        }
-    }
-
-    public void bindMaterial(Material material) {
-        Shader shader = material.getShader();
-        int shaderId = shader.getId();
-
-        if (shaderId != currentShaderId) {
-            shader.bind();
-            currentShaderId = shaderId;
-        }
-
-        shader.setInt(ShaderUniforms.DEBUG_VIEW_MODE, debugViewMode);
-        shader.setFloat(ShaderUniforms.EXPOSURE, exposure);
-        shader.setInt(ShaderUniforms.HAS_IBL, hasIBL ? 1 : 0);
-        shader.setFloat(ShaderUniforms.IBL_INTENSITY, iblIntensity);
-
-        shader.setInt(ShaderUniforms.SHADOW_MAP, TextureSlots.SHADOW_MAP);
-        shader.setFloat(ShaderUniforms.SHADOW_STRENGTH, shadowStrength);
-
-        shader.setInt(ShaderUniforms.HAS_SHADOWS, 1);
-
-
-        if (material.getId() != currentMaterialId) {
-            material.bindProperties();
-            currentMaterialId = material.getId();
-        }
-
-        Texture albedo = material.getAlbedo() != null
-                ? material.getAlbedo()
-                : resources.getDefaultWhiteTexture();
-
-        Texture normalMap = material.getNormalMap() != null
-                ? material.getNormalMap()
-                : resources.getDefaultNormalTexture();
-
-        Texture metallicRoughness = material.getMetallicRoughnessMap() != null
-                ? material.getMetallicRoughnessMap()
-                : resources.getDefaultWhiteTexture();
-
-        Texture ambientOcclusion = material.getAmbientOcclusionMap() != null
-                ? material.getAmbientOcclusionMap()
-                : resources.getDefaultWhiteTexture();
-
-        Texture emissiveMap = material.getEmissiveMap() != null
-                ? material.getEmissiveMap()
-                : resources.getDefaultWhiteTexture();
-
-        bindTextureIfNeeded(albedo, TextureSlots.ALBEDO);
-        bindTextureIfNeeded(normalMap, TextureSlots.NORMAL);
-        bindTextureIfNeeded(metallicRoughness, TextureSlots.METALLIC_ROUGHNESS);
-        bindTextureIfNeeded(ambientOcclusion, TextureSlots.AMBIENT_OCCLUSION);
-        bindTextureIfNeeded(emissiveMap, TextureSlots.EMISSIVE);
-
-        bindTextureIfNeeded(resources.getDirectionalShadowMap().getDepthTexture(), TextureSlots.SHADOW_MAP);
-    }
-
-    public void bindMesh(Mesh mesh) {
-        if (mesh.getId() != currentMeshId) {
-            mesh.bind();
-            currentMeshId = mesh.getId();
-        }
+        resetBindingCache();
     }
 
     public void prepareScene(Scene scene, float aspectRatio) {
@@ -214,6 +94,71 @@ public class RenderContext {
         iblIntensity = environment.getIblIntensity();
     }
 
+    public void resetStateCache() {
+        currentDepthTest = null;
+        currentCullFace = null;
+        currentWireframe = null;
+
+        resetBindingCache();
+    }
+
+    public void applyRenderState(RenderState state) {
+        if (currentDepthTest == null || state.isDepthTest() != currentDepthTest) {
+            currentDepthTest = state.isDepthTest();
+
+            if (currentDepthTest) {
+                glEnable(GL_DEPTH_TEST);
+            } else {
+                glDisable(GL_DEPTH_TEST);
+            }
+        }
+
+        if (currentCullFace == null || state.isCullFace() != currentCullFace) {
+            currentCullFace = state.isCullFace();
+
+            if (currentCullFace) {
+                glEnable(GL_CULL_FACE);
+            } else {
+                glDisable(GL_CULL_FACE);
+            }
+        }
+
+        if (currentWireframe == null || state.isWireframe() != currentWireframe) {
+            currentWireframe = state.isWireframe();
+
+            glPolygonMode(
+                    GL_FRONT_AND_BACK,
+                    currentWireframe ? GL_LINE : GL_FILL
+            );
+        }
+    }
+
+    public void bindMaterial(Material material) {
+        Shader shader = material.getShader();
+        int shaderId = shader.getId();
+
+        if (shaderId != currentShaderId) {
+            shader.bind();
+            currentShaderId = shaderId;
+        }
+
+        bindFrameUniforms(shader);
+
+        if (material.getId() != currentMaterialId) {
+            material.bindProperties();
+            currentMaterialId = material.getId();
+        }
+
+        bindMaterialTextures(material);
+    }
+
+    public void bindMesh(Mesh mesh) {
+        if (mesh.getId() != currentMeshId) {
+            mesh.bind();
+            currentMeshId = mesh.getId();
+        }
+    }
+
     public void setExposure(float exposure) {
         this.exposure = exposure;
     }
@@ -231,5 +176,73 @@ public class RenderContext {
 
     public RenderResources getResources() {
         return resources;
+    }
+
+    private void bindFrameUniforms(Shader shader) {
+        shader.setInt(ShaderUniforms.DEBUG_VIEW_MODE, debugViewMode);
+        shader.setFloat(ShaderUniforms.EXPOSURE, exposure);
+        shader.setInt(ShaderUniforms.HAS_IBL, hasIBL ? 1 : 0);
+        shader.setFloat(ShaderUniforms.IBL_INTENSITY, iblIntensity);
+
+        shader.setInt(ShaderUniforms.SHADOW_MAP, TextureSlots.SHADOW_MAP);
+        shader.setFloat(ShaderUniforms.SHADOW_STRENGTH, shadowStrength);
+
+        shader.setInt(ShaderUniforms.HAS_SHADOWS, 1);
+    }
+
+    private void bindMaterialTextures(Material material) {
+        Texture albedo = material.getAlbedo() != null
+                ? material.getAlbedo()
+                : resources.getDefaultWhiteTexture();
+
+        Texture normalMap = material.getNormalMap() != null
+                ? material.getNormalMap()
+                : resources.getDefaultNormalTexture();
+
+        Texture metallicRoughness = material.getMetallicRoughnessMap() != null
+                ? material.getMetallicRoughnessMap()
+                : resources.getDefaultWhiteTexture();
+
+        Texture ambientOcclusion = material.getAmbientOcclusionMap() != null
+                ? material.getAmbientOcclusionMap()
+                : resources.getDefaultWhiteTexture();
+
+        Texture emissiveMap = material.getEmissiveMap() != null
+                ? material.getEmissiveMap()
+                : resources.getDefaultWhiteTexture();
+
+        bindTextureIfNeeded(albedo, TextureSlots.ALBEDO);
+        bindTextureIfNeeded(normalMap, TextureSlots.NORMAL);
+        bindTextureIfNeeded(metallicRoughness, TextureSlots.METALLIC_ROUGHNESS);
+        bindTextureIfNeeded(ambientOcclusion, TextureSlots.AMBIENT_OCCLUSION);
+        bindTextureIfNeeded(emissiveMap, TextureSlots.EMISSIVE);
+
+        bindTextureIfNeeded(resources.getDirectionalShadowMap().getDepthTexture(), TextureSlots.SHADOW_MAP);
+    }
+
+    private void bindTextureIfNeeded(Texture texture, int unit) {
+        if (unit < 0 || unit >= boundTextures.length)
+            throw new IllegalArgumentException("Texture unit out of range: " + unit);
+
+        int textureId = texture != null ? texture.getId() : 0;
+
+        if (boundTextures[unit] == textureId)
+            return;
+
+        boundTextures[unit] = textureId;
+
+        if (texture != null) {
+            texture.bind(unit);
+        } else {
+            glBindTextureUnit(unit, 0);
+        }
+    }
+
+    private void resetBindingCache() {
+        currentShaderId = 0;
+        currentMaterialId = 0;
+        currentMeshId = 0;
+
+        Arrays.fill(boundTextures, 0);
     }
 }
