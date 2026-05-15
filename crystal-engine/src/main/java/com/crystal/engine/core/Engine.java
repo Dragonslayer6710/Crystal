@@ -181,6 +181,8 @@ public class Engine implements WindowEventListener, Application {
 
         if (scene != null) scene.dispose();
 
+        if (renderer != null) renderer.dispose();
+
         if (resourceManager != null) resourceManager.disposeAll();
 
         GLDebug.dispose();

@@ -38,9 +38,12 @@ public class RenderContext {
     private int currentMeshId = 0;
     private final int[] boundTextures = new int[MAX_TEXTURE_UNITS];
 
-    public RenderContext(ResourceManager resourceManager) {
+    public RenderContext(ResourceManager resourceManager, ShadowMap directionalShadowMap) {
         if (resourceManager == null)
             throw new IllegalArgumentException("ResourceManager cannot be null");
+
+        if (directionalShadowMap == null)
+            throw new IllegalArgumentException("Directional shadow map cannot be null");
 
         this.resources = new RenderResources(
                 resourceManager.getDefaultWhiteTexture(),
@@ -50,7 +53,7 @@ public class RenderContext {
                 resourceManager.getSkyboxShader(),
                 resourceManager.getSkyboxCubeMesh(),
                 resourceManager.createEngineShaderProgram("shadow_depth"),
-                resourceManager.register(new ShadowMap(2048))
+                directionalShadowMap
         );
     }
 
