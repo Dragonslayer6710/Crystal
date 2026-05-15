@@ -25,10 +25,10 @@ public final class DrawSceneObjectCommand implements RenderCommand {
 
         context.applyRenderState(material.getRenderState());
         context.bindMaterial(material);
-        context.bindMesh(mesh);
 
         shader.setMat4(ShaderUniforms.MODEL, transform.getWorldMatrix());
 
+        context.bindMesh(mesh);
         MeshRenderer.draw(mesh);
     }
 }

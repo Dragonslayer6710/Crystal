@@ -12,8 +12,6 @@ public final class MeshRenderer {
         if (mesh == null)
             throw new IllegalArgumentException("Mesh cannot be null");
 
-        mesh.bind();
-
         if (mesh.isIndexed()) {
             glDrawElements(
                     mesh.getPrimTypeValue(),

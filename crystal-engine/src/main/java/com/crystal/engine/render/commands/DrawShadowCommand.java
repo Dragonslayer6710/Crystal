@@ -31,6 +31,7 @@ public final class DrawShadowCommand implements RenderCommand{
         shader.setMat4(ShaderUniforms.LIGHT_SPACE_MATRIX, lightSpaceMatrix);
         shader.setMat4(ShaderUniforms.MODEL, object.getTransform().getWorldMatrix());
 
+        context.bindMesh(object.getMesh());
         MeshRenderer.draw(object.getMesh());
     }
 }

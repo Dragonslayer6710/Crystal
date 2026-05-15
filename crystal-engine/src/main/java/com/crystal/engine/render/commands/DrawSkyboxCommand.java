@@ -1,6 +1,7 @@
 package com.crystal.engine.render.commands;
 
 import com.crystal.engine.render.RenderContext;
+import com.crystal.engine.render.gl.GLStateSnapshot;
 import com.crystal.engine.render.gl.MeshRenderer;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.scene.Scene;
@@ -34,10 +35,12 @@ public final class DrawSkyboxCommand implements RenderCommand {
         if (skybox == null)
             return;
 
-        glDepthFunc(GL_LEQUAL);
-        glDepthMask(false);
+        GLStateSnapshot snapshot = new GLStateSnapshot();
 
         try {
+            glDepthFunc(GL_LEQUAL);
+            glDepthMask(false);
+
             shader.bind();
 
             shader.setInt(ShaderUniforms.SKYBOX, 0);
@@ -60,10 +63,10 @@ public final class DrawSkyboxCommand implements RenderCommand {
 
             skybox.bind(0);
 
+            context.bindMesh(cubeMesh);
             MeshRenderer.draw(cubeMesh);
         } finally {
-            glDepthMask(true);
-            glDepthFunc(GL_LESS);
+            snapshot.restore();
         }
     }
 }

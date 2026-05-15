@@ -122,6 +122,8 @@ public final class EnvironmentMapGenerator implements Disposable {
 
             final int maxMipLevels = output.getMipLevels();
 
+            cube.bind();
+
             for (int mip = 0; mip < maxMipLevels; mip++) {
                 int mipWidth = Math.max(1, size >> mip);
                 int mipHeight = Math.max(1, size >> mip);
@@ -141,6 +143,7 @@ public final class EnvironmentMapGenerator implements Disposable {
                     framebuffer.attachCubemapFace(output, mip, face);
 
                     pass.clearColorDepth();
+
                     MeshRenderer.draw(cube);
                 }
             }
@@ -169,6 +172,8 @@ public final class EnvironmentMapGenerator implements Disposable {
             brdfLutShader.bind();
 
             pass.clearColor();
+
+            fullscreenQuad.bind();
             MeshRenderer.draw(fullscreenQuad);
 
             return output;
@@ -198,6 +203,8 @@ public final class EnvironmentMapGenerator implements Disposable {
             inputTexture.bind(0);
 
             glDisable(GL_CULL_FACE);
+
+            mesh.bind();
 
             for (int face = 0; face < 6; face++) {
                 shader.setMat4("view", views[face]);

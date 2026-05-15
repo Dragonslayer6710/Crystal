@@ -182,25 +182,6 @@ public class Renderer {
             glClear(GL_DEPTH_BUFFER_BIT);
 
             shadowQueue.execute(context);
-
-            glColorMask(true, true, true, true);
-
-            if (config.isFaceCulling()) {
-                glEnable(GL_CULL_FACE);
-                glCullFace(GL_BACK);
-                glFrontFace(GL_CCW);
-            } else {
-                glDisable(GL_CULL_FACE);
-            }
-
-            if (config.isDepthTest()) {
-                glEnable(GL_DEPTH_TEST);
-                glDepthFunc(GL_LESS);
-            } else {
-                glDisable(GL_DEPTH_TEST);
-            }
-
-            glDepthMask(true);
         }
     }
 
@@ -277,8 +258,6 @@ public class Renderer {
 
         buildShadowQueue(scene, shadowCasters);
         executeShadowPass();
-
-        context.resetStateCache();
 
         buildMainQueue(scene, visibleObjects);
         executeMainPass();
