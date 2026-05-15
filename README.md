@@ -21,7 +21,8 @@ Use the root Gradle wrapper for all builds:
 - Java 21
 - Windows runtime for now
 
-LWJGL native dependencies are currently configured for Windows in `crystal-engine/build.gradle`.
+LWJGL native dependencies are currently configured for Windows through the
+`lwjglNatives` value in `gradle.properties`.
 
 ## Assets
 
@@ -50,3 +51,7 @@ The sandbox asset root is configured in `SandboxMain`.
 ## Development Notes
 
 `gradle.properties` intentionally contains local SSL bypass settings for dependency resolution. Keep that decision explicit if the project is shared or moved between machines.
+
+Dependency versions are centralized in `gradle.properties`. Snapshot dependency
+resolution is disabled by default; set `useSnapshotRepository=true` only when a
+snapshot dependency is being tested intentionally.
