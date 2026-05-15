@@ -1,5 +1,6 @@
 package com.crystal.engine.window;
 
+import com.crystal.engine.core.exception.WindowCreationException;
 import com.crystal.engine.input.InputListener;
 import com.crystal.engine.input.Key;
 import com.crystal.engine.input.MouseButton;
@@ -47,7 +48,7 @@ public class Window {
     public void create() {
         GLFWErrorCallback.createPrint(System.err).set();
 
-        if (!glfwInit()) throw new IllegalStateException("Unable to initialize GLFW");
+        if (!glfwInit()) throw new WindowCreationException("Unable to initialize GLFW");
 
         glfwWindowHint(GLFW_VISIBLE, config.isVisible() ? GLFW_TRUE : GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, config.isResizable() ? GLFW_TRUE : GLFW_FALSE);
@@ -59,7 +60,7 @@ public class Window {
         glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
         handle = glfwCreateWindow(width, height, title, NULL, NULL);
-        if (handle == NULL) throw new RuntimeException("Failed to create window");
+        if (handle == NULL) throw new WindowCreationException("Failed to create window");
 
         // Set Callbacks
         {

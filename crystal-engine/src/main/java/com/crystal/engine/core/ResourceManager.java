@@ -3,6 +3,7 @@ package com.crystal.engine.core;
 import com.crystal.engine.assets.model.AssimpModelLoader;
 import com.crystal.engine.assets.model.Model;
 import com.crystal.engine.assets.model.ModelLoadOptions;
+import com.crystal.engine.core.exception.AssetLoadException;
 import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.graphics.TextureType;
@@ -238,18 +239,18 @@ public class ResourceManager {
         try {
             return Files.readString(fullPath, StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load asset: " + fullPath.toAbsolutePath(), e);
+            throw new AssetLoadException("Failed to load asset: " + fullPath.toAbsolutePath(), e);
         }
     }
 
     private String loadEngineAssetAsString(String path) {
         try (InputStream stream = ResourceManager.class.getClassLoader().getResourceAsStream(path)) {
             if (stream == null)
-                throw new RuntimeException("Failed to load engine asset: " + path);
+                throw new AssetLoadException("Failed to load engine asset: " + path);
 
             return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load engine asset: " + path, e);
+            throw new AssetLoadException("Failed to load engine asset: " + path, e);
         }
     }
 

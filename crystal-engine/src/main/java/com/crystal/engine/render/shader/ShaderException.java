@@ -1,6 +1,8 @@
 package com.crystal.engine.render.shader;
 
-public class ShaderException extends RuntimeException {
+import com.crystal.engine.core.exception.CrystalEngineException;
+
+public class ShaderException extends CrystalEngineException {
     public ShaderException(String message) {
         super(message);
     }

@@ -1,14 +1,22 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.core.exception.AssetLoadException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class ResourceManagerTest {
+
+    @TempDir
+    Path assetRoot;
 
     @Test
     void registerReturnsTheResource() {
@@ -44,6 +52,31 @@ class ResourceManagerTest {
         resources.disposeAll();
 
         assertEquals(List.of("third", "second", "first"), disposed);
+    }
+
+    @Test
+    void createShaderProgramReportsMissingProjectAssetAsAssetLoadException() {
+        ResourceManager resources = new ResourceManager(new AssetConfig().setAssetRoot(assetRoot));
+
+        AssetLoadException exception = assertThrows(
+                AssetLoadException.class,
+                () -> resources.createShaderProgram("missing")
+        );
+
+        assertTrue(exception.getMessage().contains("Failed to load asset:"));
+        assertTrue(exception.getMessage().contains("missing.vert"));
+    }
+
+    @Test
+    void createEngineShaderProgramReportsMissingBundledAssetAsAssetLoadException() {
+        ResourceManager resources = new ResourceManager(new AssetConfig().setAssetRoot(assetRoot));
+
+        AssetLoadException exception = assertThrows(
+                AssetLoadException.class,
+                () -> resources.createEngineShaderProgram("missing")
+        );
+
+        assertEquals("Failed to load engine asset: engine-assets/shaders/missing.vert", exception.getMessage());
     }
 
     private static class TestResource implements Disposable {
