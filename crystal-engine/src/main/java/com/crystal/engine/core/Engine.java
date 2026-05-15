@@ -1,10 +1,10 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.core.exception.CrystalEngineException;
 import com.crystal.engine.input.Input;
 import com.crystal.engine.render.GLDebug;
 import com.crystal.engine.render.Renderer;
 import com.crystal.engine.render.scene.Scene;
-import com.crystal.engine.render.shader.ShaderException;
 import com.crystal.engine.window.Window;
 import com.crystal.engine.window.WindowEventListener;
 import org.lwjgl.opengl.GL;
@@ -86,71 +86,79 @@ public class Engine implements WindowEventListener, Application {
         state = EngineState.RUNNING;
     }
 
+    private void runLoop() {
+        long lastTime = System.nanoTime();
+
+        while (state == EngineState.RUNNING && !window.shouldClose()) {
+            long frameStart = System.nanoTime();
+
+            time.update(frameStart, lastTime, config.getMaxDeltaTime());
+            lastTime = frameStart;
+
+            // 1. INPUT START
+            context.getInput().beginFrame();
+
+            // 2. POLL EVENTS FROM WINDOW
+            window.pollEvents();
+
+            // 3 GAME LOGIC
+            long updateStart = System.nanoTime();
+            game.update(time.getDeltaTime());
+            time.setUpdateTimeNanos(System.nanoTime() - updateStart);
+
+            // 4. INPUT END
+            context.getInput().endFrame();
+
+            // 5. RENDERER RENDERS SCENE
+            long renderStart = System.nanoTime();
+            renderer.render(context.getScene(), window.getAspectRatio());
+            time.setRenderTimeNanos(System.nanoTime() - renderStart);
+
+            // 6. PRESENT FRAME (WINDOW RESPONSIBILITY)
+            window.swapBuffers();
+
+            // 7. THROTTLE FPS IF config.targetFPS > 0
+            if (config.getTargetFPS() > 0)
+                throttle(frameStart);
+
+            time.setFrameTimeNanos(System.nanoTime() - frameStart);
+
+            statsTitleTimer += time.getDeltaTime();
+
+            if (statsTitleTimer >= 0.25) {
+                statsTitleTimer = 0.0;
+
+                var renderStats = renderer.getStats();
+
+                window.setTitle(String.format(
+                    "%s | FPS: %d | Frame: %.2fms | Update: %.2fms | Render: %.2fms" +
+                        " | Visible: %d | Culled: %d | Draws: %d | Scene: %d | Skybox: %d",
+                    config.getWindowConfig().getTitle(),
+                    time.getFps(),
+                    time.getFrameTimeMs(),
+                    time.getUpdateTimeMs(),
+                    time.getRenderTimeMs(),
+                    renderStats.getVisibleObjectCount(),
+                    renderStats.getCulledObjectCount(),
+                    renderStats.getTotalDrawCount(),
+                    renderStats.getSceneDrawCount(),
+                    renderStats.getSkyboxDrawCount()
+                ));
+            }
+        }
+    }
+
     public void run() {
         try {
             init();
-
-            long lastTime = System.nanoTime();
-
-            while (state == EngineState.RUNNING && !window.shouldClose()) {
-                long frameStart = System.nanoTime();
-
-                time.update(frameStart, lastTime, config.getMaxDeltaTime());
-                lastTime = frameStart;
-
-                // 1. INPUT START
-                context.getInput().beginFrame();
-
-                // 2. POLL EVENTS FROM WINDOW
-                window.pollEvents();
-
-                // 3 GAME LOGIC
-                long updateStart = System.nanoTime();
-                game.update(time.getDeltaTime());
-                time.setUpdateTimeNanos(System.nanoTime() - updateStart);
-
-                // 4. INPUT END
-                context.getInput().endFrame();
-
-                // 5. RENDERER RENDERS SCENE
-                long renderStart = System.nanoTime();
-                renderer.render(context.getScene(), window.getAspectRatio());
-                time.setRenderTimeNanos(System.nanoTime() - renderStart);
-
-                // 6. PRESENT FRAME (WINDOW RESPONSIBILITY)
-                window.swapBuffers();
-
-                // 7. THROTTLE FPS IF config.targetFPS > 0
-                if (config.getTargetFPS() > 0)
-                    throttle(frameStart);
-
-                time.setFrameTimeNanos(System.nanoTime() - frameStart);
-
-                statsTitleTimer += time.getDeltaTime();
-
-                if (statsTitleTimer >= 0.25) {
-                    statsTitleTimer = 0.0;
-
-                    var renderStats = renderer.getStats();
-
-                    window.setTitle(String.format(
-                            "%s | FPS: %d | Frame: %.2fms | Update: %.2fms | Render: %.2fms" +
-                                    " | Visible: %d | Culled: %d | Draws: %d | Scene: %d | Skybox: %d",
-                            config.getWindowConfig().getTitle(),
-                            time.getFps(),
-                            time.getFrameTimeMs(),
-                            time.getUpdateTimeMs(),
-                            time.getRenderTimeMs(),
-                            renderStats.getVisibleObjectCount(),
-                            renderStats.getCulledObjectCount(),
-                            renderStats.getTotalDrawCount(),
-                            renderStats.getSceneDrawCount(),
-                            renderStats.getSkyboxDrawCount()
-                    ));
-                }
-            }
-        } catch (ShaderException e) {
-            logger.error(e.getMessage());
+            runLoop();
+        } catch (CrystalEngineException e) {
+            state = EngineState.FAILED;
+            logger.error("Engine failed", e);
+        } catch (RuntimeException e) {
+            state = EngineState.FAILED;
+            logger.error("Unexpected engine failure", e);
+            throw e;
         } finally {
             shutdown();
         }
@@ -169,6 +177,7 @@ public class Engine implements WindowEventListener, Application {
         if (state == EngineState.SHUTDOWN)
             return;
 
+        boolean failed = state == EngineState.FAILED;
         state = EngineState.STOPPING;
 
         logger.info("Engine shutting down");
@@ -189,7 +198,7 @@ public class Engine implements WindowEventListener, Application {
 
         if (window != null) window.destroy();
 
-        state = EngineState.SHUTDOWN;
+        state = failed ? EngineState.FAILED : EngineState.SHUTDOWN;
     }
 
     @Override
