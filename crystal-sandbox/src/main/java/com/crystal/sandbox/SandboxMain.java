@@ -9,6 +9,7 @@ import com.crystal.engine.render.environment.IBLGenerator;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.MeshFactory;
+import com.crystal.engine.render.scene.RotationComponent;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Transform;
 import com.crystal.engine.render.shader.Shader;
@@ -52,9 +53,14 @@ public class SandboxMain implements Game {
         material.setAlbedo(ctx.getResources().createTexture("bricks_albedo.png"));
         material.setNormalMap(ctx.getResources().createDataTexture("bricks_normal.png"));
 
-        cubeA = new SceneObject("Cube A", mesh, material, new Transform().setPosition(-2, 0, -2f));
-        cubeB = new SceneObject("Cube B", mesh, material, new Transform().setPosition(0, 0, -2f));
-        cubeC = new SceneObject("Cube C", mesh, material, new Transform().setPosition(2, 0, -2f));
+        cubeA = new SceneObject("Cube A", mesh, material, new Transform().setPosition(-2, 0, -2f))
+                .addComponent(new RotationComponent(0.0f, 1.0f, 0.0f));
+
+        cubeB = new SceneObject("Cube B", mesh, material, new Transform().setPosition(0, 0, -2f))
+                .addComponent(new RotationComponent(1.0f, 0.0f, 0.0f));
+
+        cubeC = new SceneObject("Cube C", mesh, material, new Transform().setPosition(2, 0, -2f))
+                .addComponent(new RotationComponent(0.0f, 0.0f, 1.0f));
 
         cubeA.addChild(cubeB);
         cubeB.addChild(cubeC);
@@ -66,7 +72,8 @@ public class SandboxMain implements Game {
                 new ModelLoadOptions().setShader(shader)
         );
         cubeModel.logHierarchy();
-        boxTextured = cubeModel.getRootObjects().getFirst();
+        boxTextured = cubeModel.getRootObjects().getFirst()
+                .addComponent(new RotationComponent(0.0f, 1.0f, 0.0f));
 
         boxTextured.getTransform().setPosition(2, 0, -1f);
 
@@ -79,7 +86,8 @@ public class SandboxMain implements Game {
                 new ModelLoadOptions().setShader(shader)
         );
         damagedHelmetModel.logHierarchy();
-        helmet = damagedHelmetModel.getRootObjects().getFirst();
+        helmet = damagedHelmetModel.getRootObjects().getFirst()
+                .addComponent(new RotationComponent(0.0f, 0.0f, 1.0f));
 
         ctx.getScene().add(helmet);
 
@@ -177,18 +185,6 @@ public class SandboxMain implements Game {
 
         if (input.isKeyPressed(Key.NUMPAD_ENTER))
             renderer.cycleDebugViewMode();
-
-        if (SHOW_CUBES){
-            cubeA.getTransform().rotate(0.0f, (float) dt, 0.0f);
-            cubeB.getTransform().rotate((float) dt, 0.0f, 0.0f);
-            cubeC.getTransform().rotate(0.0f, 0.0f, (float) dt);
-
-            boxTextured.getTransform().rotate(0.0f, (float) dt, 0.0f);
-        }
-
-        if (SHOW_HELMET) {
-            helmet.getTransform().rotate(0.0f, 0.0f, (float) dt);
-        }
 
     }
 
