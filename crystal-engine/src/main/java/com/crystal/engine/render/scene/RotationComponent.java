@@ -13,11 +13,13 @@ public class RotationComponent extends SceneComponent {
     }
 
     @Override
-    public void update(double deltaTime) {
+    public void update(SceneUpdateContext context) {
+        float dt = (float) context.getDeltaTime();
+
         getOwner().getTransform().rotate(
-                xRadiansPerSecond * (float) deltaTime,
-                yRadiansPerSecond * (float) deltaTime,
-                zRadiansPerSecond * (float) deltaTime
+                xRadiansPerSecond * (float) dt,
+                yRadiansPerSecond * (float) dt,
+                zRadiansPerSecond * (float) dt
         );
     }
 

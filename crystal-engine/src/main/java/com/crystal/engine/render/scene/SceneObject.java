@@ -156,17 +156,17 @@ public class SceneObject {
         return null;
     }
 
-    public void update(double deltaTime) {
+    public void update(SceneUpdateContext context) {
         if (!active)
             return;
 
         for (SceneComponent component : components) {
             if (component.isEnabled())
-                component.update(deltaTime);
+                component.update(context);
         }
 
         for (SceneObject child : children)
-            child.update(deltaTime);
+            child.update(context);
     }
 
     public boolean isActive() {

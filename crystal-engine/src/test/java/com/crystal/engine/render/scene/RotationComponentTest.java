@@ -1,5 +1,8 @@
 package com.crystal.engine.render.scene;
 
+import com.crystal.engine.input.Input;
+import com.crystal.engine.window.Window;
+import com.crystal.engine.window.WindowConfig;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.Test;
 
@@ -14,7 +17,7 @@ class RotationComponentTest {
 
         object.addComponent(component);
 
-        component.update(0.5);
+        component.update(context(0.5));
 
         assertVectorEquals(new Vector3f(0.5f, 1.0f, 1.5f), object.getTransform().getRotation());
     }
@@ -27,7 +30,7 @@ class RotationComponentTest {
 
         object.addComponent(component);
 
-        component.update(0.25);
+        component.update(context(0.25));
 
         assertVectorEquals(new Vector3f(0.5f, 0.0f, 0.0f), object.getTransform().getRotation());
     }
@@ -37,5 +40,9 @@ class RotationComponentTest {
                 expected.distance(actual) < 0.0001f,
                 "Expected " + expected + " but was " + actual
         );
+    }
+
+    private static SceneUpdateContext context(double deltaTime) {
+        return new SceneUpdateContext(deltaTime, new Input(), new Window(new WindowConfig()));
     }
 }

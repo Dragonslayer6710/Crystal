@@ -5,6 +5,7 @@ import com.crystal.engine.input.Input;
 import com.crystal.engine.render.GLDebug;
 import com.crystal.engine.render.Renderer;
 import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.render.scene.SceneUpdateContext;
 import com.crystal.engine.window.Window;
 import com.crystal.engine.window.WindowEventListener;
 import org.lwjgl.opengl.GL;
@@ -104,7 +105,11 @@ public class Engine implements WindowEventListener, Application {
             // 3 GAME LOGIC
             long updateStart = System.nanoTime();
             game.update(time.getDeltaTime());
-            context.getScene().update(time.getDeltaTime());
+            context.getScene().update(new SceneUpdateContext(
+                time.getDeltaTime(),
+                input,
+                window
+            ));
             time.setUpdateTimeNanos(System.nanoTime() - updateStart);
 
             // 4. INPUT END

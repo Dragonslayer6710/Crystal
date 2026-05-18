@@ -36,5 +36,5 @@ public abstract class SceneComponent {
 
     protected void onDetach(SceneObject owner) {}
 
-    public void update(double deltaTime) {}
+    public void update(SceneUpdateContext context) {}
 }

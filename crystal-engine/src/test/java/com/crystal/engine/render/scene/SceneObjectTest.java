@@ -1,5 +1,8 @@
 package com.crystal.engine.render.scene;
 
+import com.crystal.engine.input.Input;
+import com.crystal.engine.window.Window;
+import com.crystal.engine.window.WindowConfig;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -154,7 +157,7 @@ class SceneObjectTest {
         child.addComponent(childComponent);
         parent.addChild(child);
 
-        parent.update(0.5);
+        parent.update(context(0.5));
 
         assertEquals(1, parentComponent.updateCount);
         assertEquals(0.5, parentComponent.lastDeltaTime);
@@ -169,7 +172,7 @@ class SceneObjectTest {
         component.setEnabled(false);
         object.addComponent(component);
 
-        object.update(0.5);
+        object.update(context(0.5));
 
         assertEquals(0, component.updateCount);
     }
@@ -186,7 +189,7 @@ class SceneObjectTest {
         parent.addChild(child);
         parent.setActive(false);
 
-        parent.update(0.5);
+        parent.update(context(0.5));
 
         assertEquals(0, parentComponent.updateCount);
         assertEquals(0, childComponent.updateCount);
@@ -255,6 +258,10 @@ class SceneObjectTest {
         return new SceneObject(name, null, null, new Transform());
     }
 
+    private static SceneUpdateContext context(double deltaTime) {
+        return new SceneUpdateContext(deltaTime, new Input(), new Window(new WindowConfig()));
+    }
+
     private static class TestComponent extends SceneComponent {
         private SceneObject attachedOwner;
         private SceneObject detachedOwner;
@@ -272,9 +279,9 @@ class SceneObjectTest {
         }
 
         @Override
-        public void update(double deltaTime) {
+        public void update(SceneUpdateContext context) {
             updateCount++;
-            lastDeltaTime = deltaTime;
+            lastDeltaTime = context.getDeltaTime();
         }
     }
 

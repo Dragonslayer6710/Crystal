@@ -47,9 +47,9 @@ public class Scene implements Disposable {
         return rootObjects;
     }
 
-    public void update(double deltaTime) {
+    public void update(SceneUpdateContext context) {
         for (SceneObject object : rootObjects)
-            object.update(deltaTime);
+            object.update(context);
     }
 
     public Camera getCamera() {
