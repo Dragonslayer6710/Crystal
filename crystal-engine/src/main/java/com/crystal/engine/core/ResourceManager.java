@@ -6,7 +6,6 @@ import com.crystal.engine.assets.model.ModelLoadOptions;
 import com.crystal.engine.core.exception.AssetLoadException;
 import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.graphics.TextureSettings;
-import com.crystal.engine.graphics.TextureType;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.MeshData;
 import com.crystal.engine.render.mesh.MeshFactory;
@@ -86,6 +85,9 @@ public class ResourceManager {
     }
 
     public Shader createShaderProgram(String vName, String fName) {
+        requireNonBlank(vName, "Vertex shader name");
+        requireNonBlank(fName, "Fragment shader name");
+
         String vertexPath = projectShaderPath(vName, "vert");
         String fragmentPath = projectShaderPath(fName, "frag");
         String cacheKey = shaderCacheKey(vertexPath, fragmentPath);
@@ -126,6 +128,7 @@ public class ResourceManager {
     }
 
     public Texture createTexture(String path, TextureSettings settings) {
+        requireNonBlank(path, "Texture path");
         if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
 
         String texturePath = texturePath(path);
@@ -134,10 +137,6 @@ public class ResourceManager {
         return textureCache.computeIfAbsent(cacheKey, ignored -> register(TextureLoader.load(
                 assetRoot.resolve(texturePath), settings)
         ));
-    }
-
-    public Texture createTexture(String path, TextureType type) {
-        return createTexture(path, TextureSettings.forType(type));
     }
 
     public Texture createTexture(String path) {
@@ -149,6 +148,8 @@ public class ResourceManager {
     }
 
     public Texture createHDRTexture(String path) {
+        requireNonBlank(path, "HDR texture path");
+
         TextureSettings settings = TextureSettings.defaultHDR();
         String texturePath = texturePath(path);
         String cacheKey = textureCacheKey(texturePath, settings);
@@ -257,6 +258,7 @@ public class ResourceManager {
     }
 
     public Model loadModel(String path, ModelLoadOptions options) {
+        requireNonBlank(path, "Model path");
         return AssimpModelLoader.load(modelPath(path), this, options);
     }
 
@@ -305,5 +307,11 @@ public class ResourceManager {
 
     private Path modelPath(String path) {
         return assetRoot.resolve("models/" + path);
+    }
+
+    private void requireNonBlank(String value, String label) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(label + " cannot be null or blank");
+        }
     }
 }

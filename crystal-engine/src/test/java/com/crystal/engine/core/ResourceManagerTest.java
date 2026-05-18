@@ -1,5 +1,6 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.assets.model.ModelLoadOptions;
 import com.crystal.engine.core.exception.AssetLoadException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -77,6 +78,44 @@ class ResourceManagerTest {
         );
 
         assertEquals("Failed to load engine asset: engine-assets/shaders/missing.vert", exception.getMessage());
+    }
+
+    @Test
+    void createShaderProgramRejectsNullOrBlankNames() {
+        ResourceManager resources = new ResourceManager();
+
+        assertThrows(IllegalArgumentException.class, () -> resources.createShaderProgram(null));
+        assertThrows(IllegalArgumentException.class, () -> resources.createShaderProgram(""));
+        assertThrows(IllegalArgumentException.class, () -> resources.createShaderProgram(" "));
+        assertThrows(IllegalArgumentException.class, () -> resources.createShaderProgram("valid", null));
+        assertThrows(IllegalArgumentException.class, () -> resources.createShaderProgram(null, "valid"));
+    }
+
+    @Test
+    void createTextureRejectsNullOrBlankPath() {
+        ResourceManager resources = new ResourceManager();
+
+        assertThrows(IllegalArgumentException.class, () -> resources.createTexture(null));
+        assertThrows(IllegalArgumentException.class, () -> resources.createTexture(""));
+        assertThrows(IllegalArgumentException.class, () -> resources.createTexture(" "));
+    }
+
+    @Test
+    void createHDRTextureRejectsNullOrBlankPath() {
+        ResourceManager resources = new ResourceManager();
+
+        assertThrows(IllegalArgumentException.class, () -> resources.createHDRTexture(null));
+        assertThrows(IllegalArgumentException.class, () -> resources.createHDRTexture(""));
+        assertThrows(IllegalArgumentException.class, () -> resources.createHDRTexture(" "));
+    }
+
+    @Test
+    void loadModelRejectsNullOrBlankPath() {
+        ResourceManager resources = new ResourceManager();
+
+        assertThrows(IllegalArgumentException.class, () -> resources.loadModel(null, new ModelLoadOptions()));
+        assertThrows(IllegalArgumentException.class, () -> resources.loadModel("", new ModelLoadOptions()));
+        assertThrows(IllegalArgumentException.class, () -> resources.loadModel(" ", new ModelLoadOptions()));
     }
 
     private static class TestResource implements Disposable {
