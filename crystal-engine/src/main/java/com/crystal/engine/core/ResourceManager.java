@@ -78,9 +78,6 @@ public class ResourceManager {
     }
 
     public Shader createShaderProgram(String vName, String fName) {
-        requireNonBlank(vName, "Vertex shader name");
-        requireNonBlank(fName, "Fragment shader name");
-
         String vertexPath = assets.projectShaderPath(vName, "vert");
         String fragmentPath = assets.projectShaderPath(fName, "frag");
         String cacheKey = shaderCacheKey(vertexPath, fragmentPath);
@@ -121,7 +118,6 @@ public class ResourceManager {
     }
 
     public Texture createTexture(String path, TextureSettings settings) {
-        requireNonBlank(path, "Texture path");
         if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
 
         String texturePath = assets.projectTextureAssetPath(path);
@@ -142,8 +138,6 @@ public class ResourceManager {
     }
 
     public Texture createHDRTexture(String path) {
-        requireNonBlank(path, "HDR texture path");
-
         TextureSettings settings = TextureSettings.defaultHDR();
         String texturePath = assets.projectTextureAssetPath(path);
         String cacheKey = textureCacheKey(texturePath, settings);
@@ -231,7 +225,6 @@ public class ResourceManager {
     }
 
     public Model loadModel(String path, ModelLoadOptions options) {
-        requireNonBlank(path, "Model path");
         return AssimpModelLoader.load(assets.projectModelPath(path), this, options);
     }
 
@@ -256,12 +249,6 @@ public class ResourceManager {
         return textureCache.computeIfAbsent(cacheKey, ignored ->
                 register(TextureLoader.loadFromMemory(encodedImage, settings, cacheKey))
         );
-    }
-
-    private void requireNonBlank(String value, String label) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(label + " cannot be null or blank");
-        }
     }
 
     private String shaderCacheKey(String vertexPath, String fragmentPath) {

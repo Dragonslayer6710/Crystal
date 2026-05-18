@@ -20,10 +20,16 @@ final class AssetResolver {
     }
 
     String projectShaderPath(String name, String extension) {
+        requireNonBlank(name, "Project shader name");
+        requireNonBlank(extension, "Project shader extension");
+
         return "shaders/" + name + "." + extension;
     }
 
     String engineShaderPath(String name, String extension) {
+        requireNonBlank(name, "Engine shader name");
+        requireNonBlank(extension, "Engine shader extension");
+
         return ENGINE_ASSET_ROOT + "/shaders/" + name + "." + extension;
     }
 
@@ -32,14 +38,20 @@ final class AssetResolver {
     }
 
     String projectTextureAssetPath(String path) {
+        requireNonBlank(path, "Texture path");
+
         return "textures/" + path;
     }
 
     Path projectModelPath(String path) {
+        requireNonBlank(path, "Model path");
+
         return assetRoot.resolve("models/" + path);
     }
 
     String loadProjectAssetAsString(String path) {
+        requireNonBlank(path, "Project asset path");
+
         Path fullPath = assetRoot.resolve(path);
 
         try {
@@ -50,6 +62,8 @@ final class AssetResolver {
     }
 
     String loadEngineAssetAsString(String path) {
+        requireNonBlank(path, "Engine asset path");
+
         try (InputStream stream = AssetResolver.class.getClassLoader().getResourceAsStream(path)) {
             if (stream == null)
                 throw new AssetLoadException("Failed to load engine asset: " + path);
@@ -57,6 +71,12 @@ final class AssetResolver {
             return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new AssetLoadException("Failed to load engine asset: " + path, e);
+        }
+    }
+
+    private void requireNonBlank(String value, String label) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(label + " cannot be null or blank");
         }
     }
 }

@@ -30,6 +30,22 @@ class AssetResolverTest {
     }
 
     @Test
+    void rejectsNullOrBlankAssetNamesAndPaths() {
+        AssetResolver assets = new AssetResolver(new AssetConfig().setAssetRoot(assetRoot));
+
+        assertThrows(IllegalArgumentException.class, () -> assets.projectShaderPath(null, "vert"));
+        assertThrows(IllegalArgumentException.class, () -> assets.projectShaderPath(" ", "vert"));
+        assertThrows(IllegalArgumentException.class, () -> assets.projectShaderPath("pbr", null));
+        assertThrows(IllegalArgumentException.class, () -> assets.engineShaderPath(null, "frag"));
+        assertThrows(IllegalArgumentException.class, () -> assets.engineShaderPath("skybox", " "));
+        assertThrows(IllegalArgumentException.class, () -> assets.projectTextureAssetPath(null));
+        assertThrows(IllegalArgumentException.class, () -> assets.projectTexturePath(" "));
+        assertThrows(IllegalArgumentException.class, () -> assets.projectModelPath(null));
+        assertThrows(IllegalArgumentException.class, () -> assets.loadProjectAssetAsString(" "));
+        assertThrows(IllegalArgumentException.class, () -> assets.loadEngineAssetAsString(null));
+    }
+
+    @Test
     void loadsProjectAssetText() throws IOException {
         AssetResolver assets = new AssetResolver(new AssetConfig().setAssetRoot(assetRoot));
         Path shader = assetRoot.resolve("shaders/test.vert");
