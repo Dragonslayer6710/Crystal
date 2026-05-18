@@ -104,6 +104,7 @@ public class Engine implements WindowEventListener, Application {
             // 3 GAME LOGIC
             long updateStart = System.nanoTime();
             game.update(time.getDeltaTime());
+            context.getScene().update(time.getDeltaTime());
             time.setUpdateTimeNanos(System.nanoTime() - updateStart);
 
             // 4. INPUT END

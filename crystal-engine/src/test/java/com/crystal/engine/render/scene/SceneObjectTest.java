@@ -63,6 +63,136 @@ class SceneObjectTest {
     }
 
     @Test
+    void addComponentAttachesComponentToObject() {
+        SceneObject object = object("object");
+        TestComponent component = new TestComponent();
+
+        object.addComponent(component);
+
+        assertSame(object, component.getOwner());
+        assertSame(object, component.attachedOwner);
+        assertTrue(object.getComponents().contains(component));
+    }
+
+    @Test
+    void addComponentRejectsNullComponent() {
+        SceneObject object = object("object");
+
+        assertThrows(IllegalArgumentException.class, () -> object.addComponent(null));
+    }
+
+    @Test
+    void addComponentRejectsAttachedComponent() {
+        SceneObject first = object("first");
+        SceneObject second = object("second");
+        TestComponent component = new TestComponent();
+
+        first.addComponent(component);
+
+        assertThrows(IllegalStateException.class, () -> second.addComponent(component));
+    }
+
+    @Test
+    void removeComponentDetachesComponentFromObject() {
+        SceneObject object = object("object");
+        TestComponent component = new TestComponent();
+        object.addComponent(component);
+
+        boolean removed = object.removeComponent(component);
+
+        assertTrue(removed);
+        assertNull(component.getOwner());
+        assertSame(object, component.detachedOwner);
+        assertTrue(object.getComponents().isEmpty());
+    }
+
+    @Test
+    void removeComponentReturnsFalseForMissingComponent() {
+        SceneObject object = object("object");
+
+        assertFalse(object.removeComponent(new TestComponent()));
+        assertFalse(object.removeComponent(null));
+    }
+
+    @Test
+    void componentsListCannotBeMutatedDirectly() {
+        SceneObject object = object("object");
+
+        assertThrows(
+                UnsupportedOperationException.class,
+                () -> object.getComponents().add(new TestComponent())
+        );
+    }
+
+    @Test
+    void getComponentReturnsFirstMatchingComponent() {
+        SceneObject object = object("object");
+        TestComponent component = new TestComponent();
+
+        object.addComponent(component);
+
+        assertSame(component, object.getComponent(TestComponent.class));
+        assertSame(component, object.getComponent(SceneComponent.class));
+        assertNull(object.getComponent(OtherComponent.class));
+    }
+
+    @Test
+    void getComponentRejectsNullType() {
+        SceneObject object = object("object");
+
+        assertThrows(IllegalArgumentException.class, () -> object.getComponent(null));
+    }
+
+    @Test
+    void updateUpdatesEnabledComponentsAndChildren() {
+        SceneObject parent = object("parent");
+        SceneObject child = object("child");
+        TestComponent parentComponent = new TestComponent();
+        TestComponent childComponent = new TestComponent();
+
+        parent.addComponent(parentComponent);
+        child.addComponent(childComponent);
+        parent.addChild(child);
+
+        parent.update(0.5);
+
+        assertEquals(1, parentComponent.updateCount);
+        assertEquals(0.5, parentComponent.lastDeltaTime);
+        assertEquals(1, childComponent.updateCount);
+        assertEquals(0.5, childComponent.lastDeltaTime);
+    }
+
+    @Test
+    void updateSkipsDisabledComponents() {
+        SceneObject object = object("object");
+        TestComponent component = new TestComponent();
+        component.setEnabled(false);
+        object.addComponent(component);
+
+        object.update(0.5);
+
+        assertEquals(0, component.updateCount);
+    }
+
+    @Test
+    void updateSkipsInactiveObjectHierarchy() {
+        SceneObject parent = object("parent");
+        SceneObject child = object("child");
+        TestComponent parentComponent = new TestComponent();
+        TestComponent childComponent = new TestComponent();
+
+        parent.addComponent(parentComponent);
+        child.addComponent(childComponent);
+        parent.addChild(child);
+        parent.setActive(false);
+
+        parent.update(0.5);
+
+        assertEquals(0, parentComponent.updateCount);
+        assertEquals(0, childComponent.updateCount);
+    }
+
+    @Test
     void addChildRejectsSelfParenting() {
         SceneObject object = object("object");
 
@@ -123,5 +253,31 @@ class SceneObjectTest {
 
     private static SceneObject object(String name) {
         return new SceneObject(name, null, null, new Transform());
+    }
+
+    private static class TestComponent extends SceneComponent {
+        private SceneObject attachedOwner;
+        private SceneObject detachedOwner;
+        private int updateCount;
+        private double lastDeltaTime;
+
+        @Override
+        protected void onAttach(SceneObject owner) {
+            attachedOwner = owner;
+        }
+
+        @Override
+        protected void onDetach(SceneObject owner) {
+            detachedOwner = owner;
+        }
+
+        @Override
+        public void update(double deltaTime) {
+            updateCount++;
+            lastDeltaTime = deltaTime;
+        }
+    }
+
+    private static final class OtherComponent extends SceneComponent {
     }
 }

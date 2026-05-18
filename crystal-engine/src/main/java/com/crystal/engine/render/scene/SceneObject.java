@@ -18,6 +18,8 @@ public class SceneObject {
     private SceneObject parent;
     private final List<SceneObject> children = new ArrayList<>();
 
+    private final List<SceneComponent> components = new ArrayList<>();
+
     private boolean active = true;
     private boolean visible = true;
     private boolean castsShadow = true;
@@ -115,6 +117,56 @@ public class SceneObject {
         children.add(child);
 
         return this;
+    }
+
+    public SceneObject addComponent(SceneComponent component) {
+        if (component == null) throw new IllegalArgumentException("Component cannot be null");
+        if (component.getOwner() != null) throw new IllegalStateException("Component is already attached");
+
+        components.add(component);
+        component.attach(this);
+
+        return this;
+    }
+
+    public boolean removeComponent(SceneComponent component) {
+        if (component == null)
+            return false;
+
+        boolean removed = components.remove(component);
+
+        if (removed)
+            component.detach();
+
+        return removed;
+    }
+
+    public List<SceneComponent> getComponents() {
+        return Collections.unmodifiableList(components);
+    }
+
+    public <T extends SceneComponent> T getComponent(Class<T> type) {
+        if (type == null) throw new IllegalArgumentException("Component type cannot be null");
+
+        for (SceneComponent component : components) {
+            if (type.isInstance(component))
+                return type.cast(component);
+        }
+
+        return null;
+    }
+
+    public void update(double deltaTime) {
+        if (!active)
+            return;
+
+        for (SceneComponent component : components) {
+            if (component.isEnabled())
+                component.update(deltaTime);
+        }
+
+        for (SceneObject child : children)
+            child.update(deltaTime);
     }
 
     public boolean isActive() {
