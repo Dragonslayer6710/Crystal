@@ -1,6 +1,7 @@
 package com.crystal.engine.assets.model;
 
 import com.crystal.engine.core.ResourceManager;
+import com.crystal.engine.core.exception.ModelLoadException;
 import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.texture.Texture;
@@ -229,7 +230,7 @@ final class AssimpMaterialLoader {
             String textureRef = texturePath.dataString();
 
             if (textureRef.startsWith("*")) {
-                int embeddedIndex = Integer.parseInt(textureRef.substring(1));
+                int embeddedIndex = parseEmbeddedTextureIndex(textureRef, modelPath);
 
                 PointerBuffer textures = scene.mTextures();
                 if (textures == null || embeddedIndex >= scene.mNumTextures())
@@ -238,8 +239,8 @@ final class AssimpMaterialLoader {
                 AITexture embedded = AITexture.create(textures.get(embeddedIndex));
 
                 if (embedded.mHeight() != 0)
-                    throw new UnsupportedOperationException(
-                            "Uncompressed embedded Assimp textures are not supported yet");
+                    throw new ModelLoadException("Failed to load model '" + modelPath
+                            + "': uncompressed embedded Assimp textures are not supported yet");
 
                 ByteBuffer encoded = MemoryUtil.memByteBuffer(
                         embedded.pcData().address(),
@@ -253,8 +254,23 @@ final class AssimpMaterialLoader {
                 );
             }
 
-            Path resolved = modelPath.getParent().resolve(textureRef).normalize();
+            Path parent = modelPath.getParent();
+            if (parent == null) {
+                throw new ModelLoadException("Failed to resolve material texture '" + textureRef
+                        + "' for model without a parent path: " + modelPath);
+            }
+
+            Path resolved = parent.resolve(textureRef).normalize();
             return resources.loadTexture(resolved, settings);
+        }
+    }
+
+    private static int parseEmbeddedTextureIndex(String textureRef, Path modelPath) {
+        try {
+            return Integer.parseInt(textureRef.substring(1));
+        } catch (NumberFormatException e) {
+            throw new ModelLoadException("Failed to load model '" + modelPath
+                    + "': invalid embedded texture reference " + textureRef, e);
         }
     }
 }

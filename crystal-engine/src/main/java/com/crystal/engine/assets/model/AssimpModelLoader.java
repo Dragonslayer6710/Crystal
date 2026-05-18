@@ -21,8 +21,7 @@ import static org.lwjgl.assimp.Assimp.*;
 
 public final class AssimpModelLoader {
 
-    private AssimpModelLoader() {
-    }
+    private AssimpModelLoader() {}
 
     public static Model load(Path path, ResourceManager resources, ModelLoadOptions options) {
         if (path == null) throw new IllegalArgumentException("Path cannot be null");
@@ -58,7 +57,7 @@ public final class AssimpModelLoader {
             for (int i = 0; i < scene.mNumMeshes(); i++) {
                 AIMesh aiMesh = AIMesh.create(meshes.get(i));
 
-                loadedMeshes[i] = createMesh(aiMesh, resources);
+                loadedMeshes[i] = createMesh(aiMesh, path, resources);
                 loadedMaterials[i] = AssimpMaterialLoader.createMaterial(scene, aiMesh, path, resources, options);
             }
 
@@ -155,7 +154,7 @@ public final class AssimpModelLoader {
         );
     }
 
-    private static Mesh createMesh(AIMesh aiMesh, ResourceManager resources) {
+    private static Mesh createMesh(AIMesh aiMesh, Path modelPath, ResourceManager resources) {
         int vertexCount = aiMesh.mNumVertices();
 
         var positions = aiMesh.mVertices();
@@ -206,7 +205,7 @@ public final class AssimpModelLoader {
             }
         }
 
-        int[] indices = extractIndices(aiMesh);
+        int[] indices = extractIndices(aiMesh, modelPath);
 
         return resources.createMesh(
                 PrimitiveType.TRIANGLES,
@@ -216,7 +215,7 @@ public final class AssimpModelLoader {
         );
     }
 
-    private static int[] extractIndices(AIMesh aiMesh) {
+    private static int[] extractIndices(AIMesh aiMesh, Path modelPath) {
         int faceCount = aiMesh.mNumFaces();
         int[] indices = new int[faceCount * 3];
 
@@ -227,7 +226,8 @@ public final class AssimpModelLoader {
             IntBuffer faceIndices = face.mIndices();
 
             if (face.mNumIndices() != 3) {
-                throw new ModelLoadException("Expected triangulated face with 3 indices");
+                throw new ModelLoadException("Failed to load model '" + modelPath
+                        + "': expected triangulated face with 3 indices, got " + face.mNumIndices());
             }
 
             indices[offset++] = faceIndices.get(0);
