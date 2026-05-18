@@ -14,6 +14,8 @@ public class RotationComponent extends SceneComponent {
 
     @Override
     public void update(SceneUpdateContext context) {
+        if (context == null) throw new IllegalArgumentException("SceneUpdateContext cannot be null");
+
         float dt = (float) context.getDeltaTime();
 
         getOwner().getTransform().rotate(

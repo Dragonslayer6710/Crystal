@@ -1,33 +1,40 @@
 package com.crystal.sandbox;
 
+import com.crystal.engine.core.Application;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
 import com.crystal.engine.input.MouseButton;
+import com.crystal.engine.render.scene.Camera;
+import com.crystal.engine.render.scene.CameraControllerComponent;
+import com.crystal.engine.render.scene.SceneUpdateContext;
 import org.joml.Vector3f;
 
-public class FlyCameraController {
+public class FlyCameraController extends CameraControllerComponent {
 
-    private final EngineContext ctx;
+    private final Application application;
 
     private boolean cursorCaptured = false;
     private boolean flying = false;
 
-    public FlyCameraController(EngineContext ctx) {
-        this.ctx = ctx;
+    public FlyCameraController(Camera camera, Application application) {
+        super(camera);
+        if (application == null) throw new IllegalArgumentException("Application cannot be null");
+        this.application = application;
     }
 
-    public void update(double dt) {
-        handleCursorCapture();
+    @Override
+    public void updateCamera(Camera camera, SceneUpdateContext context) {
+        handleCursorCapture(context);
 
         if (cursorCaptured) {
-            move(dt);
-            look();
+            move(camera, context);
+            look(camera, context);
         }
     }
 
-    private void handleCursorCapture() {
-        var input = ctx.getInput();
-        var window = ctx.getWindow();
+    private void handleCursorCapture(SceneUpdateContext context) {
+        var input = context.getInput();
+        var window = context.getWindow();
 
         // toggle capture
         if (input.isKeyPressed(Key.ESCAPE)) {
@@ -35,7 +42,7 @@ public class FlyCameraController {
                 cursorCaptured = false;
                 window.setCursorCaptured(false);
             } else {
-                ctx.getApplication().stop();
+                application.stop();
             }
         }
 
@@ -45,11 +52,10 @@ public class FlyCameraController {
         }
     }
 
-    private void move(double dt) {
-        var input = ctx.getInput();
-        var camera = ctx.getScene().getCamera();
+    private void move(Camera camera, SceneUpdateContext context) {
+        var input = context.getInput();
 
-        float speed = ((input.isKeyDown(Key.LEFT_SHIFT)) ? 2f : 1f) * (float) dt;
+        float speed = ((input.isKeyDown(Key.LEFT_SHIFT)) ? 2f : 1f) * (float) context.getDeltaTime();
 
         var forward = (flying) ? camera.getForward() : camera.getForwardXZ();
         var right = (flying) ? camera.getRight() :camera.getRightXZ();
@@ -81,21 +87,21 @@ public class FlyCameraController {
         }
     }
 
-    private void look() {
-        var input = ctx.getInput();
-        var camera = ctx.getScene().getCamera();
+    private void look(Camera camera, SceneUpdateContext context) {
+        var input = context.getInput();
+
         var cameraTransform = camera.getTransform();
 
         float mouseSensitivity = 0.002f;
 
         var rotation = cameraTransform.getRotation();
 
-        rotation.y -= input.getMouseDeltaX() * mouseSensitivity;
-        rotation.x -= input.getMouseDeltaY() * mouseSensitivity;
+        rotation.y -= (float) (input.getMouseDeltaX() * mouseSensitivity);
+        rotation.x -= (float) (input.getMouseDeltaY() * mouseSensitivity);
 
         // clamp pitch to not flip upside down
         float maxPitch = (float) Math.toRadians(89.0f);
-        rotation.x = Math.max(-maxPitch, Math.min(maxPitch, rotation.x));
+        rotation.x = Math.clamp(rotation.x, -maxPitch, maxPitch);
 
         cameraTransform.setRotation(rotation.x, rotation.y, rotation.z);
     }

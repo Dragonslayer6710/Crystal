@@ -40,8 +40,6 @@ public class SandboxMain implements Game {
 
     private SceneObject helmet;
 
-    private FlyCameraController cameraController;
-
     private void addCubes(Shader shader) {
         Mesh mesh = MeshFactory.createLitTexturedCube(ctx.getResources());
 
@@ -50,8 +48,11 @@ public class SandboxMain implements Game {
                 .setWireframe(false)
                 .setCullFace(true);
 
-        material.setAlbedo(ctx.getResources().createTexture("bricks_albedo.png"));
-        material.setNormalMap(ctx.getResources().createDataTexture("bricks_normal.png"));
+        material
+            .setAlbedo(ctx.getResources().createTexture("bricks_albedo.png"))
+            .setNormalMap(ctx.getResources().createDataTexture("bricks_normal.png"))
+            .setMetallic(0.0f)
+            .setRoughness(1.0f);
 
         cubeA = new SceneObject("Cube A", mesh, material, new Transform().setPosition(-2, 0, -2f))
                 .addComponent(new RotationComponent(0.0f, 1.0f, 0.0f));
@@ -154,15 +155,16 @@ public class SandboxMain implements Game {
                 .setAmbientIntensity(0.2f)
                 .setIblIntensity(0.4f);
 
-        cameraController = new FlyCameraController(ctx);
-
         ctx.getScene().getCamera().getTransform().translate(0, 0, 2.0f);
+
+        SceneObject cameraController = new SceneObject("Camera Controller", null, null, new Transform())
+            .addComponent(new FlyCameraController(ctx.getScene().getCamera(), ctx.getApplication()));
+
+        ctx.getScene().add(cameraController);
     }
 
     @Override
     public void update(double dt) {
-        cameraController.update(dt);
-
         var input = ctx.getInput();
         var renderer = ctx.getRenderer();
 
