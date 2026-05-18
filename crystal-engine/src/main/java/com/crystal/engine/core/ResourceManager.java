@@ -3,7 +3,6 @@ package com.crystal.engine.core;
 import com.crystal.engine.assets.model.AssimpModelLoader;
 import com.crystal.engine.assets.model.Model;
 import com.crystal.engine.assets.model.ModelLoadOptions;
-import com.crystal.engine.core.exception.AssetLoadException;
 import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.render.mesh.Mesh;
@@ -17,11 +16,7 @@ import com.crystal.engine.render.texture.TextureLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.ByteBuffer;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,10 +26,9 @@ import java.util.Map;
 public class ResourceManager {
 
     private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
-    private static final String ENGINE_ASSET_ROOT = "engine-assets";
 
+    private final AssetResolver assets;
     private final List<Disposable> resources = new ArrayList<>();
-    private final Path assetRoot;
 
     private Texture defaultWhiteTexture;
     private Texture defaultNormalTexture;
@@ -50,8 +44,7 @@ public class ResourceManager {
     private boolean disposed;
 
     public ResourceManager(AssetConfig config) {
-        if (config == null) throw new IllegalArgumentException("AssetConfig cannot be null");
-        this.assetRoot = config.getAssetRoot().toAbsolutePath().normalize();
+        this.assets = new AssetResolver(config);
     }
 
     public ResourceManager() {
@@ -88,13 +81,13 @@ public class ResourceManager {
         requireNonBlank(vName, "Vertex shader name");
         requireNonBlank(fName, "Fragment shader name");
 
-        String vertexPath = projectShaderPath(vName, "vert");
-        String fragmentPath = projectShaderPath(fName, "frag");
+        String vertexPath = assets.projectShaderPath(vName, "vert");
+        String fragmentPath = assets.projectShaderPath(fName, "frag");
         String cacheKey = shaderCacheKey(vertexPath, fragmentPath);
 
         return shaderCache.computeIfAbsent(cacheKey, ignored -> {
-            String vs = loadAssetAsString(vertexPath);
-            String fs = loadAssetAsString(fragmentPath);
+            String vs = assets.loadProjectAssetAsString(vertexPath);
+            String fs = assets.loadProjectAssetAsString(fragmentPath);
 
             Shader shader = new Shader(vs, fs, vertexPath, fragmentPath);
             shader.setDebugLabel(cacheKey);
@@ -108,13 +101,13 @@ public class ResourceManager {
     }
 
     public Shader createEngineShaderProgram(String vName, String fName) {
-        String vertexPath = engineShaderPath(vName, "vert");
-        String fragmentPath = engineShaderPath(fName, "frag");
+        String vertexPath = assets.engineShaderPath(vName, "vert");
+        String fragmentPath = assets.engineShaderPath(fName, "frag");
         String cacheKey = shaderCacheKey(vertexPath, fragmentPath);
 
         return shaderCache.computeIfAbsent(cacheKey, ignored -> {
-            String vs = loadEngineAssetAsString(vertexPath);
-            String fs = loadEngineAssetAsString(fragmentPath);
+            String vs = assets.loadEngineAssetAsString(vertexPath);
+            String fs = assets.loadEngineAssetAsString(fragmentPath);
 
             Shader shader = new Shader(vs, fs, vertexPath, fragmentPath);
             shader.setDebugLabel(cacheKey);
@@ -131,12 +124,13 @@ public class ResourceManager {
         requireNonBlank(path, "Texture path");
         if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
 
-        String texturePath = texturePath(path);
+        String texturePath = assets.projectTextureAssetPath(path);
         String cacheKey = textureCacheKey(texturePath, settings);
 
         return textureCache.computeIfAbsent(cacheKey, ignored -> register(TextureLoader.load(
-                assetRoot.resolve(texturePath), settings)
-        ));
+            assets.projectTexturePath(path),
+            settings
+        )));
     }
 
     public Texture createTexture(String path) {
@@ -151,12 +145,12 @@ public class ResourceManager {
         requireNonBlank(path, "HDR texture path");
 
         TextureSettings settings = TextureSettings.defaultHDR();
-        String texturePath = texturePath(path);
+        String texturePath = assets.projectTextureAssetPath(path);
         String cacheKey = textureCacheKey(texturePath, settings);
 
         return textureCache.computeIfAbsent(cacheKey, ignored -> register(TextureLoader.loadHDR(
-                assetRoot.resolve(texturePath),
-                settings
+            assets.projectTexturePath(path),
+            settings
         )));
     }
 
@@ -236,30 +230,9 @@ public class ResourceManager {
         shaderCache.clear();
     }
 
-    private String loadAssetAsString(String path) {
-        Path fullPath = assetRoot.resolve(path);
-
-        try {
-            return Files.readString(fullPath, StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new AssetLoadException("Failed to load asset: " + fullPath.toAbsolutePath(), e);
-        }
-    }
-
-    private String loadEngineAssetAsString(String path) {
-        try (InputStream stream = ResourceManager.class.getClassLoader().getResourceAsStream(path)) {
-            if (stream == null)
-                throw new AssetLoadException("Failed to load engine asset: " + path);
-
-            return new String(stream.readAllBytes(), StandardCharsets.UTF_8);
-        } catch (IOException e) {
-            throw new AssetLoadException("Failed to load engine asset: " + path, e);
-        }
-    }
-
     public Model loadModel(String path, ModelLoadOptions options) {
         requireNonBlank(path, "Model path");
-        return AssimpModelLoader.load(modelPath(path), this, options);
+        return AssimpModelLoader.load(assets.projectModelPath(path), this, options);
     }
 
     public Texture loadTexture(Path path, TextureSettings settings) {
@@ -285,33 +258,17 @@ public class ResourceManager {
         );
     }
 
-    private String projectShaderPath(String name, String extension) {
-        return "shaders/" + name + "." + extension;
-    }
-
-    private String engineShaderPath(String name, String extension) {
-        return ENGINE_ASSET_ROOT + "/shaders/" + name + "." + extension;
+    private void requireNonBlank(String value, String label) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException(label + " cannot be null or blank");
+        }
     }
 
     private String shaderCacheKey(String vertexPath, String fragmentPath) {
         return vertexPath + "|" + fragmentPath;
     }
 
-    private String texturePath(String path) {
-        return "textures/" + path;
-    }
-
     private String textureCacheKey(String path, TextureSettings settings) {
         return path + "|" + settings.cacheKey();
-    }
-
-    private Path modelPath(String path) {
-        return assetRoot.resolve("models/" + path);
-    }
-
-    private void requireNonBlank(String value, String label) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException(label + " cannot be null or blank");
-        }
     }
 }
