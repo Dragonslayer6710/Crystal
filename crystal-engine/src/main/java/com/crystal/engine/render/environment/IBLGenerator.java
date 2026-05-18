@@ -36,7 +36,7 @@ public final class IBLGenerator {
         Mesh envCube = MeshFactory.createPositionOnlyCube(resources);
         Mesh fullscreenQuad = MeshFactory.createFullscreenQuad(resources);
 
-        EnvironmentMapGenerator generator = resources.register(new EnvironmentMapGenerator(
+        EnvironmentMapGenerator generator = resources.manageResource(new EnvironmentMapGenerator(
                 envShader,
                 irradianceShader,
                 prefilterShader,
@@ -68,10 +68,10 @@ public final class IBLGenerator {
         if (environment == null) throw new IllegalArgumentException("Environment cannot be null");
         if (hdrTexture == null) throw new IllegalArgumentException("HDR texture cannot be null");
 
-        Texture environmentCubemap = resources.register(generator.generateCubemap(hdrTexture, environmentMapSize));
-        Texture irradianceMap = resources.register(generator.generateIrradianceMap(environmentCubemap));
-        Texture prefilterMap = resources.register(generator.generatePrefilterMap(environmentCubemap));
-        Texture brdfLut = resources.register(generator.generateBrdfLut());
+        Texture environmentCubemap = resources.manageResource(generator.generateCubemap(hdrTexture, environmentMapSize));
+        Texture irradianceMap = resources.manageResource(generator.generateIrradianceMap(environmentCubemap));
+        Texture prefilterMap = resources.manageResource(generator.generatePrefilterMap(environmentCubemap));
+        Texture brdfLut = resources.manageResource(generator.generateBrdfLut());
 
         validateGeneratedTexture("environment cubemap", environmentCubemap);
         validateGeneratedTexture("irradiance map", irradianceMap);

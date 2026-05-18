@@ -51,7 +51,7 @@ public class ResourceManager {
         this(new AssetConfig());
     }
 
-    public <T extends Disposable> T register(T resource) {
+    public <T extends Disposable> T manageResource(T resource) {
         if (disposed) throw new IllegalStateException("ResourceManager has already been disposed");
 
         if (resource == null)
@@ -63,7 +63,7 @@ public class ResourceManager {
     }
 
     public Mesh createMesh(PrimitiveType type, float[] vertices, int[] indices, VertexLayout layout) {
-        return register(new Mesh(type, vertices, indices, layout));
+        return manageResource(new Mesh(type, vertices, indices, layout));
     }
 
     public Mesh createMesh(MeshData data) {
@@ -89,7 +89,7 @@ public class ResourceManager {
             Shader shader = new Shader(vs, fs, vertexPath, fragmentPath);
             shader.setDebugLabel(cacheKey);
 
-            return register(shader);
+            return manageResource(shader);
         });
     }
 
@@ -109,7 +109,7 @@ public class ResourceManager {
             Shader shader = new Shader(vs, fs, vertexPath, fragmentPath);
             shader.setDebugLabel(cacheKey);
 
-            return register(shader);
+            return manageResource(shader);
         });
     }
 
@@ -123,7 +123,7 @@ public class ResourceManager {
         String texturePath = assets.projectTextureAssetPath(path);
         String cacheKey = textureCacheKey(texturePath, settings);
 
-        return textureCache.computeIfAbsent(cacheKey, ignored -> register(TextureLoader.load(
+        return textureCache.computeIfAbsent(cacheKey, ignored -> manageResource(TextureLoader.load(
             assets.projectTexturePath(path),
             settings
         )));
@@ -142,7 +142,7 @@ public class ResourceManager {
         String texturePath = assets.projectTextureAssetPath(path);
         String cacheKey = textureCacheKey(texturePath, settings);
 
-        return textureCache.computeIfAbsent(cacheKey, ignored -> register(TextureLoader.loadHDR(
+        return textureCache.computeIfAbsent(cacheKey, ignored -> manageResource(TextureLoader.loadHDR(
             assets.projectTexturePath(path),
             settings
         )));
@@ -150,7 +150,7 @@ public class ResourceManager {
 
     public Texture getDefaultWhiteTexture() {
         if (defaultWhiteTexture == null) {
-            defaultWhiteTexture = register(TextureFactory.create1x1(
+            defaultWhiteTexture = manageResource(TextureFactory.create1x1(
                     "default-white", 255, 255, 255, 255
             ));
         }
@@ -160,7 +160,7 @@ public class ResourceManager {
 
     public Texture getDefaultNormalTexture() {
         if (defaultNormalTexture == null) {
-            defaultNormalTexture = register(TextureFactory.create1x1(
+            defaultNormalTexture = manageResource(TextureFactory.create1x1(
                     "default-normal", 128, 128, 255, 255
             ));
         }
@@ -170,7 +170,7 @@ public class ResourceManager {
 
     public Texture getDefaultBlackCubemap() {
         if (defaultBlackCubemap == null) {
-            defaultBlackCubemap = register(TextureFactory.createCubemap(
+            defaultBlackCubemap = manageResource(TextureFactory.createCubemap(
                     1,
                     "default-black-cubemap"
             ));
@@ -181,7 +181,7 @@ public class ResourceManager {
 
     public Texture getDefaultBrdfLut() {
         if (defaultBrdfLut == null) {
-            defaultBrdfLut = register(TextureFactory.create1x1(
+            defaultBrdfLut = manageResource(TextureFactory.create1x1(
                     "default-brdf-lut", 255, 255, 255, 255
             ));
         }
@@ -235,7 +235,7 @@ public class ResourceManager {
         String cacheKey = path.toAbsolutePath().normalize() + "|" + settings.cacheKey();
 
         return textureCache.computeIfAbsent(cacheKey, key ->
-                register(TextureLoader.load(path, settings))
+                manageResource(TextureLoader.load(path, settings))
         );
     }
 
@@ -247,7 +247,7 @@ public class ResourceManager {
         String cacheKey = "embedded:" + key + "|" + settings.cacheKey();
 
         return textureCache.computeIfAbsent(cacheKey, ignored ->
-                register(TextureLoader.loadFromMemory(encodedImage, settings, cacheKey))
+                manageResource(TextureLoader.loadFromMemory(encodedImage, settings, cacheKey))
         );
     }
 

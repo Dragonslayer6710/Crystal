@@ -20,11 +20,11 @@ class ResourceManagerTest {
     Path assetRoot;
 
     @Test
-    void registerReturnsTheResource() {
+    void manageResourceReturnsTheResource() {
         ResourceManager resources = new ResourceManager();
         TestResource resource = new TestResource("resource", new ArrayList<>());
 
-        assertSame(resource, resources.register(resource));
+        assertSame(resource, resources.manageResource(resource));
     }
 
     @Test
@@ -32,9 +32,9 @@ class ResourceManagerTest {
         ResourceManager resources = new ResourceManager();
         List<String> disposed = new ArrayList<>();
 
-        resources.register(new TestResource("first", disposed));
-        resources.register(new TestResource("second", disposed));
-        resources.register(new TestResource("third", disposed));
+        resources.manageResource(new TestResource("first", disposed));
+        resources.manageResource(new TestResource("second", disposed));
+        resources.manageResource(new TestResource("third", disposed));
 
         resources.disposeAll();
 
@@ -46,9 +46,9 @@ class ResourceManagerTest {
         ResourceManager resources = new ResourceManager();
         List<String> disposed = new ArrayList<>();
 
-        resources.register(new TestResource("first", disposed));
-        resources.register(new FailingResource("second", disposed));
-        resources.register(new TestResource("third", disposed));
+        resources.manageResource(new TestResource("first", disposed));
+        resources.manageResource(new FailingResource("second", disposed));
+        resources.manageResource(new TestResource("third", disposed));
 
         resources.disposeAll();
 
