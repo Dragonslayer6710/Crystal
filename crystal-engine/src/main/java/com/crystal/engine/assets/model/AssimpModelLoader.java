@@ -1,6 +1,7 @@
 package com.crystal.engine.assets.model;
 
 import com.crystal.engine.core.ResourceManager;
+import com.crystal.engine.core.exception.ModelLoadException;
 import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
@@ -40,7 +41,9 @@ public final class AssimpModelLoader {
 
         AIScene scene = aiImportFile(path.toString(), flags);
 
-        if (scene == null) throw new RuntimeException("Failed to load model: " + path + "\n" + aiGetErrorString());
+        if (scene == null) {
+            throw new ModelLoadException("Failed to load model: " + path + "\n" + aiGetErrorString());
+        }
 
         try {
             Model model = new Model();
