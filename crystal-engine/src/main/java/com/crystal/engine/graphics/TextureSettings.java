@@ -74,15 +74,6 @@ public final class TextureSettings {
                 .setWrapT(TextureWrap.CLAMP_TO_BORDER);
     }
 
-    public static TextureSettings forType(TextureType type) {
-        if (type == null) throw new IllegalArgumentException("TextureType cannot be null");
-
-        return switch (type) {
-            case ALBEDO -> defaultAlbedo();
-            case NORMAL, DATA -> defaultData();
-        };
-    }
-
     public TextureFormat getFormat() { return format; }
     public TextureFilter getMinFilter() { return minFilter; }
     public TextureFilter getMagFilter() { return magFilter; }

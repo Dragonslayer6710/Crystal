@@ -27,18 +27,6 @@ class TextureSettingsTest {
     }
 
     @Test
-    void forTypeMapsTextureTypesToExpectedDefaults() {
-        assertEquals(TextureFormat.SRGBA8, TextureSettings.forType(TextureType.ALBEDO).getFormat());
-        assertEquals(TextureFormat.RGBA8, TextureSettings.forType(TextureType.NORMAL).getFormat());
-        assertEquals(TextureFormat.RGBA8, TextureSettings.forType(TextureType.DATA).getFormat());
-    }
-
-    @Test
-    void forTypeRejectsNullTextureType() {
-        assertThrows(IllegalArgumentException.class, () -> TextureSettings.forType(null));
-    }
-
-    @Test
     void validateRejectsMinFilterMipmapsWhenMipmapsAreDisabled() {
         TextureSettings settings = new TextureSettings()
                 .setGenerateMipmaps(false)
