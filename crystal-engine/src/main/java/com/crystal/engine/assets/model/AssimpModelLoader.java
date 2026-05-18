@@ -226,7 +226,9 @@ public final class AssimpModelLoader {
             AIFace face = aiMesh.mFaces().get(i);
             IntBuffer faceIndices = face.mIndices();
 
-            if (face.mNumIndices() != 3) throw new IllegalStateException("Expected triangulated face with 3 indices");
+            if (face.mNumIndices() != 3) {
+                throw new ModelLoadException("Expected triangulated face with 3 indices");
+            }
 
             indices[offset++] = faceIndices.get(0);
             indices[offset++] = faceIndices.get(1);
