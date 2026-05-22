@@ -1,8 +1,6 @@
 package com.crystal.sandbox;
 
-import com.crystal.engine.core.Application;
 import com.crystal.engine.input.Key;
-import com.crystal.engine.input.MouseButton;
 import com.crystal.engine.render.scene.Camera;
 import com.crystal.engine.render.scene.CameraControllerComponent;
 import com.crystal.engine.render.scene.SceneUpdateContext;
@@ -10,29 +8,22 @@ import org.joml.Vector3f;
 
 public class FlyCameraController extends CameraControllerComponent {
 
-    private final Application application;
-
-    private boolean cursorCaptured = false;
-
     private float moveSpeed = 1.0f;
     private float sprintMultiplier = 2.0f;
     private float mouseSensitivity = 0.002f;
     private boolean flying = false;
 
-    public FlyCameraController(Camera camera, Application application) {
+    public FlyCameraController(Camera camera) {
         super(camera);
-        if (application == null) throw new IllegalArgumentException("Application cannot be null");
-        this.application = application;
     }
 
     @Override
     public void updateCamera(Camera camera, SceneUpdateContext context) {
-        handleCursorCapture(context);
+        if (!context.getWindow().isCursorCaptured())
+            return;
 
-        if (cursorCaptured) {
-            move(camera, context);
-            look(camera, context);
-        }
+        move(camera, context);
+        look(camera, context);
     }
 
     public FlyCameraController setMoveSpeed(float moveSpeed) {
@@ -62,26 +53,6 @@ public class FlyCameraController extends CameraControllerComponent {
     public FlyCameraController setFlying(boolean flying) {
         this.flying = flying;
         return this;
-    }
-
-    private void handleCursorCapture(SceneUpdateContext context) {
-        var input = context.getInput();
-        var window = context.getWindow();
-
-        // toggle capture
-        if (input.isKeyPressed(Key.ESCAPE)) {
-            if (cursorCaptured) {
-                cursorCaptured = false;
-                window.setCursorCaptured(false);
-            } else {
-                application.stop();
-            }
-        }
-
-        if (input.isMousePressed(MouseButton.LMB)) {
-            cursorCaptured = true;
-            window.setCursorCaptured(true);
-        }
     }
 
     private void move(Camera camera, SceneUpdateContext context) {

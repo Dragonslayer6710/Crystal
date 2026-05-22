@@ -2,6 +2,7 @@ package com.crystal.engine.core;
 
 import com.crystal.engine.audio.AudioEngine;
 import com.crystal.engine.core.exception.CrystalEngineException;
+import com.crystal.engine.debug.DebugOverlay;
 import com.crystal.engine.input.Input;
 import com.crystal.engine.render.GLDebug;
 import com.crystal.engine.render.Renderer;
@@ -27,6 +28,8 @@ public class Engine implements WindowEventListener, Application {
     private Renderer renderer;
     private ResourceManager resourceManager;
     private Scene scene;
+
+    private DebugOverlay debugOverlay;
 
     private EngineContext context;
 
@@ -75,16 +78,20 @@ public class Engine implements WindowEventListener, Application {
         renderer = new Renderer(config.getRendererConfig(), resourceManager);
         renderer.init(windowConfig.getWidth(), windowConfig.getHeight());
 
+        debugOverlay = new DebugOverlay();
+        debugOverlay.init(window.getHandle());
+
         scene = new Scene();
 
         context = new EngineContext(
-                this,
-                time,
-                input,
-                window,
-                renderer,
-                resourceManager,
-                scene
+            this,
+            time,
+            input,
+            window,
+            renderer,
+            resourceManager,
+            scene,
+            debugOverlay
         );
 
         game.init(context);
@@ -124,6 +131,8 @@ public class Engine implements WindowEventListener, Application {
             long renderStart = System.nanoTime();
             renderer.render(context.getScene(), window.getAspectRatio());
             time.setRenderTimeNanos(System.nanoTime() - renderStart);
+
+            debugOverlay.render(time, renderer);
 
             // 6. PRESENT FRAME (WINDOW RESPONSIBILITY)
             window.swapBuffers();
@@ -200,6 +209,7 @@ public class Engine implements WindowEventListener, Application {
         }
 
         if (scene != null) scene.dispose();
+        if (debugOverlay != null) debugOverlay.dispose();
         if (renderer != null) renderer.dispose();
         if (resourceManager != null) resourceManager.disposeAll();
 

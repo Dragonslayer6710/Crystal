@@ -1,5 +1,6 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.debug.DebugOverlay;
 import com.crystal.engine.input.Input;
 import com.crystal.engine.render.Renderer;
 import com.crystal.engine.render.scene.Scene;
@@ -15,8 +16,10 @@ public class EngineContext {
     private final ResourceManager resources;
     private final Scene scene;
 
+    private final DebugOverlay debugOverlay;
+
     public EngineContext(Application application, Time time, Input input, Window window,
-                         Renderer renderer, ResourceManager resources, Scene scene) {
+                         Renderer renderer, ResourceManager resources, Scene scene, DebugOverlay debugOverlay) {
         this.application = application;
         this.time = time;
         this.input = input;
@@ -24,6 +27,7 @@ public class EngineContext {
         this.renderer = renderer;
         this.resources = resources;
         this.scene = scene;
+        this.debugOverlay = debugOverlay;
     }
 
     // READ-ONLY ACCESS
@@ -34,4 +38,5 @@ public class EngineContext {
     public Renderer getRenderer() { return renderer; }
     public ResourceManager getResources() { return resources; }
     public Scene getScene() { return scene; }
+    public DebugOverlay getDebugOverlay() { return debugOverlay; }
 }

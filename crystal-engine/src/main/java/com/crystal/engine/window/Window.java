@@ -24,6 +24,8 @@ public class Window {
     private WindowEventListener windowEventListener;
     private InputListener inputListener;
 
+    private boolean cursorCaptured;
+
     private boolean destroyed;
 
     public Window(WindowConfig config) {
@@ -125,7 +127,13 @@ public class Window {
         return glfwWindowShouldClose(handle);
     }
 
+    public boolean isCursorCaptured() {
+        return cursorCaptured;
+    }
+
     public void setCursorCaptured(boolean captured) {
+        cursorCaptured = captured;
+
         if (captured) {
             glfwSetInputMode(handle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         } else {

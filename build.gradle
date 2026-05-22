@@ -33,13 +33,14 @@ def detectLwjglNatives = {
 
 ext {
     versions = [
-            joml   : providers.gradleProperty("jomlVersion").get(),
-            junit  : providers.gradleProperty("junitVersion").get(),
-            jansi  : providers.gradleProperty("jansiVersion").get(),
-            logback: providers.gradleProperty("logbackVersion").get(),
-            lwjgl  : providers.gradleProperty("lwjglVersion").get(),
-            slf4j  : providers.gradleProperty("slf4jVersion").get(),
-            jackson: providers.gradleProperty("jacksonVersion").get()
+        joml    : providers.gradleProperty("jomlVersion").get(),
+        junit   : providers.gradleProperty("junitVersion").get(),
+        jansi   : providers.gradleProperty("jansiVersion").get(),
+        logback : providers.gradleProperty("logbackVersion").get(),
+        lwjgl   : providers.gradleProperty("lwjglVersion").get(),
+        slf4j   : providers.gradleProperty("slf4jVersion").get(),
+        jackson : providers.gradleProperty("jacksonVersion").get(),
+        imgui   : providers.gradleProperty("imguiVersion").get()
     ]
     lwjglNatives = providers.gradleProperty("lwjglNatives").orElse(detectLwjglNatives()).get()
 }

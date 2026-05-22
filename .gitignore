@@ -38,3 +38,6 @@ nbdist/
 .DS_Store
 hs_err_pid*.log
 /.idea/.gitignore
+
+# Local ImGui layout/state
+imgui.ini

@@ -27,7 +27,14 @@ dependencies {
     // Maths
     api "org.joml:joml:${versions.joml}"
 
+    // JSON Loading
     implementation "com.fasterxml.jackson.core:jackson-databind:${versions.jackson}"
+
+    // Debug View/UI (via ImGUI)
+    implementation "io.github.spair:imgui-java-binding:${versions.imgui}"
+    implementation "io.github.spair:imgui-java-lwjgl3:${versions.imgui}"
+
+    runtimeOnly "io.github.spair:imgui-java-natives-windows:${versions.imgui}"
 
     testImplementation platform("org.junit:junit-bom:${versions.junit}")
     testImplementation "org.junit.jupiter:junit-jupiter"

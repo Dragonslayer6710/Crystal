@@ -5,6 +5,7 @@ import com.crystal.engine.audio.SoundSource;
 import com.crystal.engine.core.EngineConfig;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
+import com.crystal.engine.input.MouseButton;
 import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.scene.SceneLoader;
 import com.crystal.engine.render.scene.SceneObject;
@@ -83,7 +84,7 @@ public class SandboxMain implements Game {
 
     private void addCameraController() {
         SceneObject cameraController = new SceneObject("Camera Controller", null, null, new Transform())
-            .addComponent(new FlyCameraController(ctx.getScene().getCamera(), ctx.getApplication())
+            .addComponent(new FlyCameraController(ctx.getScene().getCamera())
                 .setMoveSpeed(1.0f)
                 .setSprintMultiplier(2.0f)
                 .setFlying(false));
@@ -107,6 +108,20 @@ public class SandboxMain implements Game {
     private void handleInput() {
         var input = ctx.getInput();
         var renderer = ctx.getRenderer();
+        var window = ctx.getWindow();
+
+        boolean imguiWantsMouse = ctx.getDebugOverlay().wantsMouse();
+
+        if (input.isKeyPressed(Key.ESCAPE)) {
+            if (window.isCursorCaptured()) {
+                window.setCursorCaptured(false);
+            } else {
+                ctx.getApplication().stop();
+            }
+        }
+
+        if (!imguiWantsMouse && input.isMousePressed(MouseButton.LMB))
+            window.setCursorCaptured(true);
 
         if (input.isKeyPressed(Key.F))
             renderer.setFrustumCullingEnabled(!renderer.isFrustumCullingEnabled());
