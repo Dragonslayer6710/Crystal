@@ -1,0 +1,100 @@
+{
+    "camera": {
+        "position": [0.0, 0.0, 2.0]
+    },
+    "environment": {
+        "ambientColor": [0.01, 0.01, 0.01],
+        "ambientIntensity": 0.2,
+        "ibl": "environment/studio_small_03_1k.hdr",
+        "iblIntensity": 0.4
+    },
+    "lighting": {
+        "directionalIntensity": 3.0,
+        "shadowStrength": 1.0
+    },
+    "objects": [
+        {
+            "name": "Helmet",
+            "type": "model",
+            "path": "/external/DamagedHelmet.glb",
+            "position": [0.75, 1.0, -2.5],
+            "rotationDegrees": [90.0, 0.0, -15.0],
+            "castsShadow": true
+        },
+        {
+            "name": "Floor",
+            "type": "primitive",
+            "primitive": "plane",
+            "position": [0.0, -1.0, -2.5],
+            "scale": [8.0, 1.0, 8.0],
+            "material": {
+                "albedo": "bricks_albedo.png",
+                "normal": "bricks_normal.png"
+            }
+        },
+        {
+            "name": "Box Textured",
+            "type": "model",
+            "path": "/external/BoxTextured.glb",
+            "position": [2.0, 0.0, -1.0],
+            "components": [
+                {
+                    "type": "rotation",
+                    "speedRadiansPerSecond": [0.0, 1.0, 0.0]
+                }
+            ]
+        },
+        {
+            "name": "Cube A",
+            "type": "primitive",
+            "primitive": "cube",
+            "position": [-2.0, 0.0, -2.0],
+            "material": {
+                "albedo": "bricks_albedo.png",
+                "normal": "bricks_normal.png"
+            },
+            "components": [
+                {
+                    "type": "rotation",
+                    "speedRadiansPerSecond": [0.0, 1.0, 0.0]
+                }
+            ],
+            "children": [
+                {
+                    "name": "Cube B",
+                    "type": "primitive",
+                    "primitive": "cube",
+                    "position": [2.0, 0.0, 0.0],
+                    "material": {
+                        "albedo": "bricks_albedo.png",
+                        "normal": "bricks_normal.png"
+                    },
+                    "components": [
+                        {
+                            "type": "rotation",
+                            "speedRadiansPerSecond": [1.0, 0.0, 0.0]
+                        }
+                    ],
+                    "children": [
+                        {
+                            "name": "Cube C",
+                            "type": "primitive",
+                            "primitive": "cube",
+                            "position": [2.0, 0.0, 0.0],
+                            "material": {
+                                "albedo": "bricks_albedo.png",
+                                "normal": "bricks_normal.png"
+                            },
+                            "components": [
+                                {
+                                    "type": "rotation",
+                                    "speedRadiansPerSecond": [0.0, 0.0, 1.0]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

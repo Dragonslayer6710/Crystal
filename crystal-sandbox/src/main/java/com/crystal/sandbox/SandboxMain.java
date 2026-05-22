@@ -10,6 +10,7 @@ import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.MeshFactory;
 import com.crystal.engine.render.scene.RotationComponent;
+import com.crystal.engine.render.scene.SceneLoader;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Transform;
 import com.crystal.engine.render.shader.Shader;
@@ -18,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import com.crystal.engine.core.Engine;
 import com.crystal.engine.core.Game;
+
+import java.nio.file.Path;
 
 public class SandboxMain implements Game {
 
@@ -38,86 +41,6 @@ public class SandboxMain implements Game {
 
     private SceneObject boxTextured;
 
-    private SceneObject helmet;
-
-    private void addCubes(Shader shader) {
-        Mesh mesh = MeshFactory.createLitTexturedCube(ctx.getResources());
-
-        Material material = new Material(shader);
-        material.getRenderState()
-                .setWireframe(false)
-                .setCullFace(true);
-
-        material
-            .setAlbedo(ctx.getResources().createTexture("bricks_albedo.png"))
-            .setNormalMap(ctx.getResources().createDataTexture("bricks_normal.png"))
-            .setMetallic(0.0f)
-            .setRoughness(1.0f);
-
-        cubeA = new SceneObject("Cube A", mesh, material, new Transform().setPosition(-2, 0, -2f))
-                .addComponent(new RotationComponent(0.0f, 1.0f, 0.0f));
-
-        cubeB = new SceneObject("Cube B", mesh, material, new Transform().setPosition(0, 0, -2f))
-                .addComponent(new RotationComponent(1.0f, 0.0f, 0.0f));
-
-        cubeC = new SceneObject("Cube C", mesh, material, new Transform().setPosition(2, 0, -2f))
-                .addComponent(new RotationComponent(0.0f, 0.0f, 1.0f));
-
-        cubeA.addChild(cubeB);
-        cubeB.addChild(cubeC);
-        this.ctx.getScene().add(cubeA);
-
-
-        Model cubeModel = ctx.getResources().loadModel(
-                "/external/BoxTextured.glb",
-                new ModelLoadOptions().setShader(shader)
-        );
-        cubeModel.logHierarchy();
-        boxTextured = cubeModel.getRootObjects().getFirst()
-                .addComponent(new RotationComponent(0.0f, 1.0f, 0.0f));
-
-        boxTextured.getTransform().setPosition(2, 0, -1f);
-
-        this.ctx.getScene().add(boxTextured);
-    }
-
-    private void addHelmet(Shader shader) {
-        Model damagedHelmetModel = ctx.getResources().loadModel(
-                "/external/DamagedHelmet.glb",
-                new ModelLoadOptions().setShader(shader)
-        );
-        damagedHelmetModel.logHierarchy();
-        helmet = damagedHelmetModel.getRootObjects().getFirst()
-                .addComponent(new RotationComponent(0.0f, 0.0f, 1.0f));
-
-        ctx.getScene().add(helmet);
-
-        helmet.getTransform()
-                .setPosition(0.75f, 1.0f, -2.5f)
-                .setRotationDegrees(90.0f, 0.0f, -15.0f);
-
-        helmet.setCastsShadowRecursive(false);
-    }
-
-    private void addFloor(Shader shader) {
-        Mesh floorMesh = MeshFactory.createLitTexturedPlane(ctx.getResources());
-
-        Material floorMaterial = new Material(shader);
-        floorMaterial.setAlbedo(ctx.getResources().createTexture("bricks_albedo.png"));
-        floorMaterial.setNormalMap(ctx.getResources().createDataTexture("bricks_normal.png"));
-
-        SceneObject floor = new SceneObject(
-                "Floor",
-                floorMesh,
-                floorMaterial,
-                new Transform()
-                        .setPosition(0.0f, -1.0f, -2.5f)
-                        .setScale(8.0f, 1.0f, 8.0f)
-        );
-
-        ctx.getScene().add(floor);
-    }
-
     @Override
     public void init(EngineContext ctx) {
         this.ctx = ctx;
@@ -126,36 +49,12 @@ public class SandboxMain implements Game {
         Shader shader = this.ctx.getResources()
                 .createShaderProgram("pbr");
 
-        if (SHOW_CUBES) {
-            addCubes(shader);
-        }
-
-        if (SHOW_HELMET) {
-            addHelmet(shader);
-        }
-
-        if (SHOW_FLOOR) {
-            addFloor(shader);
-        }
-
-        if (ENABLE_IBL) {
-            IBLGenerator iblGenerator = IBLGenerator.createDefault(ctx.getResources());
-            iblGenerator.generateFromHDR(
-                    ctx.getScene().getEnvironment(),
-                    "environment/studio_small_03_1k.hdr"
-            );
-        }
-
-        ctx.getScene().getDirectionalLight()
-                .setIntensity(3.0f)
-                .setShadowStrength(1.0f);
-
-        ctx.getScene().getEnvironment()
-                .setAmbientColor(0.01f, 0.01f, 0.01f)
-                .setAmbientIntensity(0.2f)
-                .setIblIntensity(0.4f);
-
-        ctx.getScene().getCamera().getTransform().translate(0, 0, 2.0f);
+        SceneLoader.load(
+            Path.of("assets/scenes/demo_scene.json"),
+            ctx.getScene(),
+            ctx.getResources(),
+            shader
+        );
 
         SceneObject cameraController = new SceneObject("Camera Controller", null, null, new Transform())
                 .addComponent(new FlyCameraController(ctx.getScene().getCamera(), ctx.getApplication())

@@ -25,6 +25,8 @@ dependencies {
     // Maths
     api "org.joml:joml:${versions.joml}"
 
+    implementation "com.fasterxml.jackson.core:jackson-databind:${versions.jackson}"
+
     testImplementation platform("org.junit:junit-bom:${versions.junit}")
     testImplementation "org.junit.jupiter:junit-jupiter"
     testRuntimeOnly "org.junit.platform:junit-platform-launcher"

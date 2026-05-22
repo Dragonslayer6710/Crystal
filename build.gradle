@@ -38,7 +38,8 @@ ext {
             jansi  : providers.gradleProperty("jansiVersion").get(),
             logback: providers.gradleProperty("logbackVersion").get(),
             lwjgl  : providers.gradleProperty("lwjglVersion").get(),
-            slf4j  : providers.gradleProperty("slf4jVersion").get()
+            slf4j  : providers.gradleProperty("slf4jVersion").get(),
+            jackson: providers.gradleProperty("jacksonVersion").get()
     ]
     lwjglNatives = providers.gradleProperty("lwjglNatives").orElse(detectLwjglNatives()).get()
 }

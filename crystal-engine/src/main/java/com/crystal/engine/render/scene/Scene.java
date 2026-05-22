@@ -7,6 +7,7 @@ import com.crystal.engine.render.uniform.SceneUniformData;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class Scene implements Disposable {
 
@@ -66,6 +67,33 @@ public class Scene implements Disposable {
 
     public UniformBuffer getSceneUBO() {
         return sceneUBO;
+    }
+
+    public Optional<SceneObject> findByName(String name) {
+        if (name == null || name.isBlank()) throw new IllegalArgumentException("Name cannot be null or blank");
+
+        for (SceneObject object : rootObjects) {
+            Optional<SceneObject> match = findByName(object, name);
+
+            if (match.isPresent())
+                return match;
+        }
+
+        return Optional.empty();
+    }
+
+    private Optional<SceneObject> findByName(SceneObject object, String name) {
+        if (name.equals(object.getName()))
+            return Optional.of(object);
+
+        for (SceneObject child : object.getChildren()) {
+            Optional<SceneObject> match = findByName(child, name);
+
+            if (match.isPresent())
+                return match;
+        }
+
+        return Optional.empty();
     }
 
     public void clear() {
