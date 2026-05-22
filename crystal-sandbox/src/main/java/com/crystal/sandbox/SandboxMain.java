@@ -84,8 +84,7 @@ public class SandboxMain implements Game {
         );
     }
 
-    @Override
-    public void update(double dt) {
+    private void handleInput() {
         var input = ctx.getInput();
         var renderer = ctx.getRenderer();
 
@@ -114,7 +113,20 @@ public class SandboxMain implements Game {
 
         if (input.isKeyPressed(Key.NUMPAD_ENTER))
             renderer.cycleDebugViewMode();
+    }
 
+    @Override
+    public void update(double dt) {
+        handleInput();
+
+        var cameraPosition = ctx.getScene().getCamera().getTransform().getWorldPosition();
+        var triggers = ctx.getScene().findTriggersContaining(cameraPosition);
+
+        if (!triggers.isEmpty()) {
+            logger.info("Camera inside trigger(s): {}", triggers.stream()
+                .map(SceneObject::getName)
+                .toList());
+        }
     }
 
     @Override

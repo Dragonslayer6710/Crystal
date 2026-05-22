@@ -4,6 +4,7 @@ import com.crystal.engine.core.Disposable;
 import com.crystal.engine.render.environment.Environment;
 import com.crystal.engine.render.gl.UniformBuffer;
 import com.crystal.engine.render.uniform.SceneUniformData;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -113,6 +114,25 @@ public class Scene implements Disposable {
 
         for (SceneObject child : object.getChildren())
             findByTag(child, tag, matches);
+    }
+
+    public List<SceneObject> findTriggersContaining(Vector3f point) {
+        if (point == null) throw new IllegalArgumentException("Point cannot be null");
+
+        List<SceneObject> matches = new ArrayList<>();
+
+        for (SceneObject object : rootObjects)
+            findTriggersContaining(object, point, matches);
+
+        return matches;
+    }
+
+    private void findTriggersContaining(SceneObject object, Vector3f point, List<SceneObject> matches) {
+        if (object.hasTriggerVolume() && object.getTriggerVolume().contains(point, object.getTransform()))
+            matches.add(object);
+
+        for (SceneObject child : object.getChildren())
+            findTriggersContaining(child, point, matches);
     }
 
     public void replaceWith(Scene source) {

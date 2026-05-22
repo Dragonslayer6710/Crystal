@@ -103,6 +103,15 @@
                     ]
                 }
             ]
+        },
+        {
+            "name": "Helmet Trigger",
+            "type": "empty",
+            "position": [0.75, 1.0, -2.5],
+            "tags": ["trigger", "debug"],
+            "trigger": {
+                "halfExtents": [1.5, 1.5, 1.5]
+            }
         }
     ]
 }

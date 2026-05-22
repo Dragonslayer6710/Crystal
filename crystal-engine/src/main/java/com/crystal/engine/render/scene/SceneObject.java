@@ -20,6 +20,8 @@ public class SceneObject {
 
     private final Set<String> tags = new HashSet<>();
 
+    private TriggerVolume triggerVolume;
+
     private boolean active = true;
     private boolean visible = true;
     private boolean castsShadow = true;
@@ -259,6 +261,19 @@ public class SceneObject {
         return tag;
     }
 
+    public boolean hasTriggerVolume() {
+        return triggerVolume != null;
+    }
+
+    public TriggerVolume getTriggerVolume() {
+        return triggerVolume;
+    }
+
+    public SceneObject setTriggerVolume(TriggerVolume triggerVolume) {
+        this.triggerVolume = triggerVolume;
+        return this;
+    }
+
     public SceneObject copyHierarchy() {
         SceneObject copy = new SceneObject(name, mesh, material, transform.copy())
             .setActive(active)
@@ -268,6 +283,11 @@ public class SceneObject {
 
         for (String tag : tags)
             copy.addTag(tag);
+
+        if (triggerVolume != null) {
+            var halfExtents = triggerVolume.getHalfExtents();
+            copy.setTriggerVolume(new TriggerVolume(halfExtents.x, halfExtents.y, halfExtents.z));
+        }
 
         for (SceneObject child : children)
             copy.addChild(child.copyHierarchy());

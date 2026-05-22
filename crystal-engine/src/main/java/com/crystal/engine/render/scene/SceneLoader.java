@@ -121,6 +121,7 @@ public class SceneLoader {
             applyTags(object, sceneObject);
             applyComponents(object, sceneObject);
             applyChildren(object, sceneObject, resources, shader);
+            applyTrigger(object, sceneObject);
 
             if (object.castsShadow != null)
                 sceneObject.setCastsShadowRecursive(object.castsShadow);
@@ -179,12 +180,21 @@ public class SceneLoader {
             applyTags(childDefinition, child);
             applyComponents(childDefinition, child);
             applyChildren(childDefinition, child, resources, shader);
+            applyTrigger(childDefinition, child);
 
             if (childDefinition.castsShadow != null)
                 child.setCastsShadowRecursive(childDefinition.castsShadow);
 
             parent.addChild(child);
         }
+    }
+
+    private static void applyTrigger(ObjectDefinition object, SceneObject sceneObject) {
+        if (object.trigger == null)
+            return;
+
+        float[] halfExtents = vec3(object.trigger.halfExtents, object.name + ".trigger.halfExtents");
+        sceneObject.setTriggerVolume(new TriggerVolume(halfExtents[0], halfExtents[1], halfExtents[2]));
     }
 
     private static SceneObject loadModelObject(ObjectDefinition object, ResourceManager resources, Shader shader) {
@@ -227,6 +237,7 @@ public class SceneLoader {
         return switch (object.type) {
             case "model" -> loadModelObject(object, resources, shader);
             case "primitive" -> createPrimitiveObject(object, resources, shader);
+            case "empty" -> new SceneObject(object.name, null, null, new Transform());
             default -> throw new IllegalArgumentException("Unsupported scene object type: " + object.type);
         };
     }
@@ -285,6 +296,11 @@ public class SceneLoader {
         public MaterialDefinition material;
         public List<ComponentDefinition> components;
         public List<ObjectDefinition> children;
+        public TriggerDefinition trigger;
+    }
+
+    private static final class TriggerDefinition {
+        public List<Float> halfExtents;
     }
 
     private static final class ComponentDefinition {
