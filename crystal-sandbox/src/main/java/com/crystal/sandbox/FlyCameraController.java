@@ -1,7 +1,6 @@
 package com.crystal.sandbox;
 
 import com.crystal.engine.core.Application;
-import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
 import com.crystal.engine.input.MouseButton;
 import com.crystal.engine.render.scene.Camera;
@@ -14,6 +13,10 @@ public class FlyCameraController extends CameraControllerComponent {
     private final Application application;
 
     private boolean cursorCaptured = false;
+
+    private float moveSpeed = 1.0f;
+    private float sprintMultiplier = 2.0f;
+    private float mouseSensitivity = 0.002f;
     private boolean flying = false;
 
     public FlyCameraController(Camera camera, Application application) {
@@ -30,6 +33,35 @@ public class FlyCameraController extends CameraControllerComponent {
             move(camera, context);
             look(camera, context);
         }
+    }
+
+    public FlyCameraController setMoveSpeed(float moveSpeed) {
+        if (!Float.isFinite(moveSpeed) || moveSpeed < 0.0f)
+            throw new IllegalArgumentException("Move speed must be finite and non-negative");
+
+        this.moveSpeed = moveSpeed;
+        return this;
+    }
+
+    public FlyCameraController setSprintMultiplier(float sprintMultiplier) {
+        if (!Float.isFinite(sprintMultiplier) || sprintMultiplier < 1.0f)
+            throw new IllegalArgumentException("Sprint multiplier must be finite and at least 1");
+
+        this.sprintMultiplier = sprintMultiplier;
+        return this;
+    }
+
+    public FlyCameraController setMouseSensitivity(float mouseSensitivity) {
+        if (!Float.isFinite(mouseSensitivity) || mouseSensitivity < 0.0f)
+            throw new IllegalArgumentException("Mouse sensitivity must be finite and non-negative");
+
+        this.mouseSensitivity = mouseSensitivity;
+        return this;
+    }
+
+    public FlyCameraController setFlying(boolean flying) {
+        this.flying = flying;
+        return this;
     }
 
     private void handleCursorCapture(SceneUpdateContext context) {
@@ -55,7 +87,9 @@ public class FlyCameraController extends CameraControllerComponent {
     private void move(Camera camera, SceneUpdateContext context) {
         var input = context.getInput();
 
-        float speed = ((input.isKeyDown(Key.LEFT_SHIFT)) ? 2f : 1f) * (float) context.getDeltaTime();
+        float speed = moveSpeed
+                * ((input.isKeyDown(Key.LEFT_SHIFT)) ? sprintMultiplier : 1.0f)
+                * (float) context.getDeltaTime();
 
         var forward = (flying) ? camera.getForward() : camera.getForwardXZ();
         var right = (flying) ? camera.getRight() :camera.getRightXZ();
@@ -91,8 +125,6 @@ public class FlyCameraController extends CameraControllerComponent {
         var input = context.getInput();
 
         var cameraTransform = camera.getTransform();
-
-        float mouseSensitivity = 0.002f;
 
         var rotation = cameraTransform.getRotation();
 

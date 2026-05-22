@@ -158,7 +158,10 @@ public class SandboxMain implements Game {
         ctx.getScene().getCamera().getTransform().translate(0, 0, 2.0f);
 
         SceneObject cameraController = new SceneObject("Camera Controller", null, null, new Transform())
-            .addComponent(new FlyCameraController(ctx.getScene().getCamera(), ctx.getApplication()));
+                .addComponent(new FlyCameraController(ctx.getScene().getCamera(), ctx.getApplication())
+                    .setMoveSpeed(1.0f)
+                    .setSprintMultiplier(2.0f)
+                    .setFlying(false));
 
         ctx.getScene().add(cameraController);
     }
