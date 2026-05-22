@@ -15,16 +15,24 @@ import com.crystal.engine.core.Engine;
 import com.crystal.engine.core.Game;
 
 import java.nio.file.Path;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SandboxMain implements Game {
 
     private static final Logger logger =
             LoggerFactory.getLogger(SandboxMain.class);
 
+    private static final Path DEMO_SCENE_PATH = Path.of("assets/scenes/demo_scene.json");
+
+    private final Set<String> activeTriggers = new HashSet<>();
+
     private EngineContext ctx;
 
     private Shader sceneShader;
-    private static final Path DEMO_SCENE_PATH = Path.of("assets/scenes/demo_scene.json");
+
+
 
     @Override
     public void init(EngineContext ctx) {
@@ -49,6 +57,8 @@ public class SandboxMain implements Game {
             loadedScene.scene().dispose();
 
             addCameraController();
+
+            activeTriggers.clear();
 
             logger.info(
                 "Reloaded scene '{}' v{} from '{}'",
@@ -115,18 +125,33 @@ public class SandboxMain implements Game {
             renderer.cycleDebugViewMode();
     }
 
+    private void updateTriggerDiagnostics() {
+        var cameraPosition = ctx.getScene().getCamera().getTransform().getWorldPosition();
+
+        Set<String> currentTriggers = ctx.getScene()
+            .findTriggersContaining(cameraPosition)
+            .stream()
+            .map(SceneObject::getName)
+            .collect(Collectors.toSet());
+
+        for (String trigger : currentTriggers) {
+            if (!activeTriggers.contains(trigger))
+                logger.info("Entered trigger '{}'", trigger);
+        }
+
+        for (String trigger : activeTriggers) {
+            if (!currentTriggers.contains(trigger))
+                logger.info("Exited trigger '{}'", trigger);
+        }
+
+        activeTriggers.clear();
+        activeTriggers.addAll(currentTriggers);
+    }
+
     @Override
     public void update(double dt) {
         handleInput();
-
-        var cameraPosition = ctx.getScene().getCamera().getTransform().getWorldPosition();
-        var triggers = ctx.getScene().findTriggersContaining(cameraPosition);
-
-        if (!triggers.isEmpty()) {
-            logger.info("Camera inside trigger(s): {}", triggers.stream()
-                .map(SceneObject::getName)
-                .toList());
-        }
+        updateTriggerDiagnostics();
     }
 
     @Override
