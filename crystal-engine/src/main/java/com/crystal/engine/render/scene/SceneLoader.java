@@ -8,8 +8,11 @@ import com.crystal.engine.render.environment.IBLGenerator;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.MeshFactory;
+import com.crystal.engine.render.scene.animation.KeyframeAnimationComponent;
+import com.crystal.engine.render.scene.animation.TransformKeyframe;
 import com.crystal.engine.render.shader.Shader;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -165,6 +168,21 @@ public class SceneLoader {
                     float[] speed = vec3(component.speedRadiansPerSecond, object.name + ".rotation.speedRadiansPerSecond");
                     sceneObject.addComponent(new RotationComponent(speed[0], speed[1], speed[2]));
                 }
+                case "keyframeAnimation" -> {
+                    if (component.keyframes == null || component.keyframes.isEmpty())
+                        throw new IllegalArgumentException(
+                            object.name + ".keyframeAnimation.keyframes must contain at least one keyframe"
+                        );
+
+                    List<TransformKeyframe> keyframes = component.keyframes.stream()
+                        .map(SceneLoader::toTransformKeyframe)
+                        .toList();
+
+                    sceneObject.addComponent(
+                        new KeyframeAnimationComponent(keyframes)
+                            .setLoop(component.loop == null || component.loop)
+                    );
+                }
                 default -> throw new IllegalArgumentException("Unsupported component type: " + component.type);
             }
         }
@@ -242,6 +260,23 @@ public class SceneLoader {
         };
     }
 
+    private static TransformKeyframe toTransformKeyframe(KeyframeDefinition keyframe) {
+        return new TransformKeyframe(
+            keyframe.time,
+            optionalVec3(keyframe.position),
+            optionalVec3(keyframe.rotationDegrees),
+            optionalVec3(keyframe.scale)
+        );
+    }
+
+    private static Vector3f optionalVec3(List<Float> values) {
+        if (values == null)
+            return null;
+
+        float[] vector = vec3(values, "animation keyframe");
+        return new Vector3f(vector[0], vector[1], vector[2]);
+    }
+
     private static float[] vec3(List<Float> values, String fieldName) {
         if (values.size() != 3) throw new IllegalArgumentException(fieldName + " must contain exactly 3 values");
 
@@ -306,8 +341,16 @@ public class SceneLoader {
     private static final class ComponentDefinition {
         public String type;
         public List<Float> speedRadiansPerSecond;
+        public Boolean loop;
+        public List<KeyframeDefinition> keyframes;
     }
 
+    private static final class KeyframeDefinition {
+        public double time;
+        public List<Float> position;
+        public List<Float> rotationDegrees;
+        public List<Float> scale;
+    }
     private static final class MaterialDefinition {
         public String albedo;
         public String normal;

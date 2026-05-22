@@ -112,6 +112,43 @@
             "trigger": {
                 "halfExtents": [1.5, 1.5, 1.5]
             }
+        },
+        {
+            "name": "Animated Cube",
+            "type": "primitive",
+            "primitive": "cube",
+            "position": [-4.0, 0.0, -2.5],
+            "tags": ["debug", "animated"],
+            "material": {
+                "albedo": "bricks_albedo.png",
+                "normal": "bricks_normal.png"
+            },
+            "components": [
+                {
+                    "type": "keyframeAnimation",
+                    "loop": true,
+                    "keyframes": [
+                        {
+                            "time": 0.0,
+                            "position": [-4.0, 0.0, -2.5],
+                            "rotationDegrees": [0.0, 0.0, 0.0],
+                            "scale": [1.0, 1.0, 1.0]
+                        },
+                        {
+                            "time": 1.0,
+                            "position": [-4.0, 1.0, -2.5],
+                            "rotationDegrees": [0.0, 180.0, 0.0],
+                            "scale": [1.25, 1.25, 1.25]
+                        },
+                        {
+                            "time": 2.0,
+                            "position": [-4.0, 0.0, -2.5],
+                            "rotationDegrees": [0.0, 360.0, 0.0],
+                            "scale": [1.0, 1.0, 1.0]
+                        }
+                    ]
+                }
+            ]
         }
     ]
 }
