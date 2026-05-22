@@ -12,6 +12,7 @@ public enum Key {
     D(GLFW_KEY_D),
 
     F(GLFW_KEY_F),
+    L(GLFW_KEY_L),
     P(GLFW_KEY_P),
     R(GLFW_KEY_R),
 

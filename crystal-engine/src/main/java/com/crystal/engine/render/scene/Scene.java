@@ -96,6 +96,25 @@ public class Scene implements Disposable {
         return Optional.empty();
     }
 
+    public List<SceneObject> findByTag(String tag) {
+        if (tag == null || tag.isBlank()) throw new IllegalArgumentException("Tag cannot be null or blank");
+
+        List<SceneObject> matches = new ArrayList<>();
+
+        for (SceneObject object : rootObjects)
+            findByTag(object, tag, matches);
+
+        return matches;
+    }
+
+    private void findByTag(SceneObject object, String tag, List<SceneObject> matches) {
+        if (object.hasTag(tag))
+            matches.add(object);
+
+        for (SceneObject child : object.getChildren())
+            findByTag(child, tag, matches);
+    }
+
     public void replaceWith(Scene source) {
         if (source == null) throw new IllegalArgumentException("Source scene cannot be null");
 

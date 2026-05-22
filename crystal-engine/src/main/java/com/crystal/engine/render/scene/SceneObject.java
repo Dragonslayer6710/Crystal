@@ -4,9 +4,7 @@ import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class SceneObject {
 
@@ -19,6 +17,8 @@ public class SceneObject {
     private final List<SceneObject> children = new ArrayList<>();
 
     private final List<SceneComponent> components = new ArrayList<>();
+
+    private final Set<String> tags = new HashSet<>();
 
     private boolean active = true;
     private boolean visible = true;
@@ -235,12 +235,39 @@ public class SceneObject {
         return this;
     }
 
+    public SceneObject addTag(String tag) {
+        tags.add(validateTag(tag));
+        return this;
+    }
+
+    public SceneObject removeTag(String tag) {
+        tags.remove(validateTag(tag));
+        return this;
+    }
+
+    public boolean hasTag(String tag) {
+        return tags.contains(validateTag(tag));
+    }
+
+    public Set<String> getTags() {
+        return Collections.unmodifiableSet(tags);
+    }
+
+    private static String validateTag(String tag) {
+        if (tag == null || tag.isBlank()) throw new IllegalArgumentException("Tag cannot be null or blank");
+
+        return tag;
+    }
+
     public SceneObject copyHierarchy() {
         SceneObject copy = new SceneObject(name, mesh, material, transform.copy())
             .setActive(active)
             .setVisible(visible)
             .setCastsShadow(castsShadow)
             .setBoundingRadius(boundingRadius);
+
+        for (String tag : tags)
+            copy.addTag(tag);
 
         for (SceneObject child : children)
             copy.addChild(child.copyHierarchy());

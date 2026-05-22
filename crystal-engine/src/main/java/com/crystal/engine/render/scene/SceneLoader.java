@@ -19,7 +19,7 @@ public class SceneLoader {
 
     private SceneLoader() {}
 
-    public static void load(Path scenePath, Scene scene, ResourceManager resources, Shader shader) {
+    public static LoadedScene loadInto(Path scenePath, Scene scene, ResourceManager resources, Shader shader) {
         if (scenePath == null) throw new IllegalArgumentException("Scene path cannot be null");
         if (scene == null) throw new IllegalArgumentException("Scene cannot be null");
         if (resources == null) throw new IllegalArgumentException("ResourceManager cannot be null");
@@ -27,21 +27,33 @@ public class SceneLoader {
 
         SceneDefinition definition = read(scenePath);
 
-        applyCamera(definition.camera, scene);
-        applyLighting(definition.lighting, scene);
-        applyEnvironment(definition.environment, scene, resources);
-        applyObjects(definition.objects, scene, resources, shader);
+        apply(definition, scene, resources, shader);
+
+        return new LoadedScene(
+            scene,
+            sceneName(definition, scenePath),
+            sceneVersion(definition)
+        );
     }
 
-    public static Scene loadNew(Path scenePath, ResourceManager resources, Shader shader) {
+    public static LoadedScene loadNew(Path scenePath, ResourceManager resources, Shader shader) {
         if (scenePath == null) throw new IllegalArgumentException("Scene path cannot be null");
         if (resources == null) throw new IllegalArgumentException("ResourceManager cannot be null");
         if (shader == null) throw new IllegalArgumentException("Shader cannot be null");
 
+        SceneDefinition definition = read(scenePath);
         Scene scene = new Scene();
-        load(scenePath, scene, resources, shader);
-        return scene;
+
+        apply(definition, scene, resources, shader);
+
+        return new LoadedScene(
+            scene,
+            sceneName(definition, scenePath),
+            sceneVersion(definition)
+        );
     }
+
+    public record LoadedScene(Scene scene, String name, int version) {}
 
     private static SceneDefinition read(Path scenePath) {
         try {
@@ -49,6 +61,13 @@ public class SceneLoader {
         } catch (IOException e) {
             throw new IllegalArgumentException("Failed to load scene: " + scenePath, e);
         }
+    }
+
+    private static void apply(SceneDefinition definition, Scene scene, ResourceManager resources, Shader shader) {
+        applyCamera(definition.camera, scene);
+        applyLighting(definition.lighting, scene);
+        applyEnvironment(definition.environment, scene, resources);
+        applyObjects(definition.objects, scene, resources, shader);
     }
 
     private static void applyCamera(CameraDefinition camera, Scene scene) {
@@ -99,6 +118,7 @@ public class SceneLoader {
             SceneObject sceneObject = createSceneObject(object, resources, shader);
 
             applyTransform(object, sceneObject.getTransform());
+            applyTags(object, sceneObject);
             applyComponents(object, sceneObject);
             applyChildren(object, sceneObject, resources, shader);
 
@@ -126,6 +146,14 @@ public class SceneLoader {
         }
     }
 
+    private static void applyTags(ObjectDefinition object, SceneObject sceneObject) {
+        if (object.tags == null)
+            return;
+
+        for (String tag : object.tags)
+            sceneObject.addTag(tag);
+    }
+
     private static void applyComponents(ObjectDefinition object, SceneObject sceneObject) {
         if (object.components == null)
             return;
@@ -148,6 +176,7 @@ public class SceneLoader {
         for (ObjectDefinition childDefinition : object.children) {
             SceneObject child = createSceneObject(childDefinition, resources, shader);
             applyTransform(childDefinition, child.getTransform());
+            applyTags(childDefinition, child);
             applyComponents(childDefinition, child);
             applyChildren(childDefinition, child, resources, shader);
 
@@ -208,7 +237,19 @@ public class SceneLoader {
         return new float[] { values.get(0), values.get(1), values.get(2) };
     }
 
+    private static String sceneName(SceneDefinition definition, Path scenePath) {
+        return definition.name != null && !definition.name.isBlank()
+            ? definition.name
+            : scenePath.getFileName().toString();
+    }
+
+    private static int sceneVersion(SceneDefinition definition) {
+        return definition.version != null ? definition.version : 1;
+    }
+
     private static final class SceneDefinition {
+        public String name;
+        public Integer version;
         public CameraDefinition camera;
         public EnvironmentDefinition environment;
         public LightingDefinition lighting;
@@ -239,6 +280,7 @@ public class SceneLoader {
         public List<Float> position;
         public List<Float> rotationDegrees;
         public List<Float> scale;
+        public List<String> tags;
         public Boolean castsShadow;
         public MaterialDefinition material;
         public List<ComponentDefinition> components;

@@ -39,18 +39,23 @@ public class SandboxMain implements Game {
 
     private void reloadScene() {
         try {
-            Scene loadedScene = SceneLoader.loadNew(
+            var loadedScene = SceneLoader.loadNew(
                 DEMO_SCENE_PATH,
                 ctx.getResources(),
                 sceneShader
             );
 
-            ctx.getScene().replaceWith(loadedScene);
-            loadedScene.dispose();
+            ctx.getScene().replaceWith(loadedScene.scene());
+            loadedScene.scene().dispose();
 
             addCameraController();
 
-            logger.info("Reloaded scene '{}'", DEMO_SCENE_PATH);
+            logger.info(
+                "Reloaded scene '{}' v{} from '{}'",
+                loadedScene.name(),
+                loadedScene.version(),
+                DEMO_SCENE_PATH
+            );
         } catch (RuntimeException e) {
             logger.error("Failed to reload scene '{}'; keeping current scene", DEMO_SCENE_PATH, e);
         }
@@ -66,6 +71,19 @@ public class SandboxMain implements Game {
         ctx.getScene().add(cameraController);
     }
 
+    private void logSceneDiagnostics() {
+        var scene = ctx.getScene();
+
+        logger.info(
+            "Scene diagnostics: roots={}, models={}, rotating={}, debug={}, environment={}",
+            scene.getRootObjects().size(),
+            scene.findByTag("model").size(),
+            scene.findByTag("rotating").size(),
+            scene.findByTag("debug").size(),
+            scene.findByTag("environment").size()
+        );
+    }
+
     @Override
     public void update(double dt) {
         var input = ctx.getInput();
@@ -73,6 +91,9 @@ public class SandboxMain implements Game {
 
         if (input.isKeyPressed(Key.F))
             renderer.setFrustumCullingEnabled(!renderer.isFrustumCullingEnabled());
+
+        if (input.isKeyPressed(Key.L))
+            logSceneDiagnostics();
 
         if (input.isKeyPressed(Key.P))
             logger.info("Renderer stats: {}", renderer.getStats().summary());
