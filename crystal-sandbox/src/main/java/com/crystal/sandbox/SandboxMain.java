@@ -1,5 +1,7 @@
 package com.crystal.sandbox;
 
+import com.crystal.engine.audio.SoundBuffer;
+import com.crystal.engine.audio.SoundSource;
 import com.crystal.engine.core.EngineConfig;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
@@ -25,6 +27,7 @@ public class SandboxMain implements Game {
             LoggerFactory.getLogger(SandboxMain.class);
 
     private static final Path DEMO_SCENE_PATH = Path.of("assets/scenes/demo_scene.json");
+    private static final boolean AUDIO_ENABLED = false;
 
     private final Set<String> activeTriggers = new HashSet<>();
 
@@ -32,7 +35,8 @@ public class SandboxMain implements Game {
 
     private Shader sceneShader;
 
-
+    private SoundBuffer testSound;
+    private SoundSource testSoundSource;
 
     @Override
     public void init(EngineContext ctx) {
@@ -41,6 +45,12 @@ public class SandboxMain implements Game {
 
         sceneShader = this.ctx.getResources()
                 .createShaderProgram("pbr");
+
+        if (AUDIO_ENABLED) {
+            testSound = ctx.getResources().loadSound("test.ogg");
+            testSoundSource = ctx.getResources().manageResource(new SoundSource())
+                .setBuffer(testSound);
+        }
 
         reloadScene();
     }
@@ -109,6 +119,10 @@ public class SandboxMain implements Game {
 
         if (input.isKeyPressed(Key.R))
             reloadScene();
+
+        if (AUDIO_ENABLED)
+            if (input.isKeyPressed(Key.E))
+                testSoundSource.play();
 
         if (input.isKeyPressed(Key.NUMPAD_0)) renderer.setDebugViewMode(0);
         if (input.isKeyPressed(Key.NUMPAD_1)) renderer.setDebugViewMode(1);
