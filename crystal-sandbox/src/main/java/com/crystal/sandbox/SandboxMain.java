@@ -3,6 +3,7 @@ package com.crystal.sandbox;
 import com.crystal.engine.core.EngineConfig;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
+import com.crystal.engine.render.scene.Scene;
 import com.crystal.engine.render.scene.SceneLoader;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Transform;
@@ -37,16 +38,22 @@ public class SandboxMain implements Game {
     }
 
     private void reloadScene() {
-        ctx.getScene().clear();
+        try {
+            Scene loadedScene = SceneLoader.loadNew(
+                DEMO_SCENE_PATH,
+                ctx.getResources(),
+                sceneShader
+            );
 
-        SceneLoader.load(
-            DEMO_SCENE_PATH,
-            ctx.getScene(),
-            ctx.getResources(),
-            sceneShader
-        );
+            ctx.getScene().replaceWith(loadedScene);
+            loadedScene.dispose();
 
-        addCameraController();
+            addCameraController();
+
+            logger.info("Reloaded scene '{}'", DEMO_SCENE_PATH);
+        } catch (RuntimeException e) {
+            logger.error("Failed to reload scene '{}'; keeping current scene", DEMO_SCENE_PATH, e);
+        }
     }
 
     private void addCameraController() {

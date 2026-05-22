@@ -5,6 +5,8 @@ import com.crystal.engine.assets.model.Model;
 import com.crystal.engine.assets.model.ModelLoadOptions;
 import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.graphics.TextureSettings;
+import com.crystal.engine.render.environment.Environment;
+import com.crystal.engine.render.environment.IBLGenerator;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.mesh.MeshData;
 import com.crystal.engine.render.mesh.MeshFactory;
@@ -36,10 +38,16 @@ public class ResourceManager {
     private Texture defaultBrdfLut;
 
     private Shader skyboxShader;
+
     private Mesh skyboxCubeMesh;
+    private Mesh litTexturedCubeMesh;
+    private Mesh litTexturedPlaneMesh;
+    private Mesh fullscreenQuadMesh;
 
     private final Map<String, Texture> textureCache = new HashMap<>();
     private final Map<String, Shader> shaderCache = new HashMap<>();
+    private final Map<String, Model> modelCache = new HashMap<>();
+    private final Map<String, Environment> iblEnvironmentCache = new HashMap<>();
 
     private boolean disposed;
 
@@ -205,6 +213,75 @@ public class ResourceManager {
         return skyboxCubeMesh;
     }
 
+    public Mesh getLitTexturedCubeMesh() {
+        if (litTexturedCubeMesh == null) {
+            litTexturedCubeMesh = MeshFactory.createLitTexturedCube(this);
+        }
+
+        return litTexturedCubeMesh;
+    }
+
+    public Mesh getLitTexturedPlaneMesh() {
+        if (litTexturedPlaneMesh == null) {
+            litTexturedPlaneMesh = MeshFactory.createLitTexturedPlane(this);
+        }
+
+        return litTexturedPlaneMesh;
+    }
+
+    public Mesh getFullscreenQuadMesh() {
+        if (fullscreenQuadMesh == null) {
+            fullscreenQuadMesh = MeshFactory.createFullscreenQuad(this);
+        }
+
+        return fullscreenQuadMesh;
+    }
+
+    public Model loadModel(String path, ModelLoadOptions options) {
+        if (options == null) throw new IllegalArgumentException("ModelLoadOptions cannot be null");
+
+        Path modelPath = assets.projectModelPath(path);
+        String cacheKey = modelCacheKey(modelPath, options);
+
+        return modelCache.computeIfAbsent(cacheKey, ignored ->
+            AssimpModelLoader.load(modelPath, this, options)
+        );
+    }
+
+    public Texture loadTexture(Path path, TextureSettings settings) {
+        if (path == null) throw new IllegalArgumentException("Path cannot be null");
+        if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
+
+        String cacheKey = path.toAbsolutePath().normalize() + "|" + settings.cacheKey();
+
+        return textureCache.computeIfAbsent(cacheKey, key ->
+            manageResource(TextureLoader.load(path, settings))
+        );
+    }
+
+    public Texture loadEmbeddedTexture(String key, ByteBuffer encodedImage, TextureSettings settings) {
+        if (key == null || key.isBlank()) throw new IllegalArgumentException("Path cannot be null or blank");
+        if (encodedImage == null) throw new IllegalArgumentException("Encoded image cannot be null");
+        if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
+
+        String cacheKey = "embedded:" + key + "|" + settings.cacheKey();
+
+        return textureCache.computeIfAbsent(cacheKey, ignored ->
+            manageResource(TextureLoader.loadFromMemory(encodedImage, settings, cacheKey))
+        );
+    }
+
+    public Environment getOrCreateIBLEnvironment(String hdrTexturePath) {
+        if (hdrTexturePath == null || hdrTexturePath.isBlank())
+            throw new IllegalArgumentException("HDR texture path cannot be null or blank");
+
+        return iblEnvironmentCache.computeIfAbsent(hdrTexturePath, ignored -> {
+            Environment environment = new Environment();
+            IBLGenerator.createDefault(this).generateFromHDR(environment, hdrTexturePath);
+            return environment;
+        });
+    }
+
     public void disposeAll() {
         if (disposed) return;
         disposed = true;
@@ -222,33 +299,8 @@ public class ResourceManager {
         resources.clear();
         textureCache.clear();
         shaderCache.clear();
-    }
-
-    public Model loadModel(String path, ModelLoadOptions options) {
-        return AssimpModelLoader.load(assets.projectModelPath(path), this, options);
-    }
-
-    public Texture loadTexture(Path path, TextureSettings settings) {
-        if (path == null) throw new IllegalArgumentException("Path cannot be null");
-        if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
-
-        String cacheKey = path.toAbsolutePath().normalize() + "|" + settings.cacheKey();
-
-        return textureCache.computeIfAbsent(cacheKey, key ->
-                manageResource(TextureLoader.load(path, settings))
-        );
-    }
-
-    public Texture loadEmbeddedTexture(String key, ByteBuffer encodedImage, TextureSettings settings) {
-        if (key == null || key.isBlank()) throw new IllegalArgumentException("Path cannot be null or blank");
-        if (encodedImage == null) throw new IllegalArgumentException("Encoded image cannot be null");
-        if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
-
-        String cacheKey = "embedded:" + key + "|" + settings.cacheKey();
-
-        return textureCache.computeIfAbsent(cacheKey, ignored ->
-                manageResource(TextureLoader.loadFromMemory(encodedImage, settings, cacheKey))
-        );
+        modelCache.clear();
+        iblEnvironmentCache.clear();
     }
 
     private String shaderCacheKey(String vertexPath, String fragmentPath) {
@@ -257,5 +309,11 @@ public class ResourceManager {
 
     private String textureCacheKey(String path, TextureSettings settings) {
         return path + "|" + settings.cacheKey();
+    }
+
+    private String modelCacheKey(Path path, ModelLoadOptions options) {
+        return path.toAbsolutePath().normalize()
+                + "|shader=" + System.identityHashCode(options.getShader())
+                + "|flipUVs=" + options.isFlipUVs();
     }
 }

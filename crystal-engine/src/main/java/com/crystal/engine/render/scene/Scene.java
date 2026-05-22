@@ -96,6 +96,40 @@ public class Scene implements Disposable {
         return Optional.empty();
     }
 
+    public void replaceWith(Scene source) {
+        if (source == null) throw new IllegalArgumentException("Source scene cannot be null");
+
+        clear();
+
+        var srcTransform = source.getCamera().getTransform();
+        camera.getTransform().setPosition(
+            srcTransform.getPosition().x,
+            srcTransform.getPosition().y,
+            srcTransform.getPosition().z
+        );
+
+        camera.getTransform().setRotation(srcTransform.getRotationQuat());
+
+        var srcDirLight = source.getDirectionalLight();
+        directionalLight
+            .setIntensity(srcDirLight.getIntensity())
+            .setShadowStrength(srcDirLight.getShadowStrength());
+
+        var srcEnv = source.getEnvironment();
+        environment
+            .setAmbientColor(
+                srcEnv.getAmbientColor().x,
+                srcEnv.getAmbientColor().y,
+                srcEnv.getAmbientColor().z
+            )
+            .setAmbientIntensity(srcEnv.getAmbientIntensity())
+            .setIblIntensity(srcEnv.getIblIntensity())
+            .copyLightingFrom(srcEnv);
+
+        for (SceneObject object : source.getRootObjects())
+            add(object);
+    }
+
     public void clear() {
         for (SceneObject object : rootObjects)
             object.getTransform().setParent(null);

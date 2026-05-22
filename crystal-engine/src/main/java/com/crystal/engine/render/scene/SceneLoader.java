@@ -3,6 +3,7 @@ package com.crystal.engine.render.scene;
 import com.crystal.engine.assets.model.Model;
 import com.crystal.engine.assets.model.ModelLoadOptions;
 import com.crystal.engine.core.ResourceManager;
+import com.crystal.engine.render.environment.Environment;
 import com.crystal.engine.render.environment.IBLGenerator;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
@@ -30,6 +31,16 @@ public class SceneLoader {
         applyLighting(definition.lighting, scene);
         applyEnvironment(definition.environment, scene, resources);
         applyObjects(definition.objects, scene, resources, shader);
+    }
+
+    public static Scene loadNew(Path scenePath, ResourceManager resources, Shader shader) {
+        if (scenePath == null) throw new IllegalArgumentException("Scene path cannot be null");
+        if (resources == null) throw new IllegalArgumentException("ResourceManager cannot be null");
+        if (shader == null) throw new IllegalArgumentException("Shader cannot be null");
+
+        Scene scene = new Scene();
+        load(scenePath, scene, resources, shader);
+        return scene;
     }
 
     private static SceneDefinition read(Path scenePath) {
@@ -75,8 +86,8 @@ public class SceneLoader {
             scene.getEnvironment().setIblIntensity(environment.iblIntensity);
 
         if (environment.ibl != null && !environment.ibl.isBlank()) {
-            IBLGenerator iblGenerator = IBLGenerator.createDefault(resources);
-            iblGenerator.generateFromHDR(scene.getEnvironment(), environment.ibl);
+            Environment cachedEnvironment = resources.getOrCreateIBLEnvironment(environment.ibl);
+            scene.getEnvironment().copyLightingFrom(cachedEnvironment);
         }
     }
 
@@ -152,7 +163,7 @@ public class SceneLoader {
             throw new IllegalArgumentException("Model object path cannot be null or blank");
         Model model = resources.loadModel(object.path, new ModelLoadOptions().setShader(shader));
 
-        SceneObject root = model.getRootObjects().getFirst();
+        SceneObject root = model.instantiate();
 
         if (object.name != null)
             root.setName(object.name);
@@ -165,8 +176,8 @@ public class SceneLoader {
             throw new IllegalArgumentException("Primitive object must define primitive");
 
         Mesh mesh = switch (object.primitive) {
-            case "plane" -> MeshFactory.createLitTexturedPlane(resources);
-            case "cube" -> MeshFactory.createLitTexturedCube(resources);
+            case "plane" -> resources.getLitTexturedPlaneMesh();
+            case "cube" -> resources.getLitTexturedCubeMesh();
             default -> throw new IllegalArgumentException("Unsupported primitive: " + object.primitive);
         };
 

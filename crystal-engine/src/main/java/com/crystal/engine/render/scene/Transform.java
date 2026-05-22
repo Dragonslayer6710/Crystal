@@ -36,6 +36,10 @@ public class Transform {
         return new Vector3f(rotation);
     }
 
+    public Quaternionf getRotationQuat() {
+        return new Quaternionf(rotationQuat);
+    }
+
     public Vector3f getScale() {
         return new Vector3f(scale);
     }
@@ -106,6 +110,13 @@ public class Transform {
     public Transform scaleBy(float x, float y, float z) {
         scale.mul(x, y, z);
         return this;
+    }
+
+    public Transform copy() {
+        return new Transform()
+            .setPosition(position.x, position.y, position.z)
+            .setRotation(rotationQuat)
+            .setScale(scale.x, scale.y, scale.z);
     }
 
     public Matrix4f getLocalMatrix() {

@@ -234,4 +234,17 @@ public class SceneObject {
         this.boundingRadius = boundingRadius;
         return this;
     }
+
+    public SceneObject copyHierarchy() {
+        SceneObject copy = new SceneObject(name, mesh, material, transform.copy())
+            .setActive(active)
+            .setVisible(visible)
+            .setCastsShadow(castsShadow)
+            .setBoundingRadius(boundingRadius);
+
+        for (SceneObject child : children)
+            copy.addChild(child.copyHierarchy());
+
+        return copy;
+    }
 }

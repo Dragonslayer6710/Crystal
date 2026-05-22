@@ -78,6 +78,17 @@ public class Environment {
         return this;
     }
 
+    public Environment copyLightingFrom(Environment source) {
+        if (source == null) throw new IllegalArgumentException("Source environment cannot be null");
+
+        skybox = source.skybox;
+        irradianceMap = source.irradianceMap;
+        prefilterMap = source.prefilterMap;
+        brdfLut = source.brdfLut;
+
+        return this;
+    }
+
     public boolean hasSkybox() {
         return skybox != null;
     }

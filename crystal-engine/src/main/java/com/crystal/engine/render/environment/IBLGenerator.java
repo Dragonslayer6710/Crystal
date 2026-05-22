@@ -33,8 +33,8 @@ public final class IBLGenerator {
 
         Shader brdfLutShader = resources.createEngineShaderProgram("brdf_lut");
 
-        Mesh envCube = MeshFactory.createPositionOnlyCube(resources);
-        Mesh fullscreenQuad = MeshFactory.createFullscreenQuad(resources);
+        Mesh envCube = resources.getSkyboxCubeMesh();
+        Mesh fullscreenQuad = resources.getFullscreenQuadMesh();
 
         EnvironmentMapGenerator generator = resources.manageResource(new EnvironmentMapGenerator(
                 envShader,
