@@ -166,6 +166,20 @@ class SceneObjectTest {
     }
 
     @Test
+    void updateStartsComponentOnceBeforeFirstUpdate() {
+        SceneObject object = object("object");
+        TestComponent component = new TestComponent();
+        object.addComponent(component);
+
+        object.update(context(0.5));
+        object.update(context(0.25));
+
+        assertEquals(1, component.startCount);
+        assertEquals(2, component.updateCount);
+        assertEquals(0.5, component.startDeltaTime);
+    }
+
+    @Test
     void updateSkipsDisabledComponents() {
         SceneObject object = object("object");
         TestComponent component = new TestComponent();
@@ -175,6 +189,36 @@ class SceneObjectTest {
         object.update(context(0.5));
 
         assertEquals(0, component.updateCount);
+        assertEquals(0, component.startCount);
+    }
+
+    @Test
+    void disabledComponentStartsWhenReEnabledAndUpdated() {
+        SceneObject object = object("object");
+        TestComponent component = new TestComponent();
+        component.setEnabled(false);
+        object.addComponent(component);
+
+        object.update(context(0.5));
+        component.setEnabled(true);
+        object.update(context(0.25));
+
+        assertEquals(1, component.startCount);
+        assertEquals(1, component.updateCount);
+        assertEquals(0.25, component.startDeltaTime);
+    }
+
+    @Test
+    void setEnabledCallsHooksOnlyWhenStateChanges() {
+        TestComponent component = new TestComponent();
+
+        component.setEnabled(false);
+        component.setEnabled(false);
+        component.setEnabled(true);
+        component.setEnabled(true);
+
+        assertEquals(1, component.disableCount);
+        assertEquals(1, component.enableCount);
     }
 
     @Test
@@ -266,7 +310,11 @@ class SceneObjectTest {
         private SceneObject attachedOwner;
         private SceneObject detachedOwner;
         private int updateCount;
+        private int startCount;
+        private int enableCount;
+        private int disableCount;
         private double lastDeltaTime;
+        private double startDeltaTime;
 
         @Override
         protected void onAttach(SceneObject owner) {
@@ -276,6 +324,22 @@ class SceneObjectTest {
         @Override
         protected void onDetach(SceneObject owner) {
             detachedOwner = owner;
+        }
+
+        @Override
+        protected void onStart(SceneUpdateContext context) {
+            startCount++;
+            startDeltaTime = context.getDeltaTime();
+        }
+
+        @Override
+        protected void onEnable() {
+            enableCount++;
+        }
+
+        @Override
+        protected void onDisable() {
+            disableCount++;
         }
 
         @Override

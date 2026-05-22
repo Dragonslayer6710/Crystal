@@ -4,6 +4,7 @@ public abstract class SceneComponent {
 
     private SceneObject owner;
     private boolean enabled = true;
+    private boolean started;
 
     final void attach(SceneObject owner) {
         if (owner == null) throw new IllegalArgumentException("Owner cannot be null");
@@ -19,6 +20,19 @@ public abstract class SceneComponent {
         onDetach(previousOwner);
     }
 
+    final void updateComponent(SceneUpdateContext context) {
+        if (context == null) throw new IllegalArgumentException("SceneUpdateContext cannot be null");
+        if (!enabled)
+            return;
+
+        if (!started) {
+            started = true;
+            onStart(context);
+        }
+
+        update(context);
+    }
+
     public SceneObject getOwner() {
         return owner;
     }
@@ -28,13 +42,29 @@ public abstract class SceneComponent {
     }
 
     public SceneComponent setEnabled(boolean enabled) {
+        if (this.enabled == enabled)
+            return this;
+
         this.enabled = enabled;
+
+        if (enabled) {
+            onEnable();
+        } else {
+            onDisable();
+        }
+
         return this;
     }
 
     protected void onAttach(SceneObject owner) {}
 
     protected void onDetach(SceneObject owner) {}
+
+    protected void onStart(SceneUpdateContext context) {}
+
+    protected void onEnable() {}
+
+    protected void onDisable() {}
 
     public void update(SceneUpdateContext context) {}
 }

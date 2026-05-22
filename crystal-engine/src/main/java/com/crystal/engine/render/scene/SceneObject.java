@@ -161,8 +161,7 @@ public class SceneObject {
             return;
 
         for (SceneComponent component : components) {
-            if (component.isEnabled())
-                component.update(context);
+            component.updateComponent(context);
         }
 
         for (SceneObject child : children)
