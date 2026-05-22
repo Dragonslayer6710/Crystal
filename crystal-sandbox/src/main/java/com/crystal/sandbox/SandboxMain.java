@@ -1,15 +1,8 @@
 package com.crystal.sandbox;
 
-import com.crystal.engine.assets.model.Model;
-import com.crystal.engine.assets.model.ModelLoadOptions;
 import com.crystal.engine.core.EngineConfig;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
-import com.crystal.engine.render.environment.IBLGenerator;
-import com.crystal.engine.render.material.Material;
-import com.crystal.engine.render.mesh.Mesh;
-import com.crystal.engine.render.mesh.MeshFactory;
-import com.crystal.engine.render.scene.RotationComponent;
 import com.crystal.engine.render.scene.SceneLoader;
 import com.crystal.engine.render.scene.SceneObject;
 import com.crystal.engine.render.scene.Transform;
@@ -27,40 +20,41 @@ public class SandboxMain implements Game {
     private static final Logger logger =
             LoggerFactory.getLogger(SandboxMain.class);
 
-    private static final boolean ENABLE_IBL = true;
-
-    private static final boolean SHOW_CUBES = true;
-    private static final boolean SHOW_HELMET = true;
-    private static final boolean SHOW_FLOOR = true;
-
     private EngineContext ctx;
 
-    private SceneObject cubeA;
-    private SceneObject cubeB;
-    private SceneObject cubeC;
-
-    private SceneObject boxTextured;
+    private Shader sceneShader;
+    private static final Path DEMO_SCENE_PATH = Path.of("assets/scenes/demo_scene.json");
 
     @Override
     public void init(EngineContext ctx) {
         this.ctx = ctx;
         logger.info("Game init");
 
-        Shader shader = this.ctx.getResources()
+        sceneShader = this.ctx.getResources()
                 .createShaderProgram("pbr");
 
+        reloadScene();
+    }
+
+    private void reloadScene() {
+        ctx.getScene().clear();
+
         SceneLoader.load(
-            Path.of("assets/scenes/demo_scene.json"),
+            DEMO_SCENE_PATH,
             ctx.getScene(),
             ctx.getResources(),
-            shader
+            sceneShader
         );
 
+        addCameraController();
+    }
+
+    private void addCameraController() {
         SceneObject cameraController = new SceneObject("Camera Controller", null, null, new Transform())
-                .addComponent(new FlyCameraController(ctx.getScene().getCamera(), ctx.getApplication())
-                    .setMoveSpeed(1.0f)
-                    .setSprintMultiplier(2.0f)
-                    .setFlying(false));
+            .addComponent(new FlyCameraController(ctx.getScene().getCamera(), ctx.getApplication())
+                .setMoveSpeed(1.0f)
+                .setSprintMultiplier(2.0f)
+                .setFlying(false));
 
         ctx.getScene().add(cameraController);
     }
@@ -75,6 +69,9 @@ public class SandboxMain implements Game {
 
         if (input.isKeyPressed(Key.P))
             logger.info("Renderer stats: {}", renderer.getStats().summary());
+
+        if (input.isKeyPressed(Key.R))
+            reloadScene();
 
         if (input.isKeyPressed(Key.NUMPAD_0)) renderer.setDebugViewMode(0);
         if (input.isKeyPressed(Key.NUMPAD_1)) renderer.setDebugViewMode(1);
