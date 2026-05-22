@@ -1,5 +1,6 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.audio.AudioEngine;
 import com.crystal.engine.core.exception.CrystalEngineException;
 import com.crystal.engine.input.Input;
 import com.crystal.engine.render.GLDebug;
@@ -22,6 +23,7 @@ public class Engine implements WindowEventListener, Application {
     private Time time;
     private Input input;
     private Window window;
+    private AudioEngine audioEngine;
     private Renderer renderer;
     private ResourceManager resourceManager;
     private Scene scene;
@@ -64,6 +66,9 @@ public class Engine implements WindowEventListener, Application {
         GL.createCapabilities();
         if (windowConfig.isDebugContext())
             GLDebug.init();
+
+        audioEngine = new AudioEngine();
+        audioEngine.init();
 
         resourceManager = new ResourceManager(config.getAssetConfig());
 
@@ -195,12 +200,12 @@ public class Engine implements WindowEventListener, Application {
         }
 
         if (scene != null) scene.dispose();
-
         if (renderer != null) renderer.dispose();
-
         if (resourceManager != null) resourceManager.disposeAll();
 
         GLDebug.dispose();
+
+        if (audioEngine != null) audioEngine.dispose();
 
         if (window != null) window.destroy();
 

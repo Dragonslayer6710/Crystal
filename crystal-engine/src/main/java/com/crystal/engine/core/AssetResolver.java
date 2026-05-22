@@ -49,6 +49,18 @@ final class AssetResolver {
         return assetRoot.resolve("models/" + path);
     }
 
+    Path projectSoundPath(String path) {
+        requireNonBlank(path, "Sound path");
+
+        return assetRoot.resolve(projectSoundAssetPath(path));
+    }
+
+    String projectSoundAssetPath(String path) {
+        requireNonBlank(path, "Sound path");
+
+        return "sounds/" + path;
+    }
+
     String loadProjectAssetAsString(String path) {
         requireNonBlank(path, "Project asset path");
 

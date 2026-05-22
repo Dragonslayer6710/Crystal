@@ -3,6 +3,8 @@ package com.crystal.engine.core;
 import com.crystal.engine.assets.model.AssimpModelLoader;
 import com.crystal.engine.assets.model.Model;
 import com.crystal.engine.assets.model.ModelLoadOptions;
+import com.crystal.engine.audio.SoundBuffer;
+import com.crystal.engine.audio.SoundLoader;
 import com.crystal.engine.graphics.PrimitiveType;
 import com.crystal.engine.graphics.TextureSettings;
 import com.crystal.engine.render.environment.Environment;
@@ -48,6 +50,7 @@ public class ResourceManager {
     private final Map<String, Shader> shaderCache = new HashMap<>();
     private final Map<String, Model> modelCache = new HashMap<>();
     private final Map<String, Environment> iblEnvironmentCache = new HashMap<>();
+    private final Map<String, SoundBuffer> soundCache = new HashMap<>();
 
     private boolean disposed;
 
@@ -282,6 +285,14 @@ public class ResourceManager {
         });
     }
 
+    public SoundBuffer loadSound(String path) {
+        String soundPath = assets.projectSoundAssetPath(path);
+
+        return soundCache.computeIfAbsent(soundPath, ignored ->
+            manageResource(SoundLoader.loadOgg(assets.projectSoundPath(path)))
+        );
+    }
+
     public void disposeAll() {
         if (disposed) return;
         disposed = true;
@@ -301,6 +312,7 @@ public class ResourceManager {
         shaderCache.clear();
         modelCache.clear();
         iblEnvironmentCache.clear();
+        soundCache.clear();
     }
 
     private String shaderCacheKey(String vertexPath, String fragmentPath) {
