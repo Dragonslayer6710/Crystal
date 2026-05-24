@@ -4,11 +4,16 @@ import com.crystal.engine.core.Disposable;
 import com.crystal.engine.core.Time;
 import com.crystal.engine.render.RenderStats;
 import com.crystal.engine.render.Renderer;
+import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.render.scene.SceneComponent;
+import com.crystal.engine.render.scene.SceneObject;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;
 import imgui.gl3.ImGuiImplGl3;
 import imgui.glfw.ImGuiImplGlfw;
+import imgui.type.ImBoolean;
+import imgui.type.ImFloat;
 
 public class DebugOverlay implements Disposable {
 
@@ -31,6 +36,8 @@ public class DebugOverlay implements Disposable {
 
     private boolean initialised;
 
+    private SceneObject selectedObject;
+
     public void init(long windowHandle) {
         if (initialised)
             return;
@@ -52,7 +59,7 @@ public class DebugOverlay implements Disposable {
         initialised = true;
     }
 
-    public void render(Time time, Renderer renderer) {
+    public void render(Time time, Renderer renderer, Scene scene) {
         if (!initialised)
             return;
 
@@ -60,13 +67,21 @@ public class DebugOverlay implements Disposable {
         glBackend.newFrame();
         ImGui.newFrame();
 
-        drawPerformanceWindow(time, renderer);
+        drawPerformanceWindow(time, renderer, scene);
 
         ImGui.render();
         glBackend.renderDrawData(ImGui.getDrawData());
     }
 
-    private void drawPerformanceWindow(Time time, Renderer renderer) {
+    public boolean wantsMouse() {
+        return initialised && ImGui.getIO().getWantCaptureMouse();
+    }
+
+    public boolean wantsKeyboard() {
+        return initialised && ImGui.getIO().getWantCaptureKeyboard();
+    }
+
+    private void drawPerformanceWindow(Time time, Renderer renderer, Scene scene) {
         RenderStats stats = renderer.getStats();
 
         ImGui.begin("Crystal Debug");
@@ -83,13 +98,29 @@ public class DebugOverlay implements Disposable {
         ImGui.text("Renderer");
         ImGui.separator();
         drawDebugViewSelector(renderer);
-        ImGui.text("Frustum Culling: " + renderer.isFrustumCullingEnabled());
+        drawRendererControls(renderer);
         ImGui.text("Renderable: " + stats.getRenderableObjectCount());
         ImGui.text("Culled: " + stats.getCulledObjectCount());
         ImGui.text("Draws: " + stats.getTotalDrawCount());
         ImGui.text("Submitted Commands: " + stats.getSubmittedCommandCount());
 
+        ImGui.spacing();
+
+        drawSceneSection(scene);
+
         ImGui.end();
+    }
+
+    private void drawRendererControls(Renderer renderer) {
+        ImBoolean frustumCulling = new ImBoolean(renderer.isFrustumCullingEnabled());
+
+        if (ImGui.checkbox("Frustum Culling", frustumCulling))
+            renderer.setFrustumCullingEnabled(frustumCulling.get());
+
+        ImFloat exposure = new ImFloat(renderer.getExposure());
+
+        if (ImGui.sliderFloat("Exposure", exposure.getData(), 0.1f, 5.0f, "%.2f"))
+            renderer.setExposure(exposure.get());
     }
 
     private void drawDebugViewSelector(Renderer renderer) {
@@ -109,12 +140,211 @@ public class DebugOverlay implements Disposable {
         }
     }
 
-    public boolean wantsMouse() {
-        return initialised && ImGui.getIO().getWantCaptureMouse();
+    private void drawSceneSection(Scene scene) {
+        ImGui.text("Scene");
+        ImGui.separator();
+        ImGui.text("Root Objects: " + scene.getRootObjects().size());
+
+        drawActiveCameraSection(scene);
+
+        if (ImGui.collapsingHeader("Hierarchy")) {
+            for (SceneObject root: scene.getRootObjects()) {
+                drawSceneObjectNode(root);
+            }
+        }
+
+        drawSelectedObjectInspector(scene);
     }
 
-    public boolean wantsKeyboard() {
-        return initialised && ImGui.getIO().getWantCaptureKeyboard();
+    private void drawActiveCameraSection(Scene scene) {
+        var transform = scene.getCamera().getTransform();
+
+        var position = transform.getPosition();
+        var rotation = transform.getRotation();
+
+        ImGui.spacing();
+        ImGui.text("Active Camera");
+        ImGui.separator();
+        ImGui.text(String.format("Position: %.2f, %.2f, %.2f", position.x, position.y, position.z));
+        ImGui.text(String.format(
+            "Rotation: %.2f, %.2f, %.2f",
+            Math.toDegrees(rotation.x),
+            Math.toDegrees(rotation.y),
+            Math.toDegrees(rotation.z)
+        ));
+    }
+
+    private void drawSceneObjectNode(SceneObject object) {
+        boolean selected = object == selectedObject;
+        String label = object.getName() + "##" + System.identityHashCode(object);
+
+        if (object.getChildren().isEmpty()) {
+            if (ImGui.selectable(label, selected)) {
+                selectedObject = object;
+            }
+
+            return;
+        }
+
+        if (ImGui.treeNode(label)) {
+            if (ImGui.isItemClicked()) {
+                selectedObject = object;
+            }
+
+            for (SceneObject child : object.getChildren()) {
+                drawSceneObjectNode(child);
+            }
+
+            ImGui.treePop();
+        } else if (ImGui.isItemClicked()) {
+            selectedObject = object;
+        }
+    }
+
+    private void drawSelectedObjectInspector(Scene scene) {
+        if (selectedObject == null)
+            return;
+
+        if (!isObjectInScene(scene, selectedObject)) {
+            selectedObject = null;
+            return;
+        }
+
+        var transform = selectedObject.getTransform();
+        var position = transform.getPosition();
+        var rotation = transform.getRotation();
+        var scale = transform.getScale();
+
+        ImGui.spacing();
+        ImGui.text("Selected Object");
+        ImGui.separator();
+        ImGui.text("Name: " + selectedObject.getName());
+        ImGui.text("Active: " + selectedObject.isActive());
+        ImGui.text("Visible: " + selectedObject.isVisible());
+
+        float[] positionValues = { position.x, position.y, position.z };
+        if (ImGui.dragFloat3("Position", positionValues, 0.05f)) {
+            transform.setPosition(positionValues[0], positionValues[1], positionValues[2]);
+        }
+
+        float[] rotationValues = {
+            (float) Math.toDegrees(rotation.x),
+            (float) Math.toDegrees(rotation.y),
+            (float) Math.toDegrees(rotation.z)
+        };
+        if (ImGui.dragFloat3("Rotation", rotationValues, 0.5f)) {
+            transform.setRotationDegrees(rotationValues[0], rotationValues[1], rotationValues[2]);
+        }
+
+        float[] scaleValues = { scale.x, scale.y, scale.z };
+        if (ImGui.dragFloat3("Scale", scaleValues, 0.05f)) {
+            transform.setScale(scaleValues[0], scaleValues[1], scaleValues[2]);
+        }
+
+        drawSelectedObjectMetadata(selectedObject);
+    }
+
+    private boolean isObjectInScene(Scene scene, SceneObject target) {
+        for (SceneObject root : scene.getRootObjects()) {
+            if (containsObject(root, target))
+                return true;
+        }
+
+        return false;
+    }
+
+    private boolean containsObject(SceneObject current, SceneObject target) {
+        if (current == target)
+            return true;
+
+        for (SceneObject child : current.getChildren()) {
+            if (containsObject(child, target))
+                return true;
+        }
+
+        return false;
+    }
+
+    private void drawSelectedObjectMetadata(SceneObject object) {
+        ImGui.spacing();
+
+        ImGui.text("Tags");
+        ImGui.separator();
+
+        if (object.getTags().isEmpty()) {
+            ImGui.text("None");
+        } else {
+            for (String tag : object.getTags()) {
+                ImGui.bulletText(tag);
+            }
+        }
+
+        ImGui.spacing();
+
+        ImGui.text("Components");
+        ImGui.separator();
+
+        if (object.getComponents().isEmpty()) {
+            ImGui.text("None");
+        } else {
+            for (SceneComponent component : object.getComponents()) {
+                ImGui.bulletText(component.getClass().getSimpleName());
+            }
+        }
+
+        ImGui.spacing();
+
+        ImGui.text("Rendering");
+        ImGui.separator();
+        ImGui.text("Renderable: " + object.isRenderable());
+        ImGui.text("Casts Shadow: " + object.castsShadow());
+        ImGui.text(String.format("Bounding Radius: %.2f", object.getBoundingRadius()));
+
+        drawMaterialInspector(object);
+    }
+
+    private void drawMaterialInspector(SceneObject object) {
+        ImGui.spacing();
+
+        ImGui.text("Material");
+        ImGui.separator();
+
+        if (!object.isRenderable()) {
+            ImGui.text("None");
+            return;
+        }
+
+        var material = object.getMaterial();
+
+        ImGui.text("Material ID: " + material.getId());
+        ImGui.text("Shader ID: " + material.getShader().getId());
+
+        ImGui.text(String.format(
+            "Tint: %.2f, %.2f, %.2f",
+            material.getTint().x,
+            material.getTint().y,
+            material.getTint().z
+        ));
+
+        ImGui.text(String.format("Metallic: %.2f", material.getMetallic()));
+        ImGui.text(String.format("Roughness: %.2f", material.getRoughness()));
+
+        ImGui.text(String.format(
+            "Emissive: %.2f, %.2f, %.2f",
+            material.getEmissive().x,
+            material.getEmissive().y,
+            material.getEmissive().z
+        ));
+
+        ImGui.spacing();
+
+        ImGui.text("Textures");
+        ImGui.separator();
+        ImGui.text("Albedo: " + (material.getAlbedo() != null));
+        ImGui.text("Normal: " + (material.getNormalMap() != null));
+        ImGui.text("Metallic-Roughness: " + (material.getMetallicRoughnessMap() != null));
+        ImGui.text("Ambient Occlusion: " + (material.getAmbientOcclusionMap() != null));
+        ImGui.text("Emissive: " + (material.getEmissiveMap() != null));
     }
 
     @Override
