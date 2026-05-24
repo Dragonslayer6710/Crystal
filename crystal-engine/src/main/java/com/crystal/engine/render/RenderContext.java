@@ -26,7 +26,8 @@ public class RenderContext {
     private int debugViewMode = 0;
     private float exposure = 1.0f;
     private boolean hasIBL;
-    private float iblIntensity = 1.0f;
+    private float iblDiffuseIntensity = 1.0f;
+    private float iblSpecularIntensity = 1.0f;
     private boolean shadowsEnabled = true;
     private float shadowStrength = 0.6f;
 
@@ -96,7 +97,8 @@ public class RenderContext {
 
         shadowStrength = scene.getDirectionalLight().getShadowStrength();
 
-        iblIntensity = environment.getIblIntensity();
+        iblDiffuseIntensity = environment.getIblDiffuseIntensity();
+        iblSpecularIntensity = environment.getIblSpecularIntensity();
     }
 
     void resetStateCache() {
@@ -169,9 +171,6 @@ public class RenderContext {
     }
 
     void setDebugViewMode(int debugViewMode) {
-        if (debugViewMode < 0 || debugViewMode > 10)
-            throw new IllegalArgumentException("Debug view mode must be between 0 and 10");
-
         this.debugViewMode = debugViewMode;
     }
 
@@ -191,7 +190,9 @@ public class RenderContext {
         shader.setInt(ShaderUniforms.DEBUG_VIEW_MODE, debugViewMode);
         shader.setFloat(ShaderUniforms.EXPOSURE, exposure);
         shader.setInt(ShaderUniforms.HAS_IBL, hasIBL ? 1 : 0);
-        shader.setFloat(ShaderUniforms.IBL_INTENSITY, iblIntensity);
+
+        shader.setFloat(ShaderUniforms.IBL_DIFFUSE_INTENSITY, iblDiffuseIntensity);
+        shader.setFloat(ShaderUniforms.IBL_SPECULAR_INTENSITY, iblSpecularIntensity);
 
         shader.setInt(ShaderUniforms.SHADOW_MAP, TextureSlots.SHADOW_MAP);
         shader.setInt(ShaderUniforms.HAS_SHADOWS, shadowsEnabled ? 1 : 0);

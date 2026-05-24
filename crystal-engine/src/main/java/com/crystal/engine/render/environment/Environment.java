@@ -13,7 +13,8 @@ public class Environment {
     private Texture prefilterMap;
     private Texture brdfLut;
 
-    private float iblIntensity = 1.0f;
+    private float iblDiffuseIntensity = 1.0f;
+    private float iblSpecularIntensity = 1.0f;
 
     public Vector3f getAmbientColor() {
         return ambientColor;
@@ -39,8 +40,12 @@ public class Environment {
         return brdfLut;
     }
 
-    public float getIblIntensity() {
-        return iblIntensity;
+    public float getIblDiffuseIntensity() {
+        return iblDiffuseIntensity;
+    }
+
+    public float getIblSpecularIntensity() {
+        return iblSpecularIntensity;
     }
 
     public Environment setAmbientColor(float r, float g, float b) {
@@ -73,8 +78,15 @@ public class Environment {
         return this;
     }
 
-    public Environment setIblIntensity(float iblIntensity) {
-        this.iblIntensity = iblIntensity;
+    public Environment setIblDiffuseIntensity(float iblDiffuseIntensity) {
+        validateIntensity(iblDiffuseIntensity, "IBL diffuse intensity");
+        this.iblDiffuseIntensity = iblDiffuseIntensity;
+        return this;
+    }
+
+    public Environment setIblSpecularIntensity(float iblSpecularIntensity) {
+        validateIntensity(iblSpecularIntensity, "IBL specular intensity");
+        this.iblSpecularIntensity = iblSpecularIntensity;
         return this;
     }
 
@@ -85,6 +97,8 @@ public class Environment {
         irradianceMap = source.irradianceMap;
         prefilterMap = source.prefilterMap;
         brdfLut = source.brdfLut;
+        iblDiffuseIntensity = source.iblDiffuseIntensity;
+        iblSpecularIntensity = source.iblSpecularIntensity;
 
         return this;
     }
@@ -103,5 +117,10 @@ public class Environment {
 
     public boolean hasIBL() {
         return hasDiffuseIBL() && hasSpecularIBL();
+    }
+
+    private static void validateIntensity(float value, String name) {
+        if (!Float.isFinite(value) || value < 0.0f)
+            throw new IllegalArgumentException(name + " must be finite and non-negative");
     }
 }

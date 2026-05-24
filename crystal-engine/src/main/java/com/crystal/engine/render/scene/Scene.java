@@ -162,7 +162,8 @@ public class Scene implements Disposable {
                 srcEnv.getAmbientColor().z
             )
             .setAmbientIntensity(srcEnv.getAmbientIntensity())
-            .setIblIntensity(srcEnv.getIblIntensity())
+            .setIblDiffuseIntensity(srcEnv.getIblDiffuseIntensity())
+            .setIblSpecularIntensity(srcEnv.getIblSpecularIntensity())
             .copyLightingFrom(srcEnv);
 
         for (SceneObject object : source.getRootObjects())

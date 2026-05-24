@@ -28,7 +28,8 @@ public class DebugOverlay implements Disposable {
         "Irradiance",
         "Prefilter",
         "BRDF LUT",
-        "Shadow"
+        "Shadow",
+        "IBL Specular"
     };
 
     private final ImGuiImplGlfw glfwBackend = new ImGuiImplGlfw();
@@ -145,6 +146,7 @@ public class DebugOverlay implements Disposable {
         ImGui.separator();
         ImGui.text("Root Objects: " + scene.getRootObjects().size());
 
+        drawEnvironmentControls(scene);
         drawActiveCameraSection(scene);
 
         if (ImGui.collapsingHeader("Hierarchy")) {
@@ -154,6 +156,24 @@ public class DebugOverlay implements Disposable {
         }
 
         drawSelectedObjectInspector(scene);
+    }
+
+    private void drawEnvironmentControls(Scene scene) {
+        var environment = scene.getEnvironment();
+
+        ImGui.spacing();
+        ImGui.text("Environment");
+        ImGui.separator();
+
+        ImFloat iblDiffuseIntensity = new ImFloat(environment.getIblDiffuseIntensity());
+        if (ImGui.sliderFloat("IBL Diffuse", iblDiffuseIntensity.getData(), 0.0f, 2.0f, "%.2f")) {
+            environment.setIblDiffuseIntensity(iblDiffuseIntensity.get());
+        }
+
+        ImFloat iblSpecularIntensity = new ImFloat(environment.getIblSpecularIntensity());
+        if (ImGui.sliderFloat("IBL Specular", iblSpecularIntensity.getData(), 0.0f, 2.0f, "%.2f")) {
+            environment.setIblSpecularIntensity(iblSpecularIntensity.get());
+        }
     }
 
     private void drawActiveCameraSection(Scene scene) {
@@ -326,8 +346,20 @@ public class DebugOverlay implements Disposable {
             material.getTint().z
         ));
 
-        ImGui.text(String.format("Metallic: %.2f", material.getMetallic()));
-        ImGui.text(String.format("Roughness: %.2f", material.getRoughness()));
+        ImFloat metallic = new ImFloat(material.getMetallic());
+        if (ImGui.sliderFloat("Metallic", metallic.getData(), 0.0f, 1.0f, "%.2f")) {
+            material.setMetallic(metallic.get());
+        }
+
+        ImFloat roughness = new ImFloat(material.getRoughness());
+        if (ImGui.sliderFloat("Roughness", roughness.getData(), 0.0f, 1.0f, "%.2f")) {
+            material.setRoughness(roughness.get());
+        }
+
+        ImFloat normalStrength = new ImFloat(material.getNormalStrength());
+        if (ImGui.sliderFloat("Normal Strength", normalStrength.getData(), 0.0f, 2.0f, "%.2f")) {
+            material.setNormalStrength(normalStrength.get());
+        }
 
         ImGui.text(String.format(
             "Emissive: %.2f, %.2f, %.2f",

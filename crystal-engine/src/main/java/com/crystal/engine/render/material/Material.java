@@ -28,6 +28,7 @@ public class Material {
     private final Vector3f tint = new Vector3f(1.0f);
     private float roughness = 0.5f;
     private float metallic = 0.0f;
+    private float normalStrength = 1.0f;
     private final Vector3f emissive = new Vector3f(0.0f);
 
     public Material(Shader shader) {
@@ -78,6 +79,10 @@ public class Material {
 
     public float getMetallic() {
         return metallic;
+    }
+
+    public float getNormalStrength() {
+        return normalStrength;
     }
 
     public Vector3f getEmissive() {
@@ -131,6 +136,14 @@ public class Material {
         return this;
     }
 
+    public Material setNormalStrength(float normalStrength) {
+        if (!Float.isFinite(normalStrength) || normalStrength < 0.0f || normalStrength > 2.0f)
+            throw new IllegalArgumentException("Normal strength must be finite and between 0 and 2");
+
+        this.normalStrength = normalStrength;
+        return this;
+    }
+
     public Material setEmissive(float r, float g, float b) {
         validateNonNegativeFiniteColor(r, g, b, "Emissive");
         emissive.set(r, g, b);
@@ -170,6 +183,7 @@ public class Material {
         shader.setVec3(ShaderUniforms.MATERIAL_TINT, tint.x, tint.y, tint.z);
         shader.setFloat(ShaderUniforms.MATERIAL_ROUGHNESS, roughness);
         shader.setFloat(ShaderUniforms.MATERIAL_METALLIC, metallic);
+        shader.setFloat(ShaderUniforms.MATERIAL_NORMAL_STRENGTH, normalStrength);
         shader.setVec3(ShaderUniforms.MATERIAL_EMISSIVE, emissive.x, emissive.y, emissive.z);
     }
 

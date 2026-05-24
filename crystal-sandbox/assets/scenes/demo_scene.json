@@ -8,12 +8,23 @@
         "ambientColor": [0.01, 0.01, 0.01],
         "ambientIntensity": 0.2,
         "ibl": "environment/studio_small_03_1k.hdr",
-        "iblIntensity": 0.4
+        "iblDiffuseIntensity": 0.4,
+        "iblSpecularIntensity": 0.08
     },
     "lighting": {
         "directionalIntensity": 3.0,
         "shadowStrength": 1.0
     },
+    "materials": [
+        {
+            "name": "brick",
+            "albedo": "Bricks_085/Bricks085_1K-JPG_Color.jpg",
+            "normal": "Bricks_085/Bricks085_1K-JPG_NormalGL.jpg",
+            "roughness": 0.9,
+            "metallic": 0.0,
+            "normalStrength": 1.0
+        }
+    ],
     "objects": [
         {
             "name": "Helmet",
@@ -44,10 +55,7 @@
             "position": [0.0, -1.0, -2.5],
             "scale": [8.0, 1.0, 8.0],
             "tags": ["environment", "floor"],
-            "material": {
-                "albedo": "bricks_albedo.png",
-                "normal": "bricks_normal.png"
-            }
+            "material": "brick"
         },
         {
             "name": "Cube A",
@@ -55,10 +63,7 @@
             "primitive": "cube",
             "position": [-2.0, 0.0, -2.0],
             "tags": ["debug", "rotating"],
-            "material": {
-                "albedo": "bricks_albedo.png",
-                "normal": "bricks_normal.png"
-            },
+            "material": "brick",
             "components": [
                 {
                     "type": "rotation",
@@ -72,10 +77,7 @@
                     "primitive": "cube",
                     "position": [2.0, 0.0, 0.0],
                     "tags": ["debug", "rotating"],
-                    "material": {
-                        "albedo": "bricks_albedo.png",
-                        "normal": "bricks_normal.png"
-                    },
+                    "material": "brick",
                     "components": [
                         {
                             "type": "rotation",
@@ -89,10 +91,7 @@
                             "primitive": "cube",
                             "position": [2.0, 0.0, 0.0],
                             "tags": ["debug", "rotating"],
-                            "material": {
-                                "albedo": "bricks_albedo.png",
-                                "normal": "bricks_normal.png"
-                            },
+                            "material": "brick",
                             "components": [
                                 {
                                     "type": "rotation",
@@ -119,10 +118,7 @@
             "primitive": "cube",
             "position": [-4.0, 0.0, -2.5],
             "tags": ["debug", "animated"],
-            "material": {
-                "albedo": "bricks_albedo.png",
-                "normal": "bricks_normal.png"
-            },
+            "material": "brick",
             "components": [
                 {
                     "type": "keyframeAnimation",

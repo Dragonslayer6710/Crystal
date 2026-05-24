@@ -16,7 +16,9 @@ import org.joml.Vector3f;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SceneLoader {
 
@@ -70,7 +72,9 @@ public class SceneLoader {
         applyCamera(definition.camera, scene);
         applyLighting(definition.lighting, scene);
         applyEnvironment(definition.environment, scene, resources);
-        applyObjects(definition.objects, scene, resources, shader);
+
+        Map<String, Material> materials = createMaterials(definition.materials, resources, shader);
+        applyObjects(definition.objects, scene, resources, shader, materials);
     }
 
     private static void applyCamera(CameraDefinition camera, Scene scene) {
@@ -104,8 +108,11 @@ public class SceneLoader {
         if (environment.ambientIntensity != null)
             scene.getEnvironment().setAmbientIntensity(environment.ambientIntensity);
 
-        if (environment.iblIntensity != null)
-            scene.getEnvironment().setIblIntensity(environment.iblIntensity);
+        if (environment.iblDiffuseIntensity != null)
+            scene.getEnvironment().setIblDiffuseIntensity(environment.iblDiffuseIntensity);
+
+        if (environment.iblSpecularIntensity != null)
+            scene.getEnvironment().setIblSpecularIntensity(environment.iblSpecularIntensity);
 
         if (environment.ibl != null && !environment.ibl.isBlank()) {
             Environment cachedEnvironment = resources.getOrCreateIBLEnvironment(environment.ibl);
@@ -113,17 +120,59 @@ public class SceneLoader {
         }
     }
 
-    private static void applyObjects(List<ObjectDefinition> objects, Scene scene, ResourceManager resources, Shader shader) {
+    private static Map<String, Material> createMaterials(List<MaterialDefinition> definitions,
+                                                         ResourceManager resources, Shader shader) {
+        Map<String, Material> materials = new HashMap<>();
+
+        if (definitions == null)
+            return materials;
+
+        for (MaterialDefinition definition : definitions) {
+            if (definition.name == null || definition.name.isBlank())
+                throw new IllegalArgumentException("Material name cannot be null or blank");
+
+            if (materials.containsKey(definition.name))
+                throw new IllegalArgumentException("Duplicate material name: " + definition.name);
+
+            materials.put(definition.name, createMaterial(definition, resources, shader));
+        }
+
+        return materials;
+    }
+
+    private static Material createMaterial(MaterialDefinition definition, ResourceManager resources, Shader shader) {
+        Material material = new Material(shader);
+
+        if (definition.albedo != null)
+            material.setAlbedo(resources.createTexture(definition.albedo));
+
+        if (definition.normal != null)
+            material.setNormalMap(resources.createDataTexture(definition.normal));
+
+        if (definition.roughness != null)
+            material.setRoughness(definition.roughness);
+
+        if (definition.metallic != null)
+            material.setMetallic(definition.metallic);
+
+        if (definition.normalStrength != null)
+            material.setNormalStrength(definition.normalStrength);
+
+        return material;
+    }
+
+    private static void applyObjects(List<ObjectDefinition> objects, Scene scene, ResourceManager resources,
+                                     Shader shader, Map<String, Material> materials) {
         if (objects == null)
             return;
 
         for (ObjectDefinition object : objects) {
-            SceneObject sceneObject = createSceneObject(object, resources, shader);
+            SceneObject sceneObject = createSceneObject(object, resources, shader, materials);
 
             applyTransform(object, sceneObject.getTransform());
             applyTags(object, sceneObject);
             applyComponents(object, sceneObject);
-            applyChildren(object, sceneObject, resources, shader);
+            applyChildren(object, sceneObject, resources, shader, materials);
             applyTrigger(object, sceneObject);
 
             if (object.castsShadow != null)
@@ -188,16 +237,17 @@ public class SceneLoader {
         }
     }
 
-    private static void applyChildren(ObjectDefinition object, SceneObject parent, ResourceManager resources, Shader shader) {
+    private static void applyChildren(ObjectDefinition object, SceneObject parent, ResourceManager resources,
+                                      Shader shader, Map<String, Material> materials) {
         if (object.children == null)
             return;
 
         for (ObjectDefinition childDefinition : object.children) {
-            SceneObject child = createSceneObject(childDefinition, resources, shader);
+            SceneObject child = createSceneObject(childDefinition, resources, shader, materials);
             applyTransform(childDefinition, child.getTransform());
             applyTags(childDefinition, child);
             applyComponents(childDefinition, child);
-            applyChildren(childDefinition, child, resources, shader);
+            applyChildren(childDefinition, child, resources, shader, materials);
             applyTrigger(childDefinition, child);
 
             if (childDefinition.castsShadow != null)
@@ -228,7 +278,8 @@ public class SceneLoader {
         return root;
     }
 
-    private static SceneObject createPrimitiveObject(ObjectDefinition object, ResourceManager resources, Shader shader) {
+    private static SceneObject createPrimitiveObject(ObjectDefinition object, ResourceManager resources,
+                                                     Shader shader, Map<String, Material> materials) {
         if (object.primitive == null || object.primitive.isBlank())
             throw new IllegalArgumentException("Primitive object must define primitive");
 
@@ -238,23 +289,30 @@ public class SceneLoader {
             default -> throw new IllegalArgumentException("Unsupported primitive: " + object.primitive);
         };
 
-        Material material = new Material(shader);
-
-        if (object.material != null) {
-            if (object.material.albedo != null)
-                material.setAlbedo(resources.createTexture(object.material.albedo));
-
-            if (object.material.normal != null)
-                material.setNormalMap(resources.createDataTexture(object.material.normal));
-        }
+        Material material = resolveMaterial(object, materials, shader);
 
         return new SceneObject(object.name, mesh, material, new Transform());
     }
 
-    private static SceneObject createSceneObject(ObjectDefinition object, ResourceManager resources, Shader shader) {
+    private static Material resolveMaterial(ObjectDefinition object, Map<String, Material> materials, Shader shader) {
+        if (object.material == null || object.material.isBlank())
+            return new Material(shader);
+
+        Material material = materials.get(object.material);
+
+        if (material == null)
+            throw new IllegalArgumentException(
+                "Object '" + object.name + "' references unknown material: " + object.material
+            );
+
+        return material;
+    }
+
+    private static SceneObject createSceneObject(ObjectDefinition object, ResourceManager resources,
+                                                 Shader shader, Map<String, Material> materials) {
         return switch (object.type) {
             case "model" -> loadModelObject(object, resources, shader);
-            case "primitive" -> createPrimitiveObject(object, resources, shader);
+            case "primitive" -> createPrimitiveObject(object, resources, shader, materials);
             case "empty" -> new SceneObject(object.name, null, null, new Transform());
             default -> throw new IllegalArgumentException("Unsupported scene object type: " + object.type);
         };
@@ -299,6 +357,7 @@ public class SceneLoader {
         public CameraDefinition camera;
         public EnvironmentDefinition environment;
         public LightingDefinition lighting;
+        public List<MaterialDefinition> materials;
         public List<ObjectDefinition> objects;
     }
 
@@ -310,7 +369,8 @@ public class SceneLoader {
         public List<Float> ambientColor;
         public Float ambientIntensity;
         public String ibl;
-        public Float iblIntensity;
+        public Float iblDiffuseIntensity;
+        public Float iblSpecularIntensity;
     }
 
     private static final class LightingDefinition {
@@ -328,7 +388,7 @@ public class SceneLoader {
         public List<Float> scale;
         public List<String> tags;
         public Boolean castsShadow;
-        public MaterialDefinition material;
+        public String material;
         public List<ComponentDefinition> components;
         public List<ObjectDefinition> children;
         public TriggerDefinition trigger;
@@ -351,8 +411,13 @@ public class SceneLoader {
         public List<Float> rotationDegrees;
         public List<Float> scale;
     }
+
     private static final class MaterialDefinition {
+        public String name;
         public String albedo;
         public String normal;
+        public Float roughness;
+        public Float metallic;
+        public Float normalStrength;
     }
 }

@@ -9,7 +9,9 @@ in vec4 v_LightSpacePosition;
 uniform int debugViewMode;
 uniform float exposure;
 uniform int hasIBL;
-uniform float iblIntensity;
+
+uniform float iblDiffuseIntensity;
+uniform float iblSpecularIntensity;
 
 uniform sampler2D albedoTexture;
 uniform sampler2D normalMap;
@@ -39,6 +41,7 @@ layout (std140, binding = 0) uniform SceneData {
 uniform vec3 materialTint;
 uniform float materialRoughness;
 uniform float materialMetallic;
+uniform float materialNormalStrength;
 uniform vec3 materialEmissive;
 
 uniform int hasAlbedoTexture;
@@ -56,6 +59,11 @@ const float MAX_REFLECTION_LOD = 4.0;
 
 vec3 fresnelSchlick(float cosTheta, vec3 F0) {
     return F0 + (1.0 - F0) * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
+}
+
+vec3 fresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness) {
+    return F0 + (max(vec3(1.0 - roughness), F0) - F0)
+        * pow(clamp(1.0 - cosTheta, 0.0, 1.0), 5.0);
 }
 
 float distributionGGX(vec3 N, vec3 H, float roughness) {
@@ -105,6 +113,9 @@ vec3 getNormal() {
     mat3 TBN = mat3(T, B, N);
 
     vec3 sampledNormal = texture(normalMap, v_UV).xyz * 2.0 - 1.0;
+    sampledNormal.xy *= materialNormalStrength;
+    sampledNormal = normalize(sampledNormal);
+
     return normalize(TBN * sampledNormal);
 }
 
@@ -115,6 +126,23 @@ vec2 getMetallicRoughness() {
     float metallic = clamp(materialMetallic * mrSample.b, 0.0, 1.0);
 
     return vec2(metallic, roughness);
+}
+
+vec3 calculateIBLSpecular(vec3 albedo, vec3 normal, vec3 viewDirection, float metallic, float roughness) {
+    if (hasIBL != 1)
+        return vec3(0.0);
+
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, albedo, metallic);
+
+    float NdotV = max(dot(normal, viewDirection), 0.0);
+    vec3 F = fresnelSchlickRoughness(NdotV, F0, roughness);
+
+    vec3 R = reflect(-viewDirection, normal);
+    vec3 prefilteredColor = textureLod(prefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
+    vec2 brdf = texture(brdfLut, vec2(NdotV, roughness)).rg;
+
+    return prefilteredColor * (F * brdf.x + brdf.y) * iblSpecularIntensity;
 }
 
 float calculateShadow(vec4 lightSpacePosition, vec3 normal, vec3 lightDirection) {
@@ -174,9 +202,11 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
         vec3 prefilteredColor = textureLod(prefilterMap, R, roughness * MAX_REFLECTION_LOD).rgb;
 
         vec2 brdf = texture(brdfLut, vec2(max(dot(normal, V), 0.0), roughness)).rg;
-        vec3 specularIBL = prefilteredColor * (F * brdf.x + brdf.y);
 
-        ambientLighting = (diffuseIBL * kD + specularIBL) * ao * iblIntensity;
+        vec3 roughnessFresnel = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
+        vec3 specularIBL = prefilteredColor * (roughnessFresnel * brdf.x + brdf.y);
+
+        ambientLighting = (diffuseIBL * kD  * iblDiffuseIntensity + specularIBL * iblSpecularIntensity) * ao;
     } else {
         ambientLighting = ambient.rgb * ambient.a * albedo * ao;
     }
@@ -271,6 +301,7 @@ void main() {
                 f_Color = vec4(1.0, 0.0, 1.0, 1.0);
             }
             break;
+
         case 10:
             float shadow = calculateShadow(
             v_LightSpacePosition,
@@ -280,6 +311,13 @@ void main() {
 
             f_Color = vec4(vec3(shadow), 1.0);
             break;
+
+        case 11:
+            vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
+            vec3 iblSpecular = calculateIBLSpecular(albedo, N, V, metallic, roughness);
+            f_Color = vec4(toneMapReinhard(iblSpecular * exposure), 1.0);
+            break;
+
         default:
             f_Color = vec4(1.0, 0.0, 1.0, 1.0);
             break;

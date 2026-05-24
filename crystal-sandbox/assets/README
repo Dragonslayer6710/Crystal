@@ -12,6 +12,17 @@ Source: https://polyhaven.com/a/studio_small_03
 Author: Greg Zaal
 License: CC0
 
+## Textures
+
+### Brick material
+Source: https://ambientcg.com/view?id=Bricks085
+Author: ambientCG / Lennart Demes
+License: CC0 1.0 Universal
+License URL: https://creativecommons.org/publicdomain/zero/1.0/
+Maps used:
+- Color / Albedo
+- NormalGL
+
 ## Sounds
 
 ### test.ogg (u_s026io00zm-beep-401570.mp3 converted to ogg)

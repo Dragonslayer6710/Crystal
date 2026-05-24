@@ -23,6 +23,9 @@ public class Renderer implements Disposable {
 
     private static final Logger logger = LoggerFactory.getLogger(Renderer.class);
 
+    private static final int DEBUG_VIEW_COUNT = 12;
+    private static final int DEBUG_VIEW_MAX = DEBUG_VIEW_COUNT - 1;
+
     private final RendererConfig config;
     private final RenderContext context;
     private final ShadowMap directionalShadowMap;
@@ -134,8 +137,8 @@ public class Renderer implements Disposable {
     }
 
     public void setDebugViewMode(int debugViewMode) {
-        if (debugViewMode < 0 || debugViewMode > 10)
-            throw new IllegalArgumentException("Debug view mode must be between 0 and 10");
+        if (debugViewMode < 0 || debugViewMode > DEBUG_VIEW_MAX)
+            throw new IllegalArgumentException("Debug view mode must be between 0 and " + DEBUG_VIEW_MAX);
 
         if (this.debugViewMode == debugViewMode)
             return;
@@ -146,7 +149,7 @@ public class Renderer implements Disposable {
     }
 
     public void cycleDebugViewMode() {
-        setDebugViewMode((debugViewMode + 1) % 11);
+        setDebugViewMode((debugViewMode + 1) % DEBUG_VIEW_COUNT);
     }
 
     public boolean isFrustumCullingEnabled() {
@@ -174,6 +177,7 @@ public class Renderer implements Disposable {
             case 8 -> "Prefilter";
             case 9 -> "BRDF LUT";
             case 10 -> "Shadow";
+            case 11 -> "IBL Specular";
             default -> "Unknown";
         };
     }

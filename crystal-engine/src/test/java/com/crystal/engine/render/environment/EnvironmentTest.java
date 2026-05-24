@@ -14,7 +14,8 @@ class EnvironmentTest {
         assertFalse(environment.hasDiffuseIBL());
         assertFalse(environment.hasSpecularIBL());
         assertFalse(environment.hasIBL());
-        assertEquals(1.0f, environment.getIblIntensity());
+        assertEquals(1.0f, environment.getIblDiffuseIntensity());
+        assertEquals(1.0f, environment.getIblSpecularIntensity());
         assertEquals(1.0f, environment.getAmbientIntensity());
     }
 
@@ -24,12 +25,14 @@ class EnvironmentTest {
 
         assertSame(environment, environment.setAmbientColor(0.1f, 0.2f, 0.3f));
         assertSame(environment, environment.setAmbientIntensity(0.4f));
-        assertSame(environment, environment.setIblIntensity(0.5f));
+        assertSame(environment, environment.setIblDiffuseIntensity(0.5f));
+        assertSame(environment, environment.setIblSpecularIntensity(0.25f));
 
         assertEquals(0.1f, environment.getAmbientColor().x);
         assertEquals(0.2f, environment.getAmbientColor().y);
         assertEquals(0.3f, environment.getAmbientColor().z);
         assertEquals(0.4f, environment.getAmbientIntensity());
-        assertEquals(0.5f, environment.getIblIntensity());
+        assertEquals(0.5f, environment.getIblDiffuseIntensity());
+        assertEquals(0.25f, environment.getIblSpecularIntensity());
     }
 }

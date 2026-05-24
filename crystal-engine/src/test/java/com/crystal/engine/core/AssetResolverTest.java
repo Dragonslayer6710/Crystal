@@ -22,9 +22,10 @@ class AssetResolverTest {
 
         assertEquals("shaders/pbr.vert", assets.projectShaderPath("pbr", "vert"));
         assertEquals("engine-assets/shaders/skybox.frag", assets.engineShaderPath("skybox", "frag"));
-        assertEquals("textures/bricks_albedo.png", assets.projectTextureAssetPath("bricks_albedo.png"));
-        assertEquals(assetRoot.resolve("textures/bricks_albedo.png").toAbsolutePath().normalize(),
-                assets.projectTexturePath("bricks_albedo.png"));
+        assertEquals("textures/Bricks_085/Bricks085_1K-JPG_Color.jpg",
+            assets.projectTextureAssetPath("Bricks_085/Bricks085_1K-JPG_Color.jpg"));
+        assertEquals(assetRoot.resolve("textures/Bricks_085/Bricks085_1K-JPG_Color.jpg").toAbsolutePath().normalize(),
+                assets.projectTexturePath("Bricks_085/Bricks085_1K-JPG_Color.jpg"));
         assertEquals(assetRoot.resolve("models/external/DamagedHelmet.glb").toAbsolutePath().normalize(),
                 assets.projectModelPath("external/DamagedHelmet.glb"));
     }

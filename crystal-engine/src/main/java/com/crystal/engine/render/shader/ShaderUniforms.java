@@ -23,6 +23,7 @@ public final class ShaderUniforms {
     public static final String MATERIAL_TINT = "materialTint";
     public static final String MATERIAL_ROUGHNESS = "materialRoughness";
     public static final String MATERIAL_METALLIC = "materialMetallic";
+    public static final String MATERIAL_NORMAL_STRENGTH = "materialNormalStrength";
     public static final String MATERIAL_EMISSIVE = "materialEmissive";
 
     public static final String HAS_ALBEDO_TEXTURE = "hasAlbedoTexture";
@@ -31,7 +32,8 @@ public final class ShaderUniforms {
     public static final String HAS_AO_MAP = "hasAoMap";
     public static final String HAS_EMISSIVE_MAP = "hasEmissiveMap";
 
-    public static final String IBL_INTENSITY = "iblIntensity";
+    public static final String IBL_DIFFUSE_INTENSITY = "iblDiffuseIntensity";
+    public static final String IBL_SPECULAR_INTENSITY = "iblSpecularIntensity";
 
     public static final String SHADOW_MAP = "shadowMap";
     public static final String LIGHT_SPACE_MATRIX = "lightSpaceMatrix";
