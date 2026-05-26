@@ -23,6 +23,14 @@ public class KeyframeAnimationComponent extends SceneComponent {
         this.keyframes.sort(Comparator.comparingDouble(TransformKeyframe::time));
     }
 
+    public List<TransformKeyframe> getKeyframes() {
+        return List.copyOf(keyframes);
+    }
+
+    public boolean isLoop() {
+        return loop;
+    }
+
     public KeyframeAnimationComponent setLoop(Boolean loop) {
         this.loop = loop;
         return this;

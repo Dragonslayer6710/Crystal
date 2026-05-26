@@ -28,6 +28,18 @@ public class RotationComponent extends SceneComponent {
         );
     }
 
+    public float getXRadiansPerSecond() {
+        return xRadiansPerSecond;
+    }
+
+    public float getYRadiansPerSecond() {
+        return yRadiansPerSecond;
+    }
+
+    public float getZRadiansPerSecond() {
+        return zRadiansPerSecond;
+    }
+
     public RotationComponent setSpeed(float xRadiansPerSecond, float yRadiansPerSecond, float zRadiansPerSecond) {
         this.xRadiansPerSecond = xRadiansPerSecond;
         this.yRadiansPerSecond = yRadiansPerSecond;

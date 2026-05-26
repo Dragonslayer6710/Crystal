@@ -11,6 +11,7 @@ import com.crystal.engine.scene.io.SceneLoader;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Transform;
 import com.crystal.engine.render.shader.Shader;
+import com.crystal.engine.scene.io.SceneWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +29,8 @@ public class SandboxMain implements Game {
             LoggerFactory.getLogger(SandboxMain.class);
 
     private static final Path DEMO_SCENE_PATH = Path.of("assets/scenes/demo_scene.json");
+    private static final Path EXPORTED_SCENE_PATH = Path.of("assets/scenes/exported_scene.json");
+
     private static final boolean AUDIO_ENABLED = false;
 
     private final Set<String> activeTriggers = new HashSet<>();
@@ -140,6 +143,12 @@ public class SandboxMain implements Game {
 
         if (input.isKeyPressed(Key.R))
             reloadScene();
+
+        if (input.isKeyPressed(Key.O)) {
+            SceneWriter.write(EXPORTED_SCENE_PATH, ctx.getScene());
+
+            logger.info("Exported scene to '{}'", EXPORTED_SCENE_PATH);
+        }
 
         if (AUDIO_ENABLED)
             if (input.isKeyPressed(Key.E))

@@ -15,6 +15,8 @@ public class SceneObject {
     private final Material material;
     private final Transform transform;
 
+    private SceneObjectSource source;
+
     private SceneObject parent;
     private final List<SceneObject> children = new ArrayList<>();
 
@@ -162,6 +164,15 @@ public class SceneObject {
         return null;
     }
 
+    public SceneObjectSource getSource() {
+        return source;
+    }
+
+    public SceneObject setSource(SceneObjectSource source) {
+        this.source = source;
+        return this;
+    }
+
     public void update(SceneUpdateContext context) {
         if (!active)
             return;
@@ -291,6 +302,7 @@ public class SceneObject {
 
     public SceneObject copyHierarchy() {
         SceneObject copy = new SceneObject(name, mesh, material, transform.copy())
+            .setSource(source)
             .setActive(active)
             .setVisible(visible)
             .setCastsShadow(castsShadow)

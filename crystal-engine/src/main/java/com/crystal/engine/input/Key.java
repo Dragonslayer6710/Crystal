@@ -15,6 +15,7 @@ public enum Key {
     L(GLFW_KEY_L),
     P(GLFW_KEY_P),
     R(GLFW_KEY_R),
+    O(GLFW_KEY_O),
     E(GLFW_KEY_E),
 
     NUMPAD_0(GLFW_KEY_KP_0),

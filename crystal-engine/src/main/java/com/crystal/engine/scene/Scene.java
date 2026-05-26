@@ -9,9 +9,7 @@ import com.crystal.engine.scene.light.DirectionalLight;
 import com.crystal.engine.render.uniform.SceneUniformData;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class Scene implements Disposable {
 
@@ -22,6 +20,8 @@ public class Scene implements Disposable {
 
     private final DirectionalLight directionalLight = new DirectionalLight();
     private final Environment environment = new Environment();
+
+    private final Map<String, SceneMaterialSource> materialSources = new LinkedHashMap<>();
 
     private final UniformBuffer sceneUBO = new UniformBuffer(
             SceneUniformData.BINDING_POINT,
@@ -84,6 +84,20 @@ public class Scene implements Disposable {
 
     public Environment getEnvironment() {
         return environment;
+    }
+
+    public void addMaterialSource(SceneMaterialSource source) {
+        if (source == null) throw new IllegalArgumentException("Material source cannot be null");
+
+        materialSources.put(source.getName(), source);
+    }
+
+    public List<SceneMaterialSource> getMaterialSources() {
+        return List.copyOf(materialSources.values());
+    }
+
+    public void clearMaterialSources() {
+        materialSources.clear();
     }
 
     public UniformBuffer getSceneUBO() {
@@ -185,6 +199,11 @@ public class Scene implements Disposable {
             .setIblDiffuseIntensity(srcEnv.getIblDiffuseIntensity())
             .setIblSpecularIntensity(srcEnv.getIblSpecularIntensity())
             .copyLightingFrom(srcEnv);
+
+        clearMaterialSources();
+
+        for (SceneMaterialSource materialSource : source.getMaterialSources())
+            addMaterialSource(materialSource);
 
         for (SceneObject object : source.getRootObjects())
             add(object);

@@ -9,6 +9,7 @@ import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneObject;
+import com.crystal.engine.scene.SceneObjectSource;
 import com.crystal.engine.scene.Transform;
 import com.crystal.engine.scene.animation.KeyframeAnimationComponent;
 import com.crystal.engine.scene.animation.TransformKeyframe;
@@ -23,6 +24,8 @@ import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.crystal.engine.scene.io.SceneDefinition.*;
 
 public class SceneLoader {
 
@@ -307,12 +310,15 @@ public class SceneLoader {
     private static SceneObject loadModelObject(ObjectDefinition object, ResourceManager resources, Shader shader) {
         if (object.path == null || object.path.isBlank())
             throw new IllegalArgumentException("Model object path cannot be null or blank");
+
         Model model = resources.loadModel(object.path, new ModelLoadOptions().setShader(shader));
 
         SceneObject root = model.instantiate();
 
         if (object.name != null)
             root.setName(object.name);
+
+        root.setSource(SceneObjectSource.model(object.path));
 
         return root;
     }
@@ -330,7 +336,8 @@ public class SceneLoader {
 
         Material material = resolveMaterial(object, materials, shader);
 
-        return new SceneObject(object.name, mesh, material, new Transform());
+        return new SceneObject(object.name, mesh, material, new Transform())
+            .setSource(SceneObjectSource.primitive(object.primitive, object.material));
     }
 
     private static Material resolveMaterial(ObjectDefinition object, Map<String, Material> materials, Shader shader) {
@@ -352,7 +359,8 @@ public class SceneLoader {
         return switch (object.type) {
             case "model" -> loadModelObject(object, resources, shader);
             case "primitive" -> createPrimitiveObject(object, resources, shader, materials);
-            case "empty" -> new SceneObject(object.name, null, null, new Transform());
+            case "empty" -> new SceneObject(object.name, null, null, new Transform())
+                .setSource(SceneObjectSource.empty());
             default -> throw new IllegalArgumentException("Unsupported scene object type: " + object.type);
         };
     }
@@ -388,77 +396,5 @@ public class SceneLoader {
 
     private static int sceneVersion(SceneDefinition definition) {
         return definition.version != null ? definition.version : 1;
-    }
-
-    private static final class SceneDefinition {
-        public String name;
-        public Integer version;
-        public CameraDefinition camera;
-        public EnvironmentDefinition environment;
-        public LightingDefinition lighting;
-        public List<MaterialDefinition> materials;
-        public List<ObjectDefinition> objects;
-    }
-
-    private static final class CameraDefinition {
-        public List<Float> position;
-    }
-
-    private static final class EnvironmentDefinition {
-        public List<Float> ambientColor;
-        public Float ambientIntensity;
-        public String ibl;
-        public Float iblDiffuseIntensity;
-        public Float iblSpecularIntensity;
-    }
-
-    private static final class LightingDefinition {
-        public Float directionalIntensity;
-        public Float shadowStrength;
-    }
-
-    private static final class ObjectDefinition {
-        public String name;
-        public String type;
-        public String path;
-        public String primitive;
-        public List<Float> position;
-        public List<Float> rotationDegrees;
-        public List<Float> scale;
-        public List<String> tags;
-        public List<String> layers;
-        public Integer layerMask;
-        public Boolean castsShadow;
-        public String material;
-        public List<ComponentDefinition> components;
-        public List<ObjectDefinition> children;
-        public TriggerDefinition trigger;
-    }
-
-    private static final class TriggerDefinition {
-        public List<Float> halfExtents;
-    }
-
-    private static final class ComponentDefinition {
-        public String type;
-        public List<Float> speedRadiansPerSecond;
-        public Boolean loop;
-        public List<KeyframeDefinition> keyframes;
-    }
-
-    private static final class KeyframeDefinition {
-        public double time;
-        public List<Float> position;
-        public List<Float> rotationDegrees;
-        public List<Float> scale;
-    }
-
-    private static final class MaterialDefinition {
-        public String name;
-        public String albedo;
-        public String normal;
-        public Float roughness;
-        public Float metallic;
-        public Float normalStrength;
     }
 }
