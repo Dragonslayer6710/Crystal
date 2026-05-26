@@ -1,14 +1,13 @@
-package com.crystal.sandbox;
+package com.crystal.engine.scene.component;
 
 import com.crystal.engine.input.Key;
 import com.crystal.engine.input.action.InputAction;
 import com.crystal.engine.input.action.InputMap;
-import com.crystal.engine.scene.camera.Camera;
-import com.crystal.engine.scene.component.CameraControllerComponent;
+import com.crystal.engine.scene.SceneComponent;
 import com.crystal.engine.scene.SceneUpdateContext;
 import org.joml.Vector3f;
 
-public class FlyCameraController extends CameraControllerComponent {
+public class FlyCameraComponent extends SceneComponent {
 
     private float moveSpeed = 1.0f;
     private float sprintMultiplier = 2.0f;
@@ -25,9 +24,7 @@ public class FlyCameraController extends CameraControllerComponent {
     private static final InputAction MOVE_DOWN = new InputAction("camera_move_down");
     private static final InputAction SPRINT = new InputAction("camera_sprint");
 
-    public FlyCameraController(Camera camera) {
-        super(camera);
-
+    public FlyCameraComponent() {
         inputMap
             .bind(MOVE_FORWARD, Key.W)
             .bind(MOVE_BACKWARD, Key.S)
@@ -39,15 +36,15 @@ public class FlyCameraController extends CameraControllerComponent {
     }
 
     @Override
-    public void updateCamera(Camera camera, SceneUpdateContext context) {
+    public void update(SceneUpdateContext context) {
         if (!context.getWindow().isCursorCaptured())
             return;
 
-        move(camera, context);
-        look(camera, context);
+        look(context);
+        move(context);
     }
 
-    public FlyCameraController setMoveSpeed(float moveSpeed) {
+    public FlyCameraComponent setMoveSpeed(float moveSpeed) {
         if (!Float.isFinite(moveSpeed) || moveSpeed < 0.0f)
             throw new IllegalArgumentException("Move speed must be finite and non-negative");
 
@@ -55,7 +52,7 @@ public class FlyCameraController extends CameraControllerComponent {
         return this;
     }
 
-    public FlyCameraController setSprintMultiplier(float sprintMultiplier) {
+    public FlyCameraComponent setSprintMultiplier(float sprintMultiplier) {
         if (!Float.isFinite(sprintMultiplier) || sprintMultiplier < 1.0f)
             throw new IllegalArgumentException("Sprint multiplier must be finite and at least 1");
 
@@ -63,7 +60,7 @@ public class FlyCameraController extends CameraControllerComponent {
         return this;
     }
 
-    public FlyCameraController setMouseSensitivity(float mouseSensitivity) {
+    public FlyCameraComponent setMouseSensitivity(float mouseSensitivity) {
         if (!Float.isFinite(mouseSensitivity) || mouseSensitivity < 0.0f)
             throw new IllegalArgumentException("Mouse sensitivity must be finite and non-negative");
 
@@ -71,20 +68,40 @@ public class FlyCameraController extends CameraControllerComponent {
         return this;
     }
 
-    public FlyCameraController setFlying(boolean flying) {
+    public FlyCameraComponent setFlying(boolean flying) {
         this.flying = flying;
         return this;
     }
 
-    private void move(Camera camera, SceneUpdateContext context) {
+    private void look(SceneUpdateContext context) {
+        var input = context.getInput();
+
+        var ownerTransform = getOwner().getTransform();
+
+        var rotation = ownerTransform.getRotation();
+
+        rotation.y -= (float) (input.getMouseDeltaX() * mouseSensitivity);
+        rotation.x -= (float) (input.getMouseDeltaY() * mouseSensitivity);
+
+        // clamp pitch to not flip upside down
+        float maxPitch = (float) Math.toRadians(89.0f);
+        rotation.x = Math.clamp(rotation.x, -maxPitch, maxPitch);
+
+        ownerTransform.setRotation(rotation.x, rotation.y, rotation.z);
+    }
+
+    private void move(SceneUpdateContext context) {
         var input = context.getInput();
 
         float speed = moveSpeed
-                * ((inputMap.isDown(input, SPRINT)) ? sprintMultiplier : 1.0f)
-                * (float) context.getDeltaTime();
+            * ((inputMap.isDown(input, SPRINT)) ? sprintMultiplier : 1.0f)
+            * (float) context.getDeltaTime();
 
-        var forward = (flying) ? camera.getForward() : camera.getForwardXZ();
-        var right = (flying) ? camera.getRight() :camera.getRightXZ();
+
+        var ownerTransform = getOwner().getTransform();
+
+        var forward = (flying) ? ownerTransform.getForward() : ownerTransform.getForwardXZ();
+        var right = (flying) ? ownerTransform.getRight() : ownerTransform.getRightXZ();
 
         Vector3f movement = new Vector3f();
 
@@ -109,24 +126,7 @@ public class FlyCameraController extends CameraControllerComponent {
         if (movement.lengthSquared() > 0.0f) {
             movement.normalize();
             movement.mul(speed);
-            camera.getTransform().translate(movement.x, movement.y, movement.z);
+            getOwner().getTransform().translate(movement.x, movement.y, movement.z);
         }
-    }
-
-    private void look(Camera camera, SceneUpdateContext context) {
-        var input = context.getInput();
-
-        var cameraTransform = camera.getTransform();
-
-        var rotation = cameraTransform.getRotation();
-
-        rotation.y -= (float) (input.getMouseDeltaX() * mouseSensitivity);
-        rotation.x -= (float) (input.getMouseDeltaY() * mouseSensitivity);
-
-        // clamp pitch to not flip upside down
-        float maxPitch = (float) Math.toRadians(89.0f);
-        rotation.x = Math.clamp(rotation.x, -maxPitch, maxPitch);
-
-        cameraTransform.setRotation(rotation.x, rotation.y, rotation.z);
     }
 }

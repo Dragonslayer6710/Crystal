@@ -143,4 +143,39 @@ public class Transform {
         return getWorldMatrix().getScale(new Vector3f());
     }
 
+    public Quaternionf getWorldRotationQuat() {
+        return getWorldMatrix().getUnnormalizedRotation(new Quaternionf());
+    }
+
+    public Vector3f getForward() {
+        return new Vector3f(0, 0, -1)
+            .rotate(rotationQuat)
+            .normalize();
+    }
+
+    public Vector3f getRight() {
+        return new Vector3f(1, 0, 0)
+            .rotate(rotationQuat)
+            .normalize();
+    }
+
+    public Vector3f getForwardXZ() {
+        Vector3f forward = getForward();
+        forward.y = 0.0f;
+
+        if (forward.lengthSquared() > 0.0f)
+            forward.normalize();
+
+        return forward;
+    }
+
+    public Vector3f getRightXZ() {
+        Vector3f right = getRight();
+        right.y = 0.0f;
+
+        if (right.lengthSquared() > 0.0f)
+            right.normalize();
+
+        return right;
+    }
 }

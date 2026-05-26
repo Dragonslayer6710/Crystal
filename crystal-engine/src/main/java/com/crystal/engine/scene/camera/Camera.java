@@ -48,43 +48,19 @@ public class Camera {
     }
 
     public Vector3f getForward() {
-        var rotation = transform.getRotation();
-
-        return new Vector3f(0, 0, -1)
-                .rotateX(rotation.x)
-                .rotateY(rotation.y)
-                .rotateZ(rotation.z)
-                .normalize();
+        return transform.getForward();
     }
 
     public Vector3f getRight() {
-        var rotation = transform.getRotation();
-
-        return new Vector3f(1, 0, 0)
-                .rotateX(rotation.x)
-                .rotateY(rotation.y)
-                .rotateZ(rotation.z)
-                .normalize();
+        return transform.getRight();
     }
 
     public Vector3f getForwardXZ() {
-        float yaw = transform.getRotation().y;
-
-        return new Vector3f(
-                (float) -Math.sin(yaw),
-                0.0f,
-                (float) -Math.cos(yaw)
-        ).normalize();
+        return transform.getForwardXZ();
     }
 
     public Vector3f getRightXZ() {
-        float yaw = transform.getRotation().y;
-
-        return new Vector3f(
-                (float) Math.cos(yaw),
-                0.0f,
-                (float) -Math.sin(yaw)
-        ).normalize();
+        return transform.getRightXZ();
     }
 
     public void updateFrustum(float aspectRatio) {

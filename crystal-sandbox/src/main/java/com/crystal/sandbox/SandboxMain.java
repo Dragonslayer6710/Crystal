@@ -2,23 +2,23 @@ package com.crystal.sandbox;
 
 import com.crystal.engine.audio.SoundBuffer;
 import com.crystal.engine.audio.SoundSource;
+import com.crystal.engine.core.Engine;
 import com.crystal.engine.core.EngineConfig;
 import com.crystal.engine.core.EngineContext;
+import com.crystal.engine.core.Game;
 import com.crystal.engine.input.Key;
 import com.crystal.engine.input.MouseButton;
 import com.crystal.engine.input.action.InputAction;
 import com.crystal.engine.input.action.InputMap;
-import com.crystal.engine.scene.component.CameraComponent;
-import com.crystal.engine.scene.io.SceneLoader;
+import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Transform;
-import com.crystal.engine.render.shader.Shader;
+import com.crystal.engine.scene.component.CameraComponent;
+import com.crystal.engine.scene.component.FlyCameraComponent;
+import com.crystal.engine.scene.io.SceneLoader;
 import com.crystal.engine.scene.io.SceneWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.crystal.engine.core.Engine;
-import com.crystal.engine.core.Game;
 
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class SandboxMain implements Game {
 
     private static final Logger logger =
-            LoggerFactory.getLogger(SandboxMain.class);
+        LoggerFactory.getLogger(SandboxMain.class);
 
     private static final Path DEMO_SCENE_PATH = Path.of("assets/scenes/demo_scene.json");
     private static final Path EXPORTED_SCENE_PATH = Path.of("assets/scenes/exported_scene.json");
@@ -64,7 +64,7 @@ public class SandboxMain implements Game {
         configureInput();
 
         sceneShader = this.ctx.getResources()
-                .createShaderProgram("pbr");
+            .createShaderProgram("pbr");
 
         if (AUDIO_ENABLED) {
             testSound = ctx.getResources().loadSound("test.ogg");
@@ -99,7 +99,7 @@ public class SandboxMain implements Game {
             ctx.getScene().replaceWith(loadedScene.scene());
             loadedScene.scene().dispose();
 
-            addCameraController();
+            addSceneCamera();
 
             activeTriggers.clear();
 
@@ -132,17 +132,25 @@ public class SandboxMain implements Game {
         }
     }
 
-    private void addCameraController() {
+    private void addSceneCamera() {
         var camera = ctx.getScene().getCamera();
+        var cameraTransform = camera.getTransform();
+        var cameraPosition = cameraTransform.getPosition();
+
+        Transform sceneCameraTransform = new Transform()
+            .setPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z)
+            .setRotation(cameraTransform.getRotationQuat());
 
         CameraComponent cameraComponent = new CameraComponent(camera);
 
-        SceneObject cameraController = new SceneObject("Scene Camera", null, null, new Transform())
-            .addComponent(cameraComponent)
-            .addComponent(new FlyCameraController(camera)
+        SceneObject cameraController = new SceneObject(
+            "Scene Camera", null, null, sceneCameraTransform
+        )
+            .addComponent(new FlyCameraComponent()
                 .setMoveSpeed(1.0f)
                 .setSprintMultiplier(2.0f)
-                .setFlying(false));
+                .setFlying(false))
+            .addComponent(cameraComponent);
 
         ctx.getScene().setActiveCamera(cameraComponent);
         ctx.getScene().add(cameraController);
