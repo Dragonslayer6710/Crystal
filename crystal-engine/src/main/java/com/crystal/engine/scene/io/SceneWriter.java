@@ -1,14 +1,18 @@
 package com.crystal.engine.scene.io;
 
+import com.crystal.engine.render.RenderLayers;
 import com.crystal.engine.scene.Scene;
+import com.crystal.engine.scene.source.SceneMaterialSource;
 import com.crystal.engine.scene.SceneObject;
-import com.crystal.engine.scene.SceneObjectSource;
+import com.crystal.engine.scene.source.SceneObjectSource;
 import com.crystal.engine.scene.animation.KeyframeAnimationComponent;
 import com.crystal.engine.scene.animation.TransformKeyframe;
 import com.crystal.engine.scene.component.RotationComponent;
+import com.crystal.engine.scene.source.SceneTransformSource;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -20,9 +24,11 @@ import static com.crystal.engine.scene.io.SceneDefinition.*;
 public final class SceneWriter {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
-        .enable(SerializationFeature.INDENT_OUTPUT);
+        .enable(SerializationFeature.INDENT_OUTPUT)
+        .setDefaultPropertyInclusion(JsonInclude.Include.NON_NULL);
 
-    private SceneWriter() {}
+    private SceneWriter() {
+    }
 
     public static void write(Path scenePath, Scene scene) {
         if (scene == null) throw new IllegalArgumentException("Scene cannot be null");
@@ -49,6 +55,12 @@ public final class SceneWriter {
         definition.camera = createCameraDefinition(scene);
         definition.environment = createEnvironmentDefinition(scene);
         definition.lighting = createLightingDefinition(scene);
+
+        definition.materials = scene.getMaterialSources()
+            .stream()
+            .map(SceneWriter::createMaterialDefinition)
+            .toList();
+
         definition.objects = scene.getRootObjects()
             .stream()
             .map(SceneWriter::createObjectDefinition)
@@ -81,6 +93,9 @@ public final class SceneWriter {
         definition.iblDiffuseIntensity = environment.getIblDiffuseIntensity();
         definition.iblSpecularIntensity = environment.getIblSpecularIntensity();
 
+        if (scene.getEnvironmentSource() != null)
+            definition.ibl = scene.getEnvironmentSource().getIbl();
+
         return definition;
     }
 
@@ -95,29 +110,42 @@ public final class SceneWriter {
         return definition;
     }
 
+    private static MaterialDefinition createMaterialDefinition(SceneMaterialSource source) {
+        MaterialDefinition definition = new MaterialDefinition();
+
+        definition.name = source.getName();
+        definition.albedo = source.getAlbedo();
+        definition.normal = source.getNormal();
+        definition.roughness = source.getRoughness();
+        definition.metallic = source.getMetallic();
+        definition.normalStrength = source.getNormalStrength();
+
+        return definition;
+    }
+
     private static ObjectDefinition createObjectDefinition(SceneObject object) {
         ObjectDefinition definition = new ObjectDefinition();
 
-        var transform = object.getTransform();
+        var layerMask = object.getLayerMask();
 
         definition.name = object.getName();
+
         applySource(object, definition);
-        definition.position = vec3(transform.getPosition());
-        definition.rotationDegrees = vec3Degrees(transform.getRotation());
-        definition.scale = vec3(transform.getScale());
+        applyTransform(object, definition);
 
         if (!object.getTags().isEmpty())
             definition.tags = new ArrayList<>(object.getTags());
 
-        if (object.getLayerMask() != 0)
-            definition.layerMask = object.getLayerMask();
+        if (layerMask != RenderLayers.WORLD)
+            definition.layerMask = layerMask;
 
-        definition.castsShadow = object.castsShadow();
+        if (!object.castsShadow())
+            definition.castsShadow = false;
 
         applyTrigger(object, definition);
         applyComponents(object, definition);
 
-        if (!object.getChildren().isEmpty()) {
+        if (!isImportedModelRoot(object) && !object.getChildren().isEmpty()) {
             definition.children = object.getChildren()
                 .stream()
                 .map(SceneWriter::createObjectDefinition)
@@ -147,6 +175,41 @@ public final class SceneWriter {
                 definition.path = source.getPath();
             }
         }
+    }
+
+    private static void applyTransform(SceneObject object, ObjectDefinition definition) {
+        SceneTransformSource source = object.getTransformSource();
+
+        if (source != null) {
+            var position = source.getPosition();
+            var rotation = source.getRotationDegrees();
+            var scale = source.getScale();
+
+            if (position != null)
+                definition.position = vec3(position);
+
+            if (rotation != null)
+                definition.rotationDegrees = vec3(rotation);
+
+            if (scale != null)
+                definition.scale = vec3(scale);
+
+            return;
+        }
+
+        var transform = object.getTransform();
+        var position = transform.getPosition();
+        var rotation = transform.getRotation();
+        var scale = transform.getScale();
+
+        if (!isZero(position))
+            definition.position = vec3(position);
+
+        if (!isZero(rotation))
+            definition.rotationDegrees = vec3Degrees(rotation);
+
+        if (!isOne(scale))
+            definition.scale = vec3(scale);
     }
 
     private static void applyTrigger(SceneObject object, ObjectDefinition definition) {
@@ -211,15 +274,29 @@ public final class SceneWriter {
         return definition;
     }
 
-    private static List<Float> vec3(Vector3f value) {
-        return List.of(value.x, value.y, value.z);
+    private static boolean isImportedModelRoot(SceneObject object) {
+        SceneObjectSource source = object.getSource();
+
+        return source != null && source.getType() == SceneObjectSource.Type.MODEL;
     }
 
-    private static List<Float> vec3Degrees(Vector3f radians) {
+    private static List<Float> vec3(Vector3fc value) {
+        return List.of(value.x(), value.y(), value.z());
+    }
+
+    private static List<Float> vec3Degrees(Vector3fc radians) {
         return List.of(
-            (float) Math.toDegrees(radians.x),
-            (float) Math.toDegrees(radians.y),
-            (float) Math.toDegrees(radians.z)
+            (float) Math.toDegrees(radians.x()),
+            (float) Math.toDegrees(radians.y()),
+            (float) Math.toDegrees(radians.z())
         );
+    }
+
+    private static boolean isZero(Vector3fc value) {
+        return value.x() == 0.0f && value.y() == 0.0f && value.z() == 0.0f;
+    }
+
+    private static boolean isOne(Vector3fc value) {
+        return value.x() == 1.0f && value.y() == 1.0f && value.z() == 1.0f;
     }
 }

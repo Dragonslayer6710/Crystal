@@ -7,6 +7,8 @@ import com.crystal.engine.scene.camera.Camera;
 import com.crystal.engine.scene.component.CameraComponent;
 import com.crystal.engine.scene.light.DirectionalLight;
 import com.crystal.engine.render.uniform.SceneUniformData;
+import com.crystal.engine.scene.source.SceneEnvironmentSource;
+import com.crystal.engine.scene.source.SceneMaterialSource;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -20,6 +22,7 @@ public class Scene implements Disposable {
 
     private final DirectionalLight directionalLight = new DirectionalLight();
     private final Environment environment = new Environment();
+    private SceneEnvironmentSource environmentSource;
 
     private final Map<String, SceneMaterialSource> materialSources = new LinkedHashMap<>();
 
@@ -84,6 +87,14 @@ public class Scene implements Disposable {
 
     public Environment getEnvironment() {
         return environment;
+    }
+
+    public SceneEnvironmentSource getEnvironmentSource() {
+        return environmentSource;
+    }
+
+    public void setEnvironmentSource(SceneEnvironmentSource environmentSource) {
+        this.environmentSource = environmentSource;
     }
 
     public void addMaterialSource(SceneMaterialSource source) {
@@ -199,6 +210,8 @@ public class Scene implements Disposable {
             .setIblDiffuseIntensity(srcEnv.getIblDiffuseIntensity())
             .setIblSpecularIntensity(srcEnv.getIblSpecularIntensity())
             .copyLightingFrom(srcEnv);
+
+        setEnvironmentSource(source.getEnvironmentSource());
 
         clearMaterialSources();
 

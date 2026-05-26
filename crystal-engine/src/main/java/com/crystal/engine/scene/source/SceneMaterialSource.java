@@ -1,4 +1,4 @@
-package com.crystal.engine.scene;
+package com.crystal.engine.scene.source;
 
 public final class SceneMaterialSource {
 

@@ -4,6 +4,8 @@ import com.crystal.engine.render.RenderLayers;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.scene.collision.TriggerVolume;
+import com.crystal.engine.scene.source.SceneObjectSource;
+import com.crystal.engine.scene.source.SceneTransformSource;
 import org.joml.Vector3f;
 
 import java.util.*;
@@ -16,6 +18,7 @@ public class SceneObject {
     private final Transform transform;
 
     private SceneObjectSource source;
+    private SceneTransformSource transformSource;
 
     private SceneObject parent;
     private final List<SceneObject> children = new ArrayList<>();
@@ -170,6 +173,15 @@ public class SceneObject {
 
     public SceneObject setSource(SceneObjectSource source) {
         this.source = source;
+        return this;
+    }
+
+    public SceneTransformSource getTransformSource() {
+        return transformSource;
+    }
+
+    public SceneObject setTransformSource(SceneTransformSource transformSource) {
+        this.transformSource = transformSource;
         return this;
     }
 

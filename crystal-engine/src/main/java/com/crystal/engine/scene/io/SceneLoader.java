@@ -9,13 +9,16 @@ import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneObject;
-import com.crystal.engine.scene.SceneObjectSource;
 import com.crystal.engine.scene.Transform;
 import com.crystal.engine.scene.animation.KeyframeAnimationComponent;
 import com.crystal.engine.scene.animation.TransformKeyframe;
 import com.crystal.engine.scene.collision.TriggerVolume;
 import com.crystal.engine.scene.component.RotationComponent;
 import com.crystal.engine.render.shader.Shader;
+import com.crystal.engine.scene.source.SceneEnvironmentSource;
+import com.crystal.engine.scene.source.SceneMaterialSource;
+import com.crystal.engine.scene.source.SceneObjectSource;
+import com.crystal.engine.scene.source.SceneTransformSource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.joml.Vector3f;
 
@@ -80,7 +83,7 @@ public class SceneLoader {
         applyLighting(definition.lighting, scene);
         applyEnvironment(definition.environment, scene, resources);
 
-        Map<String, Material> materials = createMaterials(definition.materials, resources, shader);
+        Map<String, Material> materials = createMaterials(definition.materials, scene, resources, shader);
         applyObjects(definition.objects, scene, resources, shader, materials);
     }
 
@@ -115,19 +118,21 @@ public class SceneLoader {
         if (environment.ambientIntensity != null)
             scene.getEnvironment().setAmbientIntensity(environment.ambientIntensity);
 
+        if (environment.ibl != null && !environment.ibl.isBlank()) {
+            Environment cachedEnvironment = resources.getOrCreateIBLEnvironment(environment.ibl);
+            scene.getEnvironment().copyLightingFrom(cachedEnvironment);
+            scene.setEnvironmentSource(new SceneEnvironmentSource(environment.ibl));
+        }
+
         if (environment.iblDiffuseIntensity != null)
             scene.getEnvironment().setIblDiffuseIntensity(environment.iblDiffuseIntensity);
 
         if (environment.iblSpecularIntensity != null)
             scene.getEnvironment().setIblSpecularIntensity(environment.iblSpecularIntensity);
 
-        if (environment.ibl != null && !environment.ibl.isBlank()) {
-            Environment cachedEnvironment = resources.getOrCreateIBLEnvironment(environment.ibl);
-            scene.getEnvironment().copyLightingFrom(cachedEnvironment);
-        }
     }
 
-    private static Map<String, Material> createMaterials(List<MaterialDefinition> definitions,
+    private static Map<String, Material> createMaterials(List<MaterialDefinition> definitions, Scene scene,
                                                          ResourceManager resources, Shader shader) {
         Map<String, Material> materials = new HashMap<>();
 
@@ -142,6 +147,15 @@ public class SceneLoader {
                 throw new IllegalArgumentException("Duplicate material name: " + definition.name);
 
             materials.put(definition.name, createMaterial(definition, resources, shader));
+
+            scene.addMaterialSource(new SceneMaterialSource(
+                definition.name,
+                definition.albedo,
+                definition.normal,
+                definition.roughness,
+                definition.metallic,
+                definition.normalStrength
+            ));
         }
 
         return materials;
@@ -177,6 +191,7 @@ public class SceneLoader {
             SceneObject sceneObject = createSceneObject(object, resources, shader, materials);
 
             applyTransform(object, sceneObject.getTransform());
+            applyTransformSource(object, sceneObject);
             applyTags(object, sceneObject);
             applyLayerMask(object, sceneObject);
             applyComponents(object, sceneObject);
@@ -205,6 +220,14 @@ public class SceneLoader {
             float[] scale = vec3(object.scale, object.name + ".scale");
             transform.setScale(scale[0], scale[1], scale[2]);
         }
+    }
+
+    private static void applyTransformSource(ObjectDefinition object, SceneObject sceneObject) {
+        sceneObject.setTransformSource(new SceneTransformSource(
+            optionalVec3(object.position),
+            optionalVec3(object.rotationDegrees),
+            optionalVec3(object.scale)
+        ));
     }
 
     private static void applyTags(ObjectDefinition object, SceneObject sceneObject) {
@@ -286,6 +309,7 @@ public class SceneLoader {
         for (ObjectDefinition childDefinition : object.children) {
             SceneObject child = createSceneObject(childDefinition, resources, shader, materials);
             applyTransform(childDefinition, child.getTransform());
+            applyTransformSource(childDefinition, child);
             applyTags(childDefinition, child);
             applyLayerMask(childDefinition, child);
             applyComponents(childDefinition, child);
