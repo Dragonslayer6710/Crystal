@@ -5,6 +5,8 @@ import org.lwjgl.opengl.GLDebugMessageCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.IntBuffer;
+
 import static org.lwjgl.opengl.GL43.*;
 
 public final class GLDebug {
@@ -23,6 +25,15 @@ public final class GLDebug {
 
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+
+        // Driver notifications are very noisy during ImGui/resource setup; keep warnings and errors visible.
+        glDebugMessageControl(
+            GL_DONT_CARE,
+            GL_DONT_CARE,
+            GL_DEBUG_SEVERITY_NOTIFICATION,
+            (IntBuffer) null,
+            false
+        );
 
         callback = GLDebugMessageCallback.create((source, type, id, severity,
                                                   length, message, userParam) -> {

@@ -174,7 +174,7 @@ public final class EnvironmentMapGenerator implements Disposable {
             pass.clearColor();
 
             fullscreenQuad.bind();
-            MeshRenderer.draw(fullscreenQuad);
+            glDrawArrays(GL_TRIANGLES, 0, 3);
 
             return output;
         }
