@@ -3,11 +3,11 @@ package com.crystal.engine.assets.shader;
 import com.crystal.engine.assets.AssetResolver;
 import com.crystal.engine.render.shader.Shader;
 
-public final class ShaderLoader {
+public final class ShaderAssetLoader {
 
     private final AssetResolver assets;
 
-    public ShaderLoader(AssetResolver assets) {
+    public ShaderAssetLoader(AssetResolver assets) {
         if (assets == null) throw new IllegalArgumentException("AssetResolver cannot be null");
         this.assets = assets;
     }

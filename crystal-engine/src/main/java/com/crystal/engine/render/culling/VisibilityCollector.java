@@ -1,4 +1,4 @@
-package com.crystal.engine.render;
+package com.crystal.engine.render.culling;
 
 import com.crystal.engine.scene.camera.Camera;
 import com.crystal.engine.scene.Scene;
@@ -7,12 +7,12 @@ import com.crystal.engine.scene.SceneObject;
 import java.util.ArrayList;
 import java.util.List;
 
-final class VisibilityCollector {
+public final class VisibilityCollector {
 
     private VisibilityCollector() {
     }
 
-    static Result collect(Scene scene, boolean frustumCullingEnabled) {
+    public static Result collect(Scene scene, boolean frustumCullingEnabled) {
         if (scene == null) throw new IllegalArgumentException("Scene cannot be null");
 
         Result result = new Result();
@@ -42,20 +42,20 @@ final class VisibilityCollector {
             collect(child, result, camera, frustumCullingEnabled);
     }
 
-    static final class Result {
+    public static final class Result {
 
         private final List<SceneObject> visibleObjects = new ArrayList<>();
         private int renderableObjectCount;
 
-        List<SceneObject> getVisibleObjects() {
+        public List<SceneObject> getVisibleObjects() {
             return visibleObjects;
         }
 
-        int getRenderableObjectCount() {
+        public int getRenderableObjectCount() {
             return renderableObjectCount;
         }
 
-        int getCulledObjectCount() {
+        public int getCulledObjectCount() {
             return Math.max(0, renderableObjectCount - visibleObjects.size());
         }
     }

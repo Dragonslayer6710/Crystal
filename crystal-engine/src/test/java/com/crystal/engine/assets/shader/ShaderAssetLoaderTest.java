@@ -7,11 +7,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class ShaderLoaderTest {
+class ShaderAssetLoaderTest {
 
     @Test
     void projectShaderCacheKeyUsesProjectShaderPaths() {
-        ShaderLoader loader = new ShaderLoader(new AssetResolver(new AssetConfig()));
+        ShaderAssetLoader loader = new ShaderAssetLoader(new AssetResolver(new AssetConfig()));
 
         assertEquals(
             "shaders/pbr.vert|shaders/pbr.frag",
@@ -21,7 +21,7 @@ class ShaderLoaderTest {
 
     @Test
     void engineShaderCacheKeyUsesBundledEngineShaderPaths() {
-        ShaderLoader loader = new ShaderLoader(new AssetResolver(new AssetConfig()));
+        ShaderAssetLoader loader = new ShaderAssetLoader(new AssetResolver(new AssetConfig()));
 
         assertEquals(
             "engine-assets/shaders/skybox.vert|engine-assets/shaders/skybox.frag",
@@ -31,7 +31,7 @@ class ShaderLoaderTest {
 
     @Test
     void shaderCacheKeysRejectNullOrBlankNames() {
-        ShaderLoader loader = new ShaderLoader(new AssetResolver(new AssetConfig()));
+        ShaderAssetLoader loader = new ShaderAssetLoader(new AssetResolver(new AssetConfig()));
 
         assertThrows(IllegalArgumentException.class, () -> loader.projectShaderCacheKey(null, "frag"));
         assertThrows(IllegalArgumentException.class, () -> loader.projectShaderCacheKey("", "frag"));

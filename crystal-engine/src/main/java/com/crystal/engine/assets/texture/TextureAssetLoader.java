@@ -8,11 +8,11 @@ import com.crystal.engine.render.texture.TextureSettings;
 import java.nio.ByteBuffer;
 import java.nio.file.Path;
 
-public final class TextureLoader {
+public final class TextureAssetLoader {
 
     private final AssetResolver assets;
 
-    public TextureLoader(AssetResolver assets) {
+    public TextureAssetLoader(AssetResolver assets) {
         if (assets == null) throw new IllegalArgumentException("AssetResolver cannot be null");
         this.assets = assets;
     }

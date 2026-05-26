@@ -3,10 +3,10 @@ package com.crystal.engine.assets;
 import com.crystal.engine.assets.model.assimp.AssimpModelLoader;
 import com.crystal.engine.assets.model.Model;
 import com.crystal.engine.assets.model.ModelLoadOptions;
-import com.crystal.engine.assets.shader.ShaderLoader;
-import com.crystal.engine.assets.texture.TextureLoader;
+import com.crystal.engine.assets.shader.ShaderAssetLoader;
+import com.crystal.engine.assets.texture.TextureAssetLoader;
 import com.crystal.engine.audio.SoundBuffer;
-import com.crystal.engine.audio.SoundLoader;
+import com.crystal.engine.assets.sound.SoundAssetLoader;
 import com.crystal.engine.core.Disposable;
 import com.crystal.engine.render.mesh.PrimitiveType;
 import com.crystal.engine.render.texture.TextureSettings;
@@ -34,8 +34,8 @@ public class ResourceManager {
     private static final Logger logger = LoggerFactory.getLogger(ResourceManager.class);
 
     private final AssetResolver assets;
-    private final TextureLoader textureLoader;
-    private final ShaderLoader shaderLoader;
+    private final TextureAssetLoader textureAssetLoader;
+    private final ShaderAssetLoader shaderAssetLoader;
     private final List<Disposable> resources = new ArrayList<>();
 
     private Texture defaultWhiteTexture;
@@ -60,8 +60,8 @@ public class ResourceManager {
 
     public ResourceManager(AssetConfig config) {
         this.assets = new AssetResolver(config);
-        this.textureLoader = new TextureLoader(assets);
-        this.shaderLoader = new ShaderLoader(assets);
+        this.textureAssetLoader = new TextureAssetLoader(assets);
+        this.shaderAssetLoader = new ShaderAssetLoader(assets);
     }
 
     public ResourceManager() {
@@ -95,10 +95,10 @@ public class ResourceManager {
     }
 
     public Shader createShaderProgram(String vName, String fName) {
-        String cacheKey = shaderLoader.projectShaderCacheKey(vName, fName);
+        String cacheKey = shaderAssetLoader.projectShaderCacheKey(vName, fName);
 
         return shaderCache.computeIfAbsent(cacheKey, ignored ->
-            manageResource(shaderLoader.loadProjectShader(vName, fName))
+            manageResource(shaderAssetLoader.loadProjectShader(vName, fName))
         );
     }
 
@@ -107,10 +107,10 @@ public class ResourceManager {
     }
 
     public Shader createEngineShaderProgram(String vName, String fName) {
-        String cacheKey = shaderLoader.engineShaderCacheKey(vName, fName);
+        String cacheKey = shaderAssetLoader.engineShaderCacheKey(vName, fName);
 
         return shaderCache.computeIfAbsent(cacheKey, ignored ->
-            manageResource(shaderLoader.loadEngineShader(vName, fName))
+            manageResource(shaderAssetLoader.loadEngineShader(vName, fName))
         );
     }
 
@@ -121,10 +121,10 @@ public class ResourceManager {
     public Texture createTexture(String path, TextureSettings settings) {
         if (settings == null) throw new IllegalArgumentException("TextureSettings cannot be null");
 
-        String cacheKey = textureLoader.projectTextureCacheKey(path, settings);
+        String cacheKey = textureAssetLoader.projectTextureCacheKey(path, settings);
 
         return textureCache.computeIfAbsent(cacheKey, ignored ->
-            manageResource(textureLoader.loadProjectTexture(path, settings))
+            manageResource(textureAssetLoader.loadProjectTexture(path, settings))
         );
     }
 
@@ -138,10 +138,10 @@ public class ResourceManager {
 
     public Texture createHDRTexture(String path) {
         TextureSettings settings = TextureSettings.defaultHDR();
-        String cacheKey = textureLoader.projectTextureCacheKey(path, settings);
+        String cacheKey = textureAssetLoader.projectTextureCacheKey(path, settings);
 
         return textureCache.computeIfAbsent(cacheKey, ignored ->
-            manageResource(textureLoader.loadProjectHDRTexture(path))
+            manageResource(textureAssetLoader.loadProjectHDRTexture(path))
         );
     }
 
@@ -244,7 +244,7 @@ public class ResourceManager {
         String cacheKey = path.toAbsolutePath().normalize() + "|" + settings.cacheKey();
 
         return textureCache.computeIfAbsent(cacheKey, key ->
-            manageResource(textureLoader.loadPath(path, settings))
+            manageResource(textureAssetLoader.loadPath(path, settings))
         );
     }
 
@@ -256,7 +256,7 @@ public class ResourceManager {
         String cacheKey = "embedded:" + key + "|" + settings.cacheKey();
 
         return textureCache.computeIfAbsent(cacheKey, ignored ->
-            manageResource(textureLoader.loadEmbedded(cacheKey, encodedImage, settings))
+            manageResource(textureAssetLoader.loadEmbedded(cacheKey, encodedImage, settings))
         );
     }
 
@@ -275,7 +275,7 @@ public class ResourceManager {
         String soundPath = assets.projectSoundAssetPath(path);
 
         return soundCache.computeIfAbsent(soundPath, ignored ->
-            manageResource(SoundLoader.loadOgg(assets.projectSoundPath(path)))
+            manageResource(SoundAssetLoader.loadOgg(assets.projectSoundPath(path)))
         );
     }
 

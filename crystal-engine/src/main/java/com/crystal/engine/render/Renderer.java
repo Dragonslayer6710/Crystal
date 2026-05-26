@@ -7,6 +7,7 @@ import com.crystal.engine.render.command.DrawSceneObjectCommand;
 import com.crystal.engine.render.command.DrawShadowCommand;
 import com.crystal.engine.render.command.DrawSkyboxCommand;
 import com.crystal.engine.render.command.RenderCommand;
+import com.crystal.engine.render.culling.VisibilityCollector;
 import com.crystal.engine.render.opengl.RenderPass;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Scene;

@@ -1,5 +1,6 @@
-package com.crystal.engine.audio;
+package com.crystal.engine.assets.sound;
 
+import com.crystal.engine.audio.SoundBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
@@ -9,9 +10,9 @@ import java.nio.file.Path;
 
 import static org.lwjgl.stb.STBVorbis.*;
 
-public final class SoundLoader {
+public final class SoundAssetLoader {
 
-    private SoundLoader() {}
+    private SoundAssetLoader() {}
 
     public static SoundBuffer loadOgg(Path path) {
         if (path == null) throw new IllegalArgumentException("Path cannot be null");

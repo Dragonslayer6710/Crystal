@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-class TextureLoaderTest {
+class TextureAssetLoaderTest {
 
     @Test
     void projectTextureCacheKeyPrefixesTextureRootOnce() {
-        TextureLoader loader = new TextureLoader(new AssetResolver(new AssetConfig()));
+        TextureAssetLoader loader = new TextureAssetLoader(new AssetResolver(new AssetConfig()));
         TextureSettings settings = TextureSettings.defaultAlbedo();
 
         String cacheKey = loader.projectTextureCacheKey("Bricks/color.jpg", settings);
@@ -22,7 +22,7 @@ class TextureLoaderTest {
 
     @Test
     void projectTextureCacheKeyRejectsNullSettings() {
-        TextureLoader loader = new TextureLoader(new AssetResolver(new AssetConfig()));
+        TextureAssetLoader loader = new TextureAssetLoader(new AssetResolver(new AssetConfig()));
 
         assertThrows(
             IllegalArgumentException.class,
@@ -32,7 +32,7 @@ class TextureLoaderTest {
 
     @Test
     void projectTextureCacheKeyRejectsNullOrBlankPath() {
-        TextureLoader loader = new TextureLoader(new AssetResolver(new AssetConfig()));
+        TextureAssetLoader loader = new TextureAssetLoader(new AssetResolver(new AssetConfig()));
         TextureSettings settings = TextureSettings.defaultAlbedo();
 
         assertThrows(IllegalArgumentException.class, () -> loader.projectTextureCacheKey(null, settings));
