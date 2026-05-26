@@ -1,9 +1,9 @@
 package com.crystal.sandbox;
 
 import com.crystal.engine.input.Key;
-import com.crystal.engine.render.scene.Camera;
-import com.crystal.engine.render.scene.CameraControllerComponent;
-import com.crystal.engine.render.scene.SceneUpdateContext;
+import com.crystal.engine.scene.camera.Camera;
+import com.crystal.engine.scene.component.CameraControllerComponent;
+import com.crystal.engine.scene.SceneUpdateContext;
 import org.joml.Vector3f;
 
 public class FlyCameraController extends CameraControllerComponent {

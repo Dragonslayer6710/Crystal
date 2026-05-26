@@ -1,10 +1,9 @@
 package com.crystal.engine.render.mesh;
 
 import com.crystal.engine.core.Disposable;
-import com.crystal.engine.graphics.PrimitiveType;
-import com.crystal.engine.render.gl.VertexArray;
-import com.crystal.engine.render.gl.ElementBuffer;
-import com.crystal.engine.render.gl.VertexBuffer;
+import com.crystal.engine.render.opengl.VertexArray;
+import com.crystal.engine.render.opengl.ElementBuffer;
+import com.crystal.engine.render.opengl.VertexBuffer;
 import org.joml.Vector3f;
 
 import static org.lwjgl.opengl.GL46.*;

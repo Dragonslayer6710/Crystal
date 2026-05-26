@@ -1,7 +1,7 @@
 package com.crystal.engine.render.shadow;
 
 import com.crystal.engine.core.Disposable;
-import com.crystal.engine.render.gl.Framebuffer;
+import com.crystal.engine.render.opengl.Framebuffer;
 import com.crystal.engine.render.texture.Texture;
 import com.crystal.engine.render.texture.TextureFactory;
 

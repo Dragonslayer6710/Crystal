@@ -1,13 +1,14 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.assets.ResourceManager;
 import com.crystal.engine.audio.AudioEngine;
 import com.crystal.engine.core.exception.CrystalEngineException;
 import com.crystal.engine.debug.DebugOverlay;
 import com.crystal.engine.input.Input;
-import com.crystal.engine.render.GLDebug;
+import com.crystal.engine.render.opengl.debug.GLDebug;
 import com.crystal.engine.render.Renderer;
-import com.crystal.engine.render.scene.Scene;
-import com.crystal.engine.render.scene.SceneUpdateContext;
+import com.crystal.engine.scene.Scene;
+import com.crystal.engine.scene.SceneUpdateContext;
 import com.crystal.engine.window.Window;
 import com.crystal.engine.window.WindowEventListener;
 import org.lwjgl.opengl.GL;

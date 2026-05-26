@@ -1,7 +1,7 @@
 package com.crystal.engine.render.shader;
 
 import com.crystal.engine.core.Disposable;
-import com.crystal.engine.render.GLObjectLabel;
+import com.crystal.engine.render.opengl.debug.GLObjectLabel;
 import org.joml.Matrix4f;
 import org.lwjgl.system.MemoryStack;
 

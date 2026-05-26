@@ -1,5 +1,6 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.assets.AssetConfig;
 import com.crystal.engine.render.RendererConfig;
 import com.crystal.engine.window.WindowConfig;
 

@@ -2,7 +2,7 @@ package com.crystal.engine.render.material;
 
 import com.crystal.engine.render.shader.ShaderUniforms;
 import com.crystal.engine.render.texture.Texture;
-import com.crystal.engine.render.gl.UniformBuffer;
+import com.crystal.engine.render.opengl.UniformBuffer;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.TextureSlots;
 import org.joml.Vector3f;

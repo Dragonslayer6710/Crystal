@@ -1,6 +1,7 @@
 package com.crystal.engine.render;
 
-import com.crystal.engine.render.commands.RenderCommand;
+import com.crystal.engine.render.command.RenderCommand;
+import com.crystal.engine.render.command.RenderCommandContext;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +14,7 @@ final class RenderQueue {
         commands.add(command);
     }
 
-    void execute(RenderContext context) {
+    void execute(RenderCommandContext context) {
         for (RenderCommand command : commands) {
             command.execute(context);
         }

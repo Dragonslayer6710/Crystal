@@ -1,9 +1,6 @@
 package com.crystal.engine.render.texture;
 
-import com.crystal.engine.graphics.TextureSettings;
-import com.crystal.engine.graphics.TextureTarget;
-import com.crystal.engine.graphics.TextureWrap;
-import com.crystal.engine.render.GLObjectLabel;
+import com.crystal.engine.render.opengl.debug.GLObjectLabel;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.ByteBuffer;

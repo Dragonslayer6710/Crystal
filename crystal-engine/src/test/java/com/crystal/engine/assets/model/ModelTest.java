@@ -1,7 +1,7 @@
 package com.crystal.engine.assets.model;
 
-import com.crystal.engine.render.scene.SceneObject;
-import com.crystal.engine.render.scene.Transform;
+import com.crystal.engine.scene.SceneObject;
+import com.crystal.engine.scene.Transform;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

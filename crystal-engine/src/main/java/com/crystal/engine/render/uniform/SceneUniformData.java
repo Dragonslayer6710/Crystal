@@ -1,6 +1,6 @@
 package com.crystal.engine.render.uniform;
 
-import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.scene.Scene;
 
 public final class SceneUniformData {
 

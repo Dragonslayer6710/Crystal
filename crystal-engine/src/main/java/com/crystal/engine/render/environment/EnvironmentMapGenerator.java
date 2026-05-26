@@ -1,10 +1,10 @@
 package com.crystal.engine.render.environment;
 
 import com.crystal.engine.core.Disposable;
-import com.crystal.engine.graphics.TextureSettings;
-import com.crystal.engine.render.gl.Framebuffer;
-import com.crystal.engine.render.gl.MeshRenderer;
-import com.crystal.engine.render.gl.RenderPass;
+import com.crystal.engine.render.texture.TextureSettings;
+import com.crystal.engine.render.opengl.Framebuffer;
+import com.crystal.engine.render.opengl.MeshRenderer;
+import com.crystal.engine.render.opengl.RenderPass;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;

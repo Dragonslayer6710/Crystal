@@ -1,10 +1,11 @@
 package com.crystal.engine.render;
 
-import com.crystal.engine.core.ResourceManager;
+import com.crystal.engine.assets.ResourceManager;
+import com.crystal.engine.render.command.RenderCommandContext;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.mesh.Mesh;
-import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shader.ShaderUniforms;
 import com.crystal.engine.render.shadow.ShadowMap;
@@ -16,7 +17,7 @@ import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL46.*;
 
-public class RenderContext {
+class RenderContext implements RenderCommandContext {
 
     private static final int MAX_TEXTURE_UNITS = 16;
 
@@ -49,14 +50,14 @@ public class RenderContext {
             throw new IllegalArgumentException("Directional shadow map cannot be null");
 
         this.resources = new RenderResources(
-                resourceManager.getDefaultWhiteTexture(),
-                resourceManager.getDefaultNormalTexture(),
-                resourceManager.getDefaultBlackCubemap(),
-                resourceManager.getDefaultBrdfLut(),
-                resourceManager.getSkyboxShader(),
-                resourceManager.getSkyboxCubeMesh(),
-                resourceManager.createEngineShaderProgram("shadow_depth"),
-                directionalShadowMap
+            resourceManager.getDefaultWhiteTexture(),
+            resourceManager.getDefaultNormalTexture(),
+            resourceManager.getDefaultBlackCubemap(),
+            resourceManager.getDefaultBrdfLut(),
+            resourceManager.getSkyboxShader(),
+            resourceManager.getSkyboxCubeMesh(),
+            resourceManager.createEngineShaderProgram("shadow_depth"),
+            directionalShadowMap
         );
     }
 
@@ -78,21 +79,21 @@ public class RenderContext {
         sceneUBO.bind();
 
         bindTextureIfNeeded(
-                environment.getIrradianceMap() != null ? environment.getIrradianceMap() :
-                        resources.getDefaultBlackCubemap(),
-                TextureSlots.IRRADIANCE
+            environment.getIrradianceMap() != null ? environment.getIrradianceMap() :
+                resources.getDefaultBlackCubemap(),
+            TextureSlots.IRRADIANCE
         );
 
         bindTextureIfNeeded(
-                environment.getPrefilterMap() != null ? environment.getPrefilterMap() :
-                        resources.getDefaultBlackCubemap(),
-                TextureSlots.PREFILTER
+            environment.getPrefilterMap() != null ? environment.getPrefilterMap() :
+                resources.getDefaultBlackCubemap(),
+            TextureSlots.PREFILTER
         );
 
         bindTextureIfNeeded(
-                environment.getBrdfLut() != null ? environment.getBrdfLut() :
-                        resources.getDefaultBrdfLut(),
-                TextureSlots.BRDF_LUT
+            environment.getBrdfLut() != null ? environment.getBrdfLut() :
+                resources.getDefaultBrdfLut(),
+            TextureSlots.BRDF_LUT
         );
 
         shadowStrength = scene.getDirectionalLight().getShadowStrength();
@@ -134,8 +135,8 @@ public class RenderContext {
             currentWireframe = state.isWireframe();
 
             glPolygonMode(
-                    GL_FRONT_AND_BACK,
-                    currentWireframe ? GL_LINE : GL_FILL
+                GL_FRONT_AND_BACK,
+                currentWireframe ? GL_LINE : GL_FILL
             );
         }
     }
@@ -201,24 +202,24 @@ public class RenderContext {
 
     private void bindMaterialTextures(Material material) {
         Texture albedo = material.getAlbedo() != null
-                ? material.getAlbedo()
-                : resources.getDefaultWhiteTexture();
+            ? material.getAlbedo()
+            : resources.getDefaultWhiteTexture();
 
         Texture normalMap = material.getNormalMap() != null
-                ? material.getNormalMap()
-                : resources.getDefaultNormalTexture();
+            ? material.getNormalMap()
+            : resources.getDefaultNormalTexture();
 
         Texture metallicRoughness = material.getMetallicRoughnessMap() != null
-                ? material.getMetallicRoughnessMap()
-                : resources.getDefaultWhiteTexture();
+            ? material.getMetallicRoughnessMap()
+            : resources.getDefaultWhiteTexture();
 
         Texture ambientOcclusion = material.getAmbientOcclusionMap() != null
-                ? material.getAmbientOcclusionMap()
-                : resources.getDefaultWhiteTexture();
+            ? material.getAmbientOcclusionMap()
+            : resources.getDefaultWhiteTexture();
 
         Texture emissiveMap = material.getEmissiveMap() != null
-                ? material.getEmissiveMap()
-                : resources.getDefaultWhiteTexture();
+            ? material.getEmissiveMap()
+            : resources.getDefaultWhiteTexture();
 
         bindTextureIfNeeded(albedo, TextureSlots.ALBEDO);
         bindTextureIfNeeded(normalMap, TextureSlots.NORMAL);

@@ -1,8 +1,8 @@
 package com.crystal.engine.render;
 
-import com.crystal.engine.render.scene.Camera;
-import com.crystal.engine.render.scene.Scene;
-import com.crystal.engine.render.scene.SceneObject;
+import com.crystal.engine.scene.camera.Camera;
+import com.crystal.engine.scene.Scene;
+import com.crystal.engine.scene.SceneObject;
 
 import java.util.ArrayList;
 import java.util.List;

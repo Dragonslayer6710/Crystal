@@ -1,9 +1,10 @@
 package com.crystal.engine.core;
 
+import com.crystal.engine.assets.ResourceManager;
 import com.crystal.engine.debug.DebugOverlay;
 import com.crystal.engine.input.Input;
 import com.crystal.engine.render.Renderer;
-import com.crystal.engine.render.scene.Scene;
+import com.crystal.engine.scene.Scene;
 import com.crystal.engine.window.Window;
 
 public class EngineContext {

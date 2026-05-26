@@ -1,6 +1,6 @@
 package com.crystal.engine.render.mesh;
 
-import com.crystal.engine.core.ResourceManager;
+import com.crystal.engine.assets.ResourceManager;
 import com.crystal.engine.render.mesh.primitive.MeshPrimitives;
 
 public final class MeshFactory {

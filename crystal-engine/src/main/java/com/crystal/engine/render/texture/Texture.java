@@ -1,7 +1,6 @@
 package com.crystal.engine.render.texture;
 
 import com.crystal.engine.core.Disposable;
-import com.crystal.engine.graphics.TextureTarget;
 
 import static org.lwjgl.opengl.GL46.*;
 

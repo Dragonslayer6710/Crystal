@@ -1,8 +1,7 @@
 package com.crystal.engine.render.environment;
 
-import com.crystal.engine.core.ResourceManager;
+import com.crystal.engine.assets.ResourceManager;
 import com.crystal.engine.render.mesh.Mesh;
-import com.crystal.engine.render.mesh.MeshFactory;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.texture.Texture;
 

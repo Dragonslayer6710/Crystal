@@ -1,7 +1,7 @@
 package com.crystal.engine.assets.model;
 
-import com.crystal.engine.render.scene.SceneObject;
-import com.crystal.engine.render.scene.Transform;
+import com.crystal.engine.scene.SceneObject;
+import com.crystal.engine.scene.Transform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
