@@ -12,23 +12,25 @@ public final class VisibilityCollector {
     private VisibilityCollector() {
     }
 
-    public static Result collect(Scene scene, boolean frustumCullingEnabled) {
+    public static Result collect(Scene scene, boolean frustumCullingEnabled, int visibleLayerMask) {
         if (scene == null) throw new IllegalArgumentException("Scene cannot be null");
+        if (visibleLayerMask == 0) throw new IllegalArgumentException("Visible layer mask cannot be 0");
 
         Result result = new Result();
         Camera camera = scene.getCamera();
 
         for (SceneObject root : scene.getRootObjects())
-            collect(root, result, camera, frustumCullingEnabled);
+            collect(root, result, camera, frustumCullingEnabled, visibleLayerMask);
 
         return result;
     }
 
-    private static void collect(SceneObject object, Result result, Camera camera, boolean frustumCullingEnabled) {
+    private static void collect(SceneObject object, Result result, Camera camera,
+                                boolean frustumCullingEnabled, int visibleLayerMask) {
         if (!object.isActive())
             return;
 
-        if (object.isVisible() && object.isRenderable()) {
+        if (object.isVisible() && object.isRenderable() && isVisibleInLayerMask(object, visibleLayerMask)) {
             result.renderableObjectCount++;
             if (!frustumCullingEnabled || camera.canSee(
                     object.getWorldBoundsCenter(),
@@ -39,7 +41,11 @@ public final class VisibilityCollector {
         }
 
         for (SceneObject child : object.getChildren())
-            collect(child, result, camera, frustumCullingEnabled);
+            collect(child, result, camera, frustumCullingEnabled, visibleLayerMask);
+    }
+
+    private static boolean isVisibleInLayerMask(SceneObject object, int visibleLayerMask) {
+        return (object.getLayerMask() & visibleLayerMask) != 0;
     }
 
     public static final class Result {

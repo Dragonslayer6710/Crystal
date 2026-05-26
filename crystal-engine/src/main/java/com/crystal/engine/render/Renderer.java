@@ -41,7 +41,11 @@ public class Renderer implements Disposable {
 
     private int viewportWidth;
     private int viewportHeight;
+
     private boolean frustumCullingEnabled;
+
+    private int visibleLayerMask = RenderLayers.ALL;
+
     private float exposure = 1.0f;
     private final Vector4f clearColor = new Vector4f(0.1f, 0.1f, 0.15f, 1.0f);
     private int debugViewMode = 0;
@@ -122,6 +126,12 @@ public class Renderer implements Disposable {
         frustumCullingEnabled = enabled;
     }
 
+    public void setVisibleLayerMask(int visibleLayerMask) {
+        if (visibleLayerMask == 0) throw new IllegalArgumentException("Visible layer mask cannot be 0");
+
+        this.visibleLayerMask = visibleLayerMask;
+    }
+
     public void setExposure(float exposure) {
         if (exposure <= 0.0f) throw new IllegalArgumentException("Exposure must be greater than 0");
 
@@ -159,6 +169,10 @@ public class Renderer implements Disposable {
 
     public boolean isFrustumCullingEnabled() {
         return frustumCullingEnabled;
+    }
+
+    public int getVisibleLayerMask() {
+        return visibleLayerMask;
     }
 
     public float getExposure() {
@@ -203,7 +217,11 @@ public class Renderer implements Disposable {
     }
 
     private List<SceneObject> collectVisibleObjects(Scene scene) {
-        VisibilityCollector.Result result = VisibilityCollector.collect(scene, frustumCullingEnabled);
+        VisibilityCollector.Result result = VisibilityCollector.collect(
+            scene,
+            frustumCullingEnabled,
+            visibleLayerMask
+        );
 
         stats.setRenderableObjectCount(result.getRenderableObjectCount());
         stats.setVisibleObjectCount(result.getVisibleObjects().size());

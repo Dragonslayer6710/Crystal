@@ -1,5 +1,6 @@
 package com.crystal.engine.scene;
 
+import com.crystal.engine.render.RenderLayers;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.scene.collision.TriggerVolume;
@@ -26,6 +27,8 @@ public class SceneObject {
     private boolean active = true;
     private boolean visible = true;
     private boolean castsShadow = true;
+
+    private int layerMask = RenderLayers.WORLD;
 
     private float boundingRadius = 1.0f;
 
@@ -183,6 +186,10 @@ public class SceneObject {
         return castsShadow;
     }
 
+    public int getLayerMask() {
+        return layerMask;
+    }
+
     public float getBoundingRadius() {
         return boundingRadius;
     }
@@ -233,6 +240,13 @@ public class SceneObject {
         return this;
     }
 
+    public SceneObject setLayerMask(int layerMask) {
+        if (layerMask == 0) throw new IllegalArgumentException("Layer mask cannot be 0");
+
+        this.layerMask = layerMask;
+        return this;
+    }
+
     public SceneObject setBoundingRadius(float boundingRadius) {
         this.boundingRadius = boundingRadius;
         return this;
@@ -280,6 +294,7 @@ public class SceneObject {
             .setActive(active)
             .setVisible(visible)
             .setCastsShadow(castsShadow)
+            .setLayerMask(layerMask)
             .setBoundingRadius(boundingRadius);
 
         for (String tag : tags)

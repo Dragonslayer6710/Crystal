@@ -3,6 +3,7 @@ package com.crystal.engine.scene.io;
 import com.crystal.engine.assets.model.Model;
 import com.crystal.engine.assets.model.ModelLoadOptions;
 import com.crystal.engine.assets.ResourceManager;
+import com.crystal.engine.render.RenderLayers;
 import com.crystal.engine.render.environment.Environment;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
@@ -174,6 +175,7 @@ public class SceneLoader {
 
             applyTransform(object, sceneObject.getTransform());
             applyTags(object, sceneObject);
+            applyLayerMask(object, sceneObject);
             applyComponents(object, sceneObject);
             applyChildren(object, sceneObject, resources, shader, materials);
             applyTrigger(object, sceneObject);
@@ -240,6 +242,39 @@ public class SceneLoader {
         }
     }
 
+    private static void applyLayerMask(ObjectDefinition object, SceneObject sceneObject) {
+        if (object.layerMask != null && object.layers != null)
+            throw new IllegalArgumentException(object.name + " cannot define both layerMask and layers");
+
+        if (object.layerMask != null) {
+            sceneObject.setLayerMask(object.layerMask);
+            return;
+        }
+
+        if (object.layers != null) {
+            sceneObject.setLayerMask(resolveLayerNames(object.name, object.layers));
+        }
+    }
+
+    private static int resolveLayerNames(String objectName, List<String> layers) {
+        if (layers.isEmpty()) throw new IllegalArgumentException(objectName + ".layers cannot be empty");
+
+        int mask = 0;
+
+        for (String layer : layers)
+            mask |= resolveLayerName(objectName, layer);
+
+        return mask;
+    }
+
+    private static int resolveLayerName(String objectName, String layer) {
+        try {
+            return RenderLayers.fromName(layer);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException(objectName + " references invalid layer: " + layer, e);
+        }
+    }
+
     private static void applyChildren(ObjectDefinition object, SceneObject parent, ResourceManager resources,
                                       Shader shader, Map<String, Material> materials) {
         if (object.children == null)
@@ -249,6 +284,7 @@ public class SceneLoader {
             SceneObject child = createSceneObject(childDefinition, resources, shader, materials);
             applyTransform(childDefinition, child.getTransform());
             applyTags(childDefinition, child);
+            applyLayerMask(childDefinition, child);
             applyComponents(childDefinition, child);
             applyChildren(childDefinition, child, resources, shader, materials);
             applyTrigger(childDefinition, child);
@@ -390,6 +426,8 @@ public class SceneLoader {
         public List<Float> rotationDegrees;
         public List<Float> scale;
         public List<String> tags;
+        public List<String> layers;
+        public Integer layerMask;
         public Boolean castsShadow;
         public String material;
         public List<ComponentDefinition> components;

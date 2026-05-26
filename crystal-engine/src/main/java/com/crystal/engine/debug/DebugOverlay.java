@@ -2,6 +2,7 @@ package com.crystal.engine.debug;
 
 import com.crystal.engine.core.Disposable;
 import com.crystal.engine.core.Time;
+import com.crystal.engine.render.RenderLayers;
 import com.crystal.engine.render.RenderStats;
 import com.crystal.engine.render.Renderer;
 import com.crystal.engine.scene.Scene;
@@ -122,6 +123,39 @@ public class DebugOverlay implements Disposable {
 
         if (ImGui.sliderFloat("Exposure", exposure.getData(), 0.1f, 5.0f, "%.2f"))
             renderer.setExposure(exposure.get());
+
+        drawLayerMaskControls(renderer);
+    }
+
+    private void drawLayerMaskControls(Renderer renderer) {
+        ImGui.spacing();
+        ImGui.text("Visible Layers");
+
+        int mask = renderer.getVisibleLayerMask();
+
+        mask = drawLayerCheckbox("World", mask, RenderLayers.WORLD);
+        mask = drawLayerCheckbox("UI", mask, RenderLayers.UI);
+        mask = drawLayerCheckbox("Debug", mask, RenderLayers.DEBUG);
+        mask = drawLayerCheckbox("Editor", mask, RenderLayers.EDITOR);
+
+        if (mask != renderer.getVisibleLayerMask()) {
+            renderer.setVisibleLayerMask(mask);
+        }
+    }
+
+    private int drawLayerCheckbox(String label, int currentMask, int layer) {
+        ImBoolean enabled = new ImBoolean((currentMask & layer) != 0);
+
+        if (ImGui.checkbox(label, enabled)) {
+            if (enabled.get()) {
+                return currentMask | layer;
+            }
+
+            int updatedMask = currentMask & ~layer;
+            return updatedMask == 0 ? currentMask : updatedMask;
+        }
+
+        return currentMask;
     }
 
     private void drawDebugViewSelector(Renderer renderer) {
@@ -241,6 +275,11 @@ public class DebugOverlay implements Disposable {
         ImGui.text("Name: " + selectedObject.getName());
         ImGui.text("Active: " + selectedObject.isActive());
         ImGui.text("Visible: " + selectedObject.isVisible());
+        ImGui.text(
+            "Layer Mask: " +
+            selectedObject.getLayerMask() +
+            " (" + RenderLayers.describe(selectedObject.getLayerMask()) + ")"
+        );
 
         float[] positionValues = { position.x, position.y, position.z };
         if (ImGui.dragFloat3("Position", positionValues, 0.05f)) {
