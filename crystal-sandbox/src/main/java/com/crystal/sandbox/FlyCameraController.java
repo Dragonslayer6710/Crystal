@@ -1,6 +1,8 @@
 package com.crystal.sandbox;
 
 import com.crystal.engine.input.Key;
+import com.crystal.engine.input.action.InputAction;
+import com.crystal.engine.input.action.InputMap;
 import com.crystal.engine.scene.camera.Camera;
 import com.crystal.engine.scene.component.CameraControllerComponent;
 import com.crystal.engine.scene.SceneUpdateContext;
@@ -13,8 +15,27 @@ public class FlyCameraController extends CameraControllerComponent {
     private float mouseSensitivity = 0.002f;
     private boolean flying = false;
 
+    private final InputMap inputMap = new InputMap();
+
+    private static final InputAction MOVE_FORWARD = new InputAction("camera_move_forward");
+    private static final InputAction MOVE_BACKWARD = new InputAction("camera_move_backward");
+    private static final InputAction MOVE_LEFT = new InputAction("camera_move_left");
+    private static final InputAction MOVE_RIGHT = new InputAction("camera_move_right");
+    private static final InputAction MOVE_UP = new InputAction("camera_move_up");
+    private static final InputAction MOVE_DOWN = new InputAction("camera_move_down");
+    private static final InputAction SPRINT = new InputAction("camera_sprint");
+
     public FlyCameraController(Camera camera) {
         super(camera);
+
+        inputMap
+            .bind(MOVE_FORWARD, Key.W)
+            .bind(MOVE_BACKWARD, Key.S)
+            .bind(MOVE_LEFT, Key.A)
+            .bind(MOVE_RIGHT, Key.D)
+            .bind(MOVE_UP, Key.SPACE)
+            .bind(MOVE_DOWN, Key.LEFT_CTRL)
+            .bind(SPRINT, Key.LEFT_SHIFT);
     }
 
     @Override
@@ -59,7 +80,7 @@ public class FlyCameraController extends CameraControllerComponent {
         var input = context.getInput();
 
         float speed = moveSpeed
-                * ((input.isKeyDown(Key.LEFT_SHIFT)) ? sprintMultiplier : 1.0f)
+                * ((inputMap.isDown(input, SPRINT)) ? sprintMultiplier : 1.0f)
                 * (float) context.getDeltaTime();
 
         var forward = (flying) ? camera.getForward() : camera.getForwardXZ();
@@ -67,21 +88,21 @@ public class FlyCameraController extends CameraControllerComponent {
 
         Vector3f movement = new Vector3f();
 
-        if (input.isKeyDown(Key.W) && !input.isKeyDown(Key.S)) {
+        if (inputMap.isDown(input, MOVE_FORWARD) && !inputMap.isDown(input, MOVE_BACKWARD)) {
             movement.add(forward);
-        } else if (input.isKeyDown(Key.S)) {
+        } else if (inputMap.isDown(input, MOVE_BACKWARD)) {
             movement.sub(forward);
         }
 
-        if (input.isKeyDown(Key.D) && !input.isKeyDown(Key.A)) {
+        if (inputMap.isDown(input, MOVE_RIGHT) && !inputMap.isDown(input, MOVE_LEFT)) {
             movement.add(right);
-        } else if (input.isKeyDown(Key.A)) {
+        } else if (inputMap.isDown(input, MOVE_LEFT)) {
             movement.sub(right);
         }
 
-        if (input.isKeyDown(Key.SPACE) && !input.isKeyDown(Key.LEFT_CTRL)) {
+        if (inputMap.isDown(input, MOVE_UP) && !inputMap.isDown(input, MOVE_DOWN)) {
             movement.y += 1.0f;
-        } else if (input.isKeyDown(Key.LEFT_CTRL)) {
+        } else if (inputMap.isDown(input, MOVE_DOWN)) {
             movement.y -= 1.0f;
         }
 

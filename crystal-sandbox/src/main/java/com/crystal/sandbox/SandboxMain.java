@@ -6,6 +6,8 @@ import com.crystal.engine.core.EngineConfig;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
 import com.crystal.engine.input.MouseButton;
+import com.crystal.engine.input.action.InputAction;
+import com.crystal.engine.input.action.InputMap;
 import com.crystal.engine.scene.component.CameraComponent;
 import com.crystal.engine.scene.io.SceneLoader;
 import com.crystal.engine.scene.SceneObject;
@@ -35,6 +37,18 @@ public class SandboxMain implements Game {
 
     private final Set<String> activeTriggers = new HashSet<>();
 
+    private final InputMap inputMap = new InputMap();
+
+    private static final InputAction EXIT = new InputAction("exit");
+    private static final InputAction CAPTURE_CURSOR = new InputAction("capture_cursor");
+    private static final InputAction TOGGLE_FRUSTUM_CULLING = new InputAction("toggle_frustum_culling");
+    private static final InputAction LOG_SCENE_DIAGNOSTICS = new InputAction("log_scene_diagnostics");
+    private static final InputAction LOG_RENDERER_STATS = new InputAction("log_renderer_stats");
+    private static final InputAction RELOAD_SCENE = new InputAction("reload_scene");
+    private static final InputAction EXPORT_SCENE = new InputAction("export_scene");
+    private static final InputAction PLAY_TEST_SOUND = new InputAction("play_test_sound");
+    private static final InputAction CYCLE_DEBUG_VIEW = new InputAction("cycle_debug_view");
+
     private EngineContext ctx;
 
     private Shader sceneShader;
@@ -47,6 +61,8 @@ public class SandboxMain implements Game {
         this.ctx = ctx;
         logger.info("Game init");
 
+        configureInput();
+
         sceneShader = this.ctx.getResources()
                 .createShaderProgram("pbr");
 
@@ -57,6 +73,19 @@ public class SandboxMain implements Game {
         }
 
         reloadScene();
+    }
+
+    private void configureInput() {
+        inputMap
+            .bind(EXIT, Key.ESCAPE)
+            .bind(CAPTURE_CURSOR, MouseButton.LMB)
+            .bind(TOGGLE_FRUSTUM_CULLING, Key.F)
+            .bind(LOG_SCENE_DIAGNOSTICS, Key.L)
+            .bind(LOG_RENDERER_STATS, Key.P)
+            .bind(RELOAD_SCENE, Key.R)
+            .bind(EXPORT_SCENE, Key.O)
+            .bind(PLAY_TEST_SOUND, Key.E)
+            .bind(CYCLE_DEBUG_VIEW, Key.NUMPAD_ENTER);
     }
 
     private void reloadScene() {
@@ -139,7 +168,7 @@ public class SandboxMain implements Game {
 
         boolean imguiWantsMouse = ctx.getDebugOverlay().wantsMouse();
 
-        if (input.isKeyPressed(Key.ESCAPE)) {
+        if (inputMap.isPressed(input, EXIT)) {
             if (window.isCursorCaptured()) {
                 window.setCursorCaptured(false);
             } else {
@@ -147,26 +176,26 @@ public class SandboxMain implements Game {
             }
         }
 
-        if (!imguiWantsMouse && input.isMousePressed(MouseButton.LMB))
+        if (!imguiWantsMouse && inputMap.isPressed(input, CAPTURE_CURSOR))
             window.setCursorCaptured(true);
 
-        if (input.isKeyPressed(Key.F))
+        if (inputMap.isPressed(input, TOGGLE_FRUSTUM_CULLING))
             renderer.setFrustumCullingEnabled(!renderer.isFrustumCullingEnabled());
 
-        if (input.isKeyPressed(Key.L))
+        if (inputMap.isPressed(input, LOG_SCENE_DIAGNOSTICS))
             logSceneDiagnostics();
 
-        if (input.isKeyPressed(Key.P))
+        if (inputMap.isPressed(input, LOG_RENDERER_STATS))
             logger.info("Renderer stats: {}", renderer.getStats().summary());
 
-        if (input.isKeyPressed(Key.R))
+        if (inputMap.isPressed(input, RELOAD_SCENE))
             reloadScene();
 
-        if (input.isKeyPressed(Key.O))
+        if (inputMap.isPressed(input, EXPORT_SCENE))
             exportScene();
 
         if (AUDIO_ENABLED)
-            if (input.isKeyPressed(Key.E))
+            if (inputMap.isPressed(input, PLAY_TEST_SOUND))
                 testSoundSource.play();
 
         if (input.isKeyPressed(Key.NUMPAD_0)) renderer.setDebugViewMode(0);
@@ -180,7 +209,7 @@ public class SandboxMain implements Game {
         if (input.isKeyPressed(Key.NUMPAD_8)) renderer.setDebugViewMode(8);
         if (input.isKeyPressed(Key.NUMPAD_9)) renderer.setDebugViewMode(9);
 
-        if (input.isKeyPressed(Key.NUMPAD_ENTER))
+        if (inputMap.isPressed(input, CYCLE_DEBUG_VIEW))
             renderer.cycleDebugViewMode();
     }
 

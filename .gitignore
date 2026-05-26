@@ -41,3 +41,6 @@ hs_err_pid*.log
 
 # Local ImGui layout/state
 imgui.ini
+
+# Exported Scenes
+crystal-sandbox/assets/scenes/exported_scene.json
