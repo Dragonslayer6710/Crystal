@@ -6,6 +6,7 @@ import com.crystal.engine.core.EngineConfig;
 import com.crystal.engine.core.EngineContext;
 import com.crystal.engine.input.Key;
 import com.crystal.engine.input.MouseButton;
+import com.crystal.engine.scene.component.CameraComponent;
 import com.crystal.engine.scene.io.SceneLoader;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Transform;
@@ -82,12 +83,18 @@ public class SandboxMain implements Game {
     }
 
     private void addCameraController() {
-        SceneObject cameraController = new SceneObject("Camera Controller", null, null, new Transform())
-            .addComponent(new FlyCameraController(ctx.getScene().getCamera())
+        var camera = ctx.getScene().getCamera();
+
+        CameraComponent cameraComponent = new CameraComponent(camera);
+
+        SceneObject cameraController = new SceneObject("Scene Camera", null, null, new Transform())
+            .addComponent(cameraComponent)
+            .addComponent(new FlyCameraController(camera)
                 .setMoveSpeed(1.0f)
                 .setSprintMultiplier(2.0f)
                 .setFlying(false));
 
+        ctx.getScene().setActiveCamera(cameraComponent);
         ctx.getScene().add(cameraController);
     }
 

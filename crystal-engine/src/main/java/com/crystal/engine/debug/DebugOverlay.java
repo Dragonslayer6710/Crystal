@@ -8,6 +8,7 @@ import com.crystal.engine.render.Renderer;
 import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneComponent;
 import com.crystal.engine.scene.SceneObject;
+import com.crystal.engine.scene.component.CameraComponent;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;
@@ -300,7 +301,7 @@ public class DebugOverlay implements Disposable {
             transform.setScale(scaleValues[0], scaleValues[1], scaleValues[2]);
         }
 
-        drawSelectedObjectMetadata(selectedObject);
+        drawSelectedObjectMetadata(scene, selectedObject);
     }
 
     private boolean isObjectInScene(Scene scene, SceneObject target) {
@@ -324,7 +325,7 @@ public class DebugOverlay implements Disposable {
         return false;
     }
 
-    private void drawSelectedObjectMetadata(SceneObject object) {
+    private void drawSelectedObjectMetadata(Scene scene, SceneObject object) {
         ImGui.spacing();
 
         ImGui.text("Tags");
@@ -349,6 +350,43 @@ public class DebugOverlay implements Disposable {
             for (SceneComponent component : object.getComponents()) {
                 ImGui.bulletText(component.getClass().getSimpleName());
             }
+        }
+
+        CameraComponent cameraComponent = object.getComponent(CameraComponent.class);
+
+        if (cameraComponent != null) {
+            ImGui.spacing();
+
+            ImGui.text("Camera");
+            ImGui.separator();
+
+            boolean activeCamera = scene.getActiveCamera()
+                .map(component -> component == cameraComponent)
+                .orElse(false);
+
+            ImGui.text("Active: " + activeCamera);
+
+            if (!activeCamera && ImGui.button("Set Active Camera")) {
+                scene.setActiveCamera(cameraComponent);
+            }
+
+            var cameraTransform = cameraComponent.getCamera().getTransform();
+            var position = cameraTransform.getPosition();
+            var rotation = cameraTransform.getRotation();
+
+            ImGui.text(String.format(
+                "Position: %.2f, %.2f, %.2f",
+                position.x,
+                position.y,
+                position.z
+            ));
+
+            ImGui.text(String.format(
+                "Rotation: %.2f, %.2f, %.2f",
+                Math.toDegrees(rotation.x),
+                Math.toDegrees(rotation.y),
+                Math.toDegrees(rotation.z)
+            ));
         }
 
         ImGui.spacing();

@@ -4,6 +4,7 @@ import com.crystal.engine.core.Disposable;
 import com.crystal.engine.render.environment.Environment;
 import com.crystal.engine.render.opengl.UniformBuffer;
 import com.crystal.engine.scene.camera.Camera;
+import com.crystal.engine.scene.component.CameraComponent;
 import com.crystal.engine.scene.light.DirectionalLight;
 import com.crystal.engine.render.uniform.SceneUniformData;
 import org.joml.Vector3f;
@@ -16,6 +17,8 @@ public class Scene implements Disposable {
 
     private final List<SceneObject> rootObjects = new ArrayList<>();
     private final Camera camera = new Camera(0, 0, 0);
+
+    private CameraComponent activeCamera;
 
     private final DirectionalLight directionalLight = new DirectionalLight();
     private final Environment environment = new Environment();
@@ -57,7 +60,22 @@ public class Scene implements Disposable {
     }
 
     public Camera getCamera() {
+        if (activeCamera != null && activeCamera.isEnabled())
+            return activeCamera.getCamera();
+
         return camera;
+    }
+
+    public Optional<CameraComponent> getActiveCamera() {
+        return Optional.ofNullable(activeCamera);
+    }
+
+    public void setActiveCamera(CameraComponent activeCamera) {
+        this.activeCamera = activeCamera;
+    }
+
+    public void clearActiveCamera() {
+        activeCamera = null;
     }
 
     public DirectionalLight getDirectionalLight() {
