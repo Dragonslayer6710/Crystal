@@ -85,6 +85,24 @@ public class SandboxMain implements Game {
         }
     }
 
+    private void exportScene() {
+        try {
+            SceneWriter.write(EXPORTED_SCENE_PATH, ctx.getScene());
+
+            var loadedScene = SceneLoader.loadNew(
+                EXPORTED_SCENE_PATH,
+                ctx.getResources(),
+                sceneShader
+            );
+
+            loadedScene.scene().dispose();
+
+            logger.info("Exported and validated scene '{}'", EXPORTED_SCENE_PATH);
+        } catch (RuntimeException e) {
+            logger.error("Failed to export or validate scene '{}'", EXPORTED_SCENE_PATH, e);
+        }
+    }
+
     private void addCameraController() {
         var camera = ctx.getScene().getCamera();
 
@@ -144,11 +162,8 @@ public class SandboxMain implements Game {
         if (input.isKeyPressed(Key.R))
             reloadScene();
 
-        if (input.isKeyPressed(Key.O)) {
-            SceneWriter.write(EXPORTED_SCENE_PATH, ctx.getScene());
-
-            logger.info("Exported scene to '{}'", EXPORTED_SCENE_PATH);
-        }
+        if (input.isKeyPressed(Key.O))
+            exportScene();
 
         if (AUDIO_ENABLED)
             if (input.isKeyPressed(Key.E))
