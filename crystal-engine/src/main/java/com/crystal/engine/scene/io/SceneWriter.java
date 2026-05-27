@@ -35,10 +35,10 @@ public final class SceneWriter {
     public static void write(Path scenePath, Scene scene) {
         if (scene == null) throw new IllegalArgumentException("Scene cannot be null");
 
-        write(scenePath, toDefinition(scene));
+        writeDefinition(scenePath, toDefinition(scene));
     }
 
-    private static void write(Path scenePath, SceneDefinition definition) {
+    public static void writeDefinition(Path scenePath, SceneDefinition definition) {
         if (scenePath == null) throw new IllegalArgumentException("Scene path cannot be null");
         if (definition == null) throw new IllegalArgumentException("Scene definition cannot be null");
 
