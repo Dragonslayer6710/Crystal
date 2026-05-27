@@ -14,6 +14,7 @@ import com.crystal.engine.scene.component.DirectionalLightComponent;
 import com.crystal.engine.scene.component.KeyframeAnimationComponent;
 import com.crystal.engine.scene.animation.TransformKeyframe;
 import com.crystal.engine.scene.collision.TriggerVolume;
+import com.crystal.engine.scene.component.PointLightComponent;
 import com.crystal.engine.scene.component.RotationComponent;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.scene.source.SceneEnvironmentSource;
@@ -195,8 +196,8 @@ public class SceneLoader {
             applyTransformSource(object, sceneObject);
             applyTags(object, sceneObject);
             applyLayerMask(object, sceneObject);
-            applyComponents(object, sceneObject, scene);
-            applyChildren(object, sceneObject, scene, resources, shader, materials);
+            applyComponents(object, sceneObject);
+            applyChildren(object, sceneObject, resources, shader, materials);
             applyTrigger(object, sceneObject);
 
             if (object.castsShadow != null)
@@ -239,7 +240,7 @@ public class SceneLoader {
             sceneObject.addTag(tag);
     }
 
-    private static void applyComponents(ObjectDefinition object, SceneObject sceneObject, Scene scene) {
+    private static void applyComponents(ObjectDefinition object, SceneObject sceneObject) {
         if (object.components == null)
             return;
 
@@ -294,6 +295,25 @@ public class SceneLoader {
 
                     sceneObject.addComponent(light);
                 }
+                case "pointLight" -> {
+                    PointLightComponent light = new PointLightComponent();
+
+                    if (component.color != null) {
+                        float[] color = vec3(
+                            component.color,
+                            object.name + ".pointLight.color"
+                        );
+                        light.setColor(color[0], color[1], color[2]);
+                    }
+
+                    if (component.intensity != null)
+                        light.setIntensity(component.intensity);
+
+                    if (component.radius != null)
+                        light.setRadius(component.radius);
+
+                    sceneObject.addComponent(light);
+                }
                 default -> throw new IllegalArgumentException("Unsupported component type: " + component.type);
             }
         }
@@ -332,7 +352,7 @@ public class SceneLoader {
         }
     }
 
-    private static void applyChildren(ObjectDefinition object, SceneObject parent, Scene scene, ResourceManager resources,
+    private static void applyChildren(ObjectDefinition object, SceneObject parent, ResourceManager resources,
                                       Shader shader, Map<String, Material> materials) {
         if (object.children == null)
             return;
@@ -343,8 +363,8 @@ public class SceneLoader {
             applyTransformSource(childDefinition, child);
             applyTags(childDefinition, child);
             applyLayerMask(childDefinition, child);
-            applyComponents(childDefinition, child, scene);
-            applyChildren(childDefinition, child, scene, resources, shader, materials);
+            applyComponents(childDefinition, child);
+            applyChildren(childDefinition, child, resources, shader, materials);
             applyTrigger(childDefinition, child);
 
             if (childDefinition.castsShadow != null)

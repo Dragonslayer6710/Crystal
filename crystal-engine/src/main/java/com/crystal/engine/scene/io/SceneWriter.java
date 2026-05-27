@@ -3,6 +3,7 @@ package com.crystal.engine.scene.io;
 import com.crystal.engine.render.RenderLayers;
 import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.component.DirectionalLightComponent;
+import com.crystal.engine.scene.component.PointLightComponent;
 import com.crystal.engine.scene.source.SceneMaterialSource;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.source.SceneObjectSource;
@@ -268,6 +269,20 @@ public final class SceneWriter {
             component.intensity = light.getIntensity();
             component.shadowStrength = light.getShadowStrength();
             component.useTransformDirection = directionalLight.usesTransformDirection();
+
+            components.add(component);
+        }
+
+        PointLightComponent pointLight = object.getComponent(PointLightComponent.class);
+
+        if (pointLight != null) {
+            var light = pointLight.getLight();
+
+            ComponentDefinition component = new ComponentDefinition();
+            component.type = "pointLight";
+            component.color = vec3(light.getColor());
+            component.intensity = light.getIntensity();
+            component.radius = light.getRadius();
 
             components.add(component);
         }

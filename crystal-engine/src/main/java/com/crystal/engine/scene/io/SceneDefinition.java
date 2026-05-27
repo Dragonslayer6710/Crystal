@@ -60,12 +60,17 @@ public final class SceneDefinition {
         public Boolean loop;
         public List<KeyframeDefinition> keyframes;
 
-        // DirectionalLightComponent
-        public List<Float> direction;
+        // Light components
         public List<Float> color;
         public Float intensity;
+
+        // DirectionalLightComponent
+        public List<Float> direction;
         public Float shadowStrength;
         public Boolean useTransformDirection;
+
+        // PointLightComponent
+        public Float radius;
     }
 
     public static final class KeyframeDefinition {

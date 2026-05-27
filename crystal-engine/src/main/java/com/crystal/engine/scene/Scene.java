@@ -6,6 +6,7 @@ import com.crystal.engine.render.opengl.UniformBuffer;
 import com.crystal.engine.scene.camera.Camera;
 import com.crystal.engine.scene.component.CameraComponent;
 import com.crystal.engine.scene.component.DirectionalLightComponent;
+import com.crystal.engine.scene.component.PointLightComponent;
 import com.crystal.engine.scene.light.DirectionalLight;
 import com.crystal.engine.render.uniform.SceneUniformData;
 import com.crystal.engine.scene.source.SceneEnvironmentSource;
@@ -101,6 +102,13 @@ public class Scene implements Disposable {
         return getDirectionalLights()
             .stream()
             .findFirst();
+    }
+
+    public List<PointLightComponent> getPointLights() {
+        return findComponents(PointLightComponent.class)
+            .stream()
+            .filter(PointLightComponent::isEnabled)
+            .toList();
     }
 
     public Environment getEnvironment() {
