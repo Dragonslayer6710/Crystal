@@ -89,75 +89,12 @@
             "material": "brick"
         },
         {
-            "name": "Cube A",
-            "type": "primitive",
-            "primitive": "cube",
-            "position": [-2.0, 0.0, -2.0],
-            "tags": ["debug", "rotating"],
-            "material": "brick",
-            "components": [
-                {
-                    "type": "rotation",
-                    "speedRadiansPerSecond": [0.0, 1.0, 0.0]
-                }
-            ],
-            "children": [
-                {
-                    "name": "Cube B",
-                    "type": "primitive",
-                    "primitive": "cube",
-                    "position": [2.0, 0.0, 0.0],
-                    "tags": ["debug", "rotating"],
-                    "material": "brick",
-                    "components": [
-                        {
-                            "type": "rotation",
-                            "speedRadiansPerSecond": [1.0, 0.0, 0.0]
-                        },
-                        {
-                            "type": "orbit",
-                            "center": [-2.0, 0.0, -2.0],
-                            "radius": 2.0,
-                            "speed": 0.75,
-                            "phase": 0.0
-                        }
-                    ],
-                    "children": [
-                        {
-                            "name": "Cube C",
-                            "type": "primitive",
-                            "primitive": "cube",
-                            "position": [2.0, 0.0, 0.0],
-                            "tags": ["debug", "rotating"],
-                            "material": "brick",
-                            "components": [
-                                {
-                                    "type": "rotation",
-                                    "speedRadiansPerSecond": [0.0, 0.0, 1.0]
-                                }
-                            ]
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "name": "Helmet Trigger",
-            "type": "empty",
-            "position": [0.75, 1.0, -2.5],
-            "tags": ["trigger", "debug"],
-            "layers": ["debug"],
-            "trigger": {
-                "halfExtents": [1.5, 1.5, 1.5]
-            }
-        },
-        {
             "name": "Collectible A",
             "type": "primitive",
             "primitive": "cube",
             "position": [-1.0, 0.0, -2.5],
             "scale": [0.25, 0.25, 0.25],
-            "tags": ["collectible", "debug"],
+            "tags": ["gameplay", "collectible"],
             "material": "brick",
             "components": [
                 {
@@ -176,38 +113,52 @@
             }
         },
         {
-            "name": "Animated Cube",
+            "name": "Collectible B",
             "type": "primitive",
             "primitive": "cube",
-            "position": [-4.0, 0.0, -2.5],
-            "tags": ["debug", "animated"],
+            "position": [1.75, 0.0, -2.25],
+            "scale": [0.25, 0.25, 0.25],
+            "tags": ["gameplay", "collectible"],
             "material": "brick",
             "components": [
                 {
-                    "type": "keyframeAnimation",
-                    "loop": true,
-                    "keyframes": [
-                        {
-                            "time": 0.0,
-                            "position": [-4.0, 0.0, -2.5],
-                            "rotationDegrees": [0.0, 0.0, 0.0],
-                            "scale": [1.0, 1.0, 1.0]
-                        },
-                        {
-                            "time": 1.0,
-                            "position": [-4.0, 1.0, -2.5],
-                            "rotationDegrees": [0.0, 180.0, 0.0],
-                            "scale": [1.25, 1.25, 1.25]
-                        },
-                        {
-                            "time": 2.0,
-                            "position": [-4.0, 0.0, -2.5],
-                            "rotationDegrees": [0.0, 360.0, 0.0],
-                            "scale": [1.0, 1.0, 1.0]
-                        }
-                    ]
+                    "type": "bob",
+                    "amplitude": 0.2,
+                    "speed": 3.0,
+                    "phase": 1.0
+                },
+                {
+                    "type": "rotation",
+                    "speedRadiansPerSecond": [0.0, 2.0, 0.0]
                 }
-            ]
+            ],
+            "trigger": {
+                "halfExtents": [0.5, 0.5, 0.5]
+            }
+        },
+        {
+            "name": "Collectible C",
+            "type": "primitive",
+            "primitive": "cube",
+            "position": [0.0, 0.75, -4.0],
+            "scale": [0.25, 0.25, 0.25],
+            "tags": ["gameplay", "collectible"],
+            "material": "brick",
+            "components": [
+                {
+                    "type": "bob",
+                    "amplitude": 0.2,
+                    "speed": 3.0,
+                    "phase": 2.0
+                },
+                {
+                    "type": "rotation",
+                    "speedRadiansPerSecond": [0.0, 2.0, 0.0]
+                }
+            ],
+            "trigger": {
+                "halfExtents": [0.5, 0.5, 0.5]
+            }
         }
     ]
 }

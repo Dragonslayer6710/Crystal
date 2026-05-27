@@ -58,6 +58,8 @@ public class SandboxMain implements Game {
     private SoundBuffer testSound;
     private SoundSource testSoundSource;
 
+    private int collectibleCount;
+
     @Override
     public void init(EngineContext ctx) {
         this.ctx = ctx;
@@ -104,6 +106,7 @@ public class SandboxMain implements Game {
 
             activeTriggers.clear();
             collectedObjects.clear();
+            collectibleCount = ctx.getScene().findByTag("collectible").size();
 
             logger.info(
                 "Reloaded scene '{}' v{} from '{}'",
@@ -264,10 +267,14 @@ public class SandboxMain implements Game {
                 .setActive(false);
 
             logger.info(
-                "Collected '{}' ({})",
+                "Collected '{}' ({}/{})",
                 name,
-                collectedObjects.size()
+                collectedObjects.size(),
+                collectibleCount
             );
+
+            if (collectedObjects.size() == collectibleCount)
+                logger.info("All collectibles collected");
         }
     }
 
