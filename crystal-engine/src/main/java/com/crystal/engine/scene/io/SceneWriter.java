@@ -2,14 +2,11 @@ package com.crystal.engine.scene.io;
 
 import com.crystal.engine.render.RenderLayers;
 import com.crystal.engine.scene.Scene;
-import com.crystal.engine.scene.component.DirectionalLightComponent;
-import com.crystal.engine.scene.component.PointLightComponent;
+import com.crystal.engine.scene.component.*;
 import com.crystal.engine.scene.source.SceneMaterialSource;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.source.SceneObjectSource;
-import com.crystal.engine.scene.component.KeyframeAnimationComponent;
 import com.crystal.engine.scene.animation.TransformKeyframe;
-import com.crystal.engine.scene.component.RotationComponent;
 import com.crystal.engine.scene.source.SceneTransformSource;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -254,6 +251,29 @@ public final class SceneWriter {
                 .map(SceneWriter::createKeyframeDefinition)
                 .toList();
 
+            components.add(component);
+        }
+
+        BobComponent bob = object.getComponent(BobComponent.class);
+
+        if (bob != null) {
+            ComponentDefinition component = new ComponentDefinition();
+            component.type = "bob";
+            component.amplitude = bob.getAmplitude();
+            component.speed = bob.getSpeed();
+            component.phase = bob.getPhase();
+            components.add(component);
+        }
+
+        OrbitComponent orbit = object.getComponent(OrbitComponent.class);
+
+        if (orbit != null) {
+            ComponentDefinition component = new ComponentDefinition();
+            component.type = "orbit";
+            component.center = vec3(orbit.getCenter());
+            component.radius = orbit.getRadius();
+            component.speed = orbit.getSpeed();
+            component.phase = orbit.getPhase();
             components.add(component);
         }
 

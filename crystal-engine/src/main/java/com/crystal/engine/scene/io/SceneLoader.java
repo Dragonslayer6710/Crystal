@@ -10,12 +10,9 @@ import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Transform;
-import com.crystal.engine.scene.component.DirectionalLightComponent;
-import com.crystal.engine.scene.component.KeyframeAnimationComponent;
+import com.crystal.engine.scene.component.*;
 import com.crystal.engine.scene.animation.TransformKeyframe;
 import com.crystal.engine.scene.collision.TriggerVolume;
-import com.crystal.engine.scene.component.PointLightComponent;
-import com.crystal.engine.scene.component.RotationComponent;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.scene.source.SceneEnvironmentSource;
 import com.crystal.engine.scene.source.SceneMaterialSource;
@@ -315,6 +312,39 @@ public class SceneLoader {
                         light.setRadius(component.radius);
 
                     sceneObject.addComponent(light);
+                }
+                case "bob" -> {
+                    BobComponent bob = new BobComponent();
+
+                    if (component.amplitude != null)
+                        bob.setAmplitude(component.amplitude);
+
+                    if (component.speed != null)
+                        bob.setSpeed(component.speed);
+
+                    if (component.phase != null)
+                        bob.setPhase(component.phase);
+
+                    sceneObject.addComponent(bob);
+                }
+                case "orbit" -> {
+                    OrbitComponent orbit = new OrbitComponent();
+
+                    if (component.center != null) {
+                        float[] center = vec3(component.center, object.name + ".orbit.center");
+                        orbit.setCenter(center[0], center[1], center[2]);
+                    }
+
+                    if (component.radius != null)
+                        orbit.setRadius(component.radius);
+
+                    if (component.speed != null)
+                        orbit.setSpeed(component.speed);
+
+                    if (component.phase != null)
+                        orbit.setPhase(component.phase);
+
+                    sceneObject.addComponent(orbit);
                 }
                 default -> throw new IllegalArgumentException("Unsupported component type: " + component.type);
             }

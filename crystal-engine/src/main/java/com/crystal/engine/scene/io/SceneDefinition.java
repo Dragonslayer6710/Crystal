@@ -69,7 +69,15 @@ public final class SceneDefinition {
         public Float shadowStrength;
         public Boolean useTransformDirection;
 
-        // PointLightComponent
+        // BobComponent / OrbitComponent
+        public Float amplitude;
+        public Float speed;
+        public Float phase;
+
+        // OrbitComponent
+        public List<Float> center;
+
+        // PointLightComponent / OrbitComponent
         public Float radius;
     }
 

@@ -48,6 +48,12 @@
                     "color": [1.0, 0.15, 0.05],
                     "intensity": 5.0,
                     "radius": 2.0
+                },
+                {
+                    "type": "bob",
+                    "amplitude": 0.35,
+                    "speed": 2.0,
+                    "phase": 0.0
                 }
             ]
         },
@@ -107,6 +113,13 @@
                         {
                             "type": "rotation",
                             "speedRadiansPerSecond": [1.0, 0.0, 0.0]
+                        },
+                        {
+                            "type": "orbit",
+                            "center": [-2.0, 0.0, -2.0],
+                            "radius": 2.0,
+                            "speed": 0.75,
+                            "phase": 0.0
                         }
                     ],
                     "children": [
