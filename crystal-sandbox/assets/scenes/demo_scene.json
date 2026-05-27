@@ -152,6 +152,30 @@
             }
         },
         {
+            "name": "Collectible A",
+            "type": "primitive",
+            "primitive": "cube",
+            "position": [-1.0, 0.0, -2.5],
+            "scale": [0.25, 0.25, 0.25],
+            "tags": ["collectible", "debug"],
+            "material": "brick",
+            "components": [
+                {
+                    "type": "bob",
+                    "amplitude": 0.2,
+                    "speed": 3.0,
+                    "phase": 0.0
+                },
+                {
+                    "type": "rotation",
+                    "speedRadiansPerSecond": [0.0, 2.0, 0.0]
+                }
+            ],
+            "trigger": {
+                "halfExtents": [0.5, 0.5, 0.5]
+            }
+        },
+        {
             "name": "Animated Cube",
             "type": "primitive",
             "primitive": "cube",

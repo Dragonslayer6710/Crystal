@@ -37,6 +37,8 @@ public class SandboxMain implements Game {
 
     private final Set<String> activeTriggers = new HashSet<>();
 
+    private final Set<String> collectedObjects = new HashSet<>();
+
     private final InputMap inputMap = new InputMap();
 
     private static final InputAction EXIT = new InputAction("exit");
@@ -101,6 +103,7 @@ public class SandboxMain implements Game {
             addSceneCamera();
 
             activeTriggers.clear();
+            collectedObjects.clear();
 
             logger.info(
                 "Reloaded scene '{}' v{} from '{}'",
@@ -241,10 +244,38 @@ public class SandboxMain implements Game {
         activeTriggers.addAll(currentTriggers);
     }
 
+    private void updateCollectibles() {
+        var cameraPosition = ctx.getScene().getCamera().getTransform().getWorldPosition();
+
+        var collectibles = ctx.getScene()
+            .findTriggersContaining(cameraPosition)
+            .stream()
+            .filter(object -> object.hasTag("collectible"))
+            .toList();
+
+        for (SceneObject collectible : collectibles) {
+            String name = collectible.getName();
+
+            if (!collectedObjects.add(name))
+                continue;
+
+            collectible
+                .setVisible(false)
+                .setActive(false);
+
+            logger.info(
+                "Collected '{}' ({})",
+                name,
+                collectedObjects.size()
+            );
+        }
+    }
+
     @Override
     public void update(double dt) {
         handleInput();
         updateTriggerDiagnostics();
+        updateCollectibles();
     }
 
     @Override
