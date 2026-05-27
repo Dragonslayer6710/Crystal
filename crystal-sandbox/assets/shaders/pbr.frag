@@ -175,7 +175,7 @@ vec3 calculatePbrLight(
     vec3 lightDirection,
     vec3 radiance,
     vec3 F0,
-    vec3 kD,
+    float metallic,
     float roughness
 ) {
     vec3 H = normalize(lightDirection + viewDirection);
@@ -192,10 +192,35 @@ vec3 calculatePbrLight(
     vec3 specular = numerator / denominator;
 
     vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;
 
     vec3 diffuseBRDF = kD * albedo / PI;
 
     return (diffuseBRDF + specular) * radiance * NdotL;
+}
+
+vec3 calculatePointLightInfluence() {
+    vec3 influence = vec3(0.0);
+    int activePointLights = min(int(pointLightCount.x), 8);
+
+    for (int i = 0; i < activePointLights; i++) {
+        vec3 lightPosition = pointLights[i].positionRadius.xyz;
+        float radius = pointLights[i].positionRadius.w;
+
+        vec3 toLight = lightPosition - v_WorldPosition;
+        float distanceToLight = length(toLight);
+
+        if (radius <= 0.0 || distanceToLight > radius)
+        continue;
+
+        float attenuation = pow(max(1.0 - distanceToLight / radius, 0.0), 2.0);
+        influence += pointLights[i].colorIntensity.rgb
+        * pointLights[i].colorIntensity.a
+        * attenuation;
+    }
+
+    return influence;
 }
 
 vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness, float ao) {
@@ -217,7 +242,7 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
         L,
         sunColor.rgb * sunColor.a,
         F0,
-        kD,
+        metallic,
         roughness
     );
 
@@ -249,7 +274,7 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
             pointL,
             radiance,
             F0,
-            kD,
+            metallic,
             roughness
         );
     }
@@ -266,7 +291,6 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
 
         vec2 brdf = texture(brdfLut, vec2(max(dot(normal, V), 0.0), roughness)).rg;
 
-        vec3 roughnessFresnel = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
         vec3 specularIBL = prefilteredColor * (F * brdf.x + brdf.y);
 
         ambientLighting = (diffuseIBL * kD  * iblDiffuseIntensity + specularIBL * iblSpecularIntensity) * ao;
@@ -379,6 +403,14 @@ void main() {
             vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
             vec3 iblSpecular = calculateIBLSpecular(albedo, N, V, metallic, roughness);
             f_Color = vec4(toneMapReinhard(iblSpecular * exposure), 1.0);
+            break;
+
+        case 12:
+            f_Color = vec4(toneMapReinhard(calculatePointLightInfluence() * exposure), 1.0);
+            break;
+
+        case 13:
+            f_Color = vec4(vec3(clamp(pointLightCount.x / 8.0, 0.0, 1.0)), 1.0);
             break;
 
         default:

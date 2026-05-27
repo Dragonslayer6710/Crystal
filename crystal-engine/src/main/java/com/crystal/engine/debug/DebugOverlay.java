@@ -9,6 +9,8 @@ import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneComponent;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.component.CameraComponent;
+import com.crystal.engine.scene.component.DirectionalLightComponent;
+import com.crystal.engine.scene.component.PointLightComponent;
 import imgui.ImGui;
 import imgui.ImGuiIO;
 import imgui.flag.ImGuiConfigFlags;
@@ -31,7 +33,9 @@ public class DebugOverlay implements Disposable {
         "Prefilter",
         "BRDF LUT",
         "Shadow",
-        "IBL Specular"
+        "IBL Specular",
+        "Point Light Influence",
+        "Point Light Count"
     };
 
     private final ImGuiImplGlfw glfwBackend = new ImGuiImplGlfw();
@@ -389,6 +393,9 @@ public class DebugOverlay implements Disposable {
             ));
         }
 
+        drawDirectionalLightInspector(object);
+        drawPointLightInspector(object);
+
         ImGui.spacing();
 
         ImGui.text("Rendering");
@@ -398,6 +405,75 @@ public class DebugOverlay implements Disposable {
         ImGui.text(String.format("Bounding Radius: %.2f", object.getBoundingRadius()));
 
         drawMaterialInspector(object);
+    }
+
+    private void drawDirectionalLightInspector(SceneObject object) {
+        DirectionalLightComponent directionalLight = object.getComponent(DirectionalLightComponent.class);
+
+        if (directionalLight == null)
+            return;
+
+        var light = directionalLight.getLight();
+        var color = light.getColor();
+        var direction = light.getDirection();
+
+        ImGui.spacing();
+        ImGui.text("Directional Light");
+        ImGui.separator();
+
+        float[] colorValues = { color.x, color.y, color.z };
+        if (ImGui.colorEdit3("Sun Color", colorValues)) {
+            directionalLight.setColor(colorValues[0], colorValues[1], colorValues[2]);
+        }
+
+        ImFloat intensity = new ImFloat(light.getIntensity());
+        if (ImGui.sliderFloat("Sun Intensity", intensity.getData(), 0.0f, 100.0f, "%.2f")) {
+            directionalLight.setIntensity(intensity.get());
+        }
+
+        ImFloat shadowStrength = new ImFloat(light.getShadowStrength());
+        if (ImGui.sliderFloat("Shadow Strength", shadowStrength.getData(), 0.0f, 1.0f, "%.2f")) {
+            directionalLight.setShadowStrength(shadowStrength.get());
+        }
+
+        boolean useTransformDirection = directionalLight.usesTransformDirection();
+        ImGui.text("Uses Transform Direction: " + useTransformDirection);
+
+        if (!useTransformDirection) {
+            float[] directionValues = { direction.x, direction.y, direction.z };
+            if (ImGui.dragFloat3("Sun Direction", directionValues, 0.05f)) {
+                directionalLight.setDirection(directionValues[0], directionValues[1], directionValues[2]);
+            }
+        }
+    }
+
+    private void drawPointLightInspector(SceneObject object) {
+        PointLightComponent pointLight = object.getComponent(PointLightComponent.class);
+
+        if (pointLight == null)
+            return;
+
+        var light = pointLight.getLight();
+        var color = light.getColor();
+
+        ImGui.spacing();
+        ImGui.text("Point Light");
+        ImGui.separator();
+
+        float[] colorValues = { color.x, color.y, color.z };
+        if (ImGui.colorEdit3("Color", colorValues)) {
+            pointLight.setColor(colorValues[0], colorValues[1], colorValues[2]);
+        }
+
+        ImFloat intensity = new ImFloat(light.getIntensity());
+        if (ImGui.sliderFloat("Intensity", intensity.getData(), 0.0f, 100.0f, "%.2f")) {
+            pointLight.setIntensity(intensity.get());
+        }
+
+        ImFloat radius = new ImFloat(light.getRadius());
+        if (ImGui.sliderFloat("Radius", radius.getData(), 0.1f, 30.0f, "%.2f")) {
+            pointLight.setRadius(radius.get());
+        }
     }
 
     private void drawMaterialInspector(SceneObject object) {

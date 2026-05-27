@@ -28,7 +28,7 @@ public class Renderer implements Disposable {
 
     private static final Logger logger = LoggerFactory.getLogger(Renderer.class);
 
-    private static final int DEBUG_VIEW_COUNT = 12;
+    private static final int DEBUG_VIEW_COUNT = 14;
     private static final int DEBUG_VIEW_MAX = DEBUG_VIEW_COUNT - 1;
 
     private final RendererConfig config;
@@ -197,6 +197,8 @@ public class Renderer implements Disposable {
             case 9 -> "BRDF LUT";
             case 10 -> "Shadow";
             case 11 -> "IBL Specular";
+            case 12 -> "Point Light Influence";
+            case 13 -> "Point Light Count";
             default -> "Unknown";
         };
     }

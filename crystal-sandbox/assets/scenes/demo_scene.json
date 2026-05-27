@@ -46,8 +46,8 @@
                 {
                     "type": "pointLight",
                     "color": [1.0, 0.15, 0.05],
-                    "intensity": 60.0,
-                    "radius": 8.0
+                    "intensity": 5.0,
+                    "radius": 2.0
                 }
             ]
         },
