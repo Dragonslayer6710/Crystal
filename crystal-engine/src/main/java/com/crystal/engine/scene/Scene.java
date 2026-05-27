@@ -2,6 +2,7 @@ package com.crystal.engine.scene;
 
 import com.crystal.engine.render.environment.Environment;
 import com.crystal.engine.scene.camera.Camera;
+import com.crystal.engine.scene.collision.BoxCollider;
 import com.crystal.engine.scene.component.CameraComponent;
 import com.crystal.engine.scene.component.DirectionalLightComponent;
 import com.crystal.engine.scene.component.PointLightComponent;
@@ -242,6 +243,56 @@ public class Scene {
 
         for (SceneObject child : object.getChildren())
             findTriggersContaining(child, point, matches);
+    }
+
+    public List<SceneObject> findCollidersContaining(Vector3f point) {
+        if (point == null) throw new IllegalArgumentException("Point cannot be null");
+
+        List<SceneObject> matches = new ArrayList<>();
+
+        for (SceneObject object : rootObjects)
+            findCollidersContaining(object, point, matches);
+
+        return matches;
+    }
+
+    private void findCollidersContaining(SceneObject object, Vector3f point, List<SceneObject> matches) {
+        if (!object.isActive())
+            return;
+
+        if (object.hasBoxCollider() && object.getBoxCollider().contains(point, object.getTransform()))
+            matches.add(object);
+
+        for (SceneObject child : object.getChildren())
+            findCollidersContaining(child, point, matches);
+    }
+
+    public List<SceneObject> findCollidersIntersecting(BoxCollider collider, Transform transform) {
+        if (collider == null) throw new IllegalArgumentException("Collider cannot be null");
+        if (transform == null) throw new IllegalArgumentException("Transform cannot be null");
+
+        List<SceneObject> matches = new ArrayList<>();
+
+        for (SceneObject object : rootObjects)
+            findCollidersIntersecting(object, collider, transform, matches);
+
+        return matches;
+    }
+
+    private void findCollidersIntersecting(
+        SceneObject object,
+        BoxCollider collider,
+        Transform transform,
+        List<SceneObject> matches
+    ) {
+        if (!object.isActive())
+            return;
+
+        if (object.hasBoxCollider() && object.getBoxCollider().intersects(collider, object.getTransform(), transform))
+            matches.add(object);
+
+        for (SceneObject child : object.getChildren())
+            findCollidersIntersecting(child, collider, transform, matches);
     }
 
     public void replaceWith(Scene source) {

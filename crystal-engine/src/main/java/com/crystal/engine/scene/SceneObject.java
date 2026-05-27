@@ -3,6 +3,7 @@ package com.crystal.engine.scene;
 import com.crystal.engine.render.RenderLayers;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.mesh.Mesh;
+import com.crystal.engine.scene.collision.BoxCollider;
 import com.crystal.engine.scene.collision.TriggerVolume;
 import com.crystal.engine.scene.source.SceneObjectSource;
 import com.crystal.engine.scene.source.SceneTransformSource;
@@ -28,6 +29,8 @@ public class SceneObject {
     private final Set<String> tags = new HashSet<>();
 
     private TriggerVolume triggerVolume;
+
+    private BoxCollider boxCollider;
 
     private boolean active = true;
     private boolean visible = true;
@@ -312,6 +315,19 @@ public class SceneObject {
         return this;
     }
 
+    public boolean hasBoxCollider() {
+        return boxCollider != null;
+    }
+
+    public BoxCollider getBoxCollider() {
+        return boxCollider;
+    }
+
+    public SceneObject setBoxCollider(BoxCollider boxCollider) {
+        this.boxCollider = boxCollider;
+        return this;
+    }
+
     public SceneObject copyHierarchy() {
         SceneObject copy = new SceneObject(name, mesh, material, transform.copy())
             .setSource(source)
@@ -327,6 +343,11 @@ public class SceneObject {
         if (triggerVolume != null) {
             var halfExtents = triggerVolume.getHalfExtents();
             copy.setTriggerVolume(new TriggerVolume(halfExtents.x, halfExtents.y, halfExtents.z));
+        }
+
+        if (boxCollider != null) {
+            var halfExtents = boxCollider.getHalfExtents();
+            copy.setBoxCollider(new BoxCollider(halfExtents.x, halfExtents.y, halfExtents.z));
         }
 
         for (SceneObject child : children)
