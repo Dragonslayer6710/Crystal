@@ -42,7 +42,7 @@ public class SceneLoader {
         if (resources == null) throw new IllegalArgumentException("ResourceManager cannot be null");
         if (shader == null) throw new IllegalArgumentException("Shader cannot be null");
 
-        SceneDefinition definition = read(scenePath);
+        SceneDefinition definition = readDefinition(scenePath);
 
         apply(definition, scene, resources, shader);
 
@@ -58,7 +58,7 @@ public class SceneLoader {
         if (resources == null) throw new IllegalArgumentException("ResourceManager cannot be null");
         if (shader == null) throw new IllegalArgumentException("Shader cannot be null");
 
-        SceneDefinition definition = read(scenePath);
+        SceneDefinition definition = readDefinition(scenePath);
         Scene scene = new Scene();
 
         apply(definition, scene, resources, shader);
@@ -72,7 +72,9 @@ public class SceneLoader {
 
     public record LoadedScene(Scene scene, String name, int version) {}
 
-    private static SceneDefinition read(Path scenePath) {
+    public static SceneDefinition readDefinition(Path scenePath) {
+        if (scenePath == null) throw new IllegalArgumentException("Scene path cannot be null");
+
         try {
             return new ObjectMapper().readValue(scenePath.toFile(), SceneDefinition.class);
         } catch (IOException e) {
