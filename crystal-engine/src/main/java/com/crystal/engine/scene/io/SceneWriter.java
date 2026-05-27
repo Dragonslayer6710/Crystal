@@ -144,6 +144,7 @@ public final class SceneWriter {
             definition.castsShadow = false;
 
         applyTrigger(object, definition);
+        applyCollider(object, definition);
         applyComponents(object, definition);
 
         if (!isImportedModelRoot(object) && !object.getChildren().isEmpty()) {
@@ -221,6 +222,16 @@ public final class SceneWriter {
         trigger.halfExtents = vec3(object.getTriggerVolume().getHalfExtents());
 
         definition.trigger = trigger;
+    }
+
+    private static void applyCollider(SceneObject object, ObjectDefinition definition) {
+        if (!object.hasBoxCollider())
+            return;
+
+        ColliderDefinition collider = new ColliderDefinition();
+        collider.halfExtents = vec3(object.getBoxCollider().getHalfExtents());
+
+        definition.collider = collider;
     }
 
     private static void applyComponents(SceneObject object, ObjectDefinition definition) {

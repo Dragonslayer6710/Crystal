@@ -5,6 +5,7 @@ import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Transform;
 import com.crystal.engine.scene.animation.TransformKeyframe;
+import com.crystal.engine.scene.collision.BoxCollider;
 import com.crystal.engine.scene.collision.TriggerVolume;
 import com.crystal.engine.scene.component.BobComponent;
 import com.crystal.engine.scene.component.DirectionalLightComponent;
@@ -28,6 +29,46 @@ class SceneWriterTest {
 
     @TempDir
     Path tempDir;
+
+    @Test
+    void writeExportsRuntimeSceneColliders() {
+        Path scenePath = tempDir.resolve("runtime-collider.scene.json");
+        Scene scene = new Scene();
+
+        SceneObject wall = new SceneObject("Wall", null, null, new Transform())
+            .setBoxCollider(new BoxCollider(1.0f, 2.0f, 3.0f));
+
+        scene.add(wall);
+
+        SceneWriter.write(scenePath, scene);
+
+        SceneDefinition definition = SceneLoader.readDefinition(scenePath);
+        SceneDefinition.ObjectDefinition exportedWall = definition.objects.getFirst();
+
+        assertEquals(List.of(1.0f, 2.0f, 3.0f), exportedWall.collider.halfExtents);
+    }
+
+    @Test
+    void writeDefinitionRoundTripsColliderDefinitions() {
+        Path scenePath = tempDir.resolve("collider.scene.json");
+        SceneDefinition definition = new SceneDefinition();
+
+        SceneDefinition.ObjectDefinition wall = new SceneDefinition.ObjectDefinition();
+        wall.name = "Wall";
+        wall.type = "empty";
+
+        SceneDefinition.ColliderDefinition collider = new SceneDefinition.ColliderDefinition();
+        collider.halfExtents = List.of(1.0f, 2.0f, 3.0f);
+        wall.collider = collider;
+
+        definition.objects = List.of(wall);
+
+        SceneWriter.writeDefinition(scenePath, definition);
+
+        SceneDefinition loaded = SceneLoader.readDefinition(scenePath);
+
+        assertEquals(List.of(1.0f, 2.0f, 3.0f), loaded.objects.getFirst().collider.halfExtents);
+    }
 
     @Test
     void writeExportsRuntimeMotionComponents() {

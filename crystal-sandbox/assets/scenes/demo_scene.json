@@ -64,7 +64,10 @@
             "position": [0.75, 1.0, -2.5],
             "rotationDegrees": [90.0, 0.0, -15.0],
             "tags": ["model", "showcase"],
-            "castsShadow": true
+            "castsShadow": true,
+            "collider": {
+                "halfExtents": [0.75, 1.0, 0.75]
+            }
         },
         {
             "name": "Box Textured",
@@ -72,6 +75,9 @@
             "path": "/external/BoxTextured.glb",
             "position": [2.0, 0.0, -1.0],
             "tags": ["model", "showcase", "rotating"],
+            "collider": {
+                "halfExtents": [0.5, 0.5, 0.5]
+            },
             "components": [
                 {
                     "type": "rotation",
@@ -86,7 +92,10 @@
             "position": [0.0, -1.0, -2.5],
             "scale": [8.0, 1.0, 8.0],
             "tags": ["environment", "floor"],
-            "material": "brick"
+            "material": "brick",
+            "collider": {
+                "halfExtents": [4.0, 0.1, 4.0]
+            }
         },
         {
             "name": "Collectible A",

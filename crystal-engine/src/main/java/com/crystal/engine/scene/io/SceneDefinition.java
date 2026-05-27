@@ -41,12 +41,17 @@ public final class SceneDefinition {
         public Integer layerMask;
         public Boolean castsShadow;
         public String material;
+        public TriggerDefinition trigger;
+        public ColliderDefinition collider;
         public List<ComponentDefinition> components;
         public List<ObjectDefinition> children;
-        public TriggerDefinition trigger;
     }
 
     public static final class TriggerDefinition {
+        public List<Float> halfExtents;
+    }
+
+    public static final class ColliderDefinition {
         public List<Float> halfExtents;
     }
 

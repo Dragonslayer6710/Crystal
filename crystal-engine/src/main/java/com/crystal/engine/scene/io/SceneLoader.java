@@ -10,6 +10,7 @@ import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Transform;
+import com.crystal.engine.scene.collision.BoxCollider;
 import com.crystal.engine.scene.component.*;
 import com.crystal.engine.scene.animation.TransformKeyframe;
 import com.crystal.engine.scene.collision.TriggerVolume;
@@ -198,6 +199,7 @@ public class SceneLoader {
             applyComponents(object, sceneObject);
             applyChildren(object, sceneObject, resources, shader, materials);
             applyTrigger(object, sceneObject);
+            applyCollider(object, sceneObject);
 
             if (object.castsShadow != null)
                 sceneObject.setCastsShadowRecursive(object.castsShadow);
@@ -398,6 +400,7 @@ public class SceneLoader {
             applyComponents(childDefinition, child);
             applyChildren(childDefinition, child, resources, shader, materials);
             applyTrigger(childDefinition, child);
+            applyCollider(childDefinition, child);
 
             if (childDefinition.castsShadow != null)
                 child.setCastsShadowRecursive(childDefinition.castsShadow);
@@ -412,6 +415,14 @@ public class SceneLoader {
 
         float[] halfExtents = vec3(object.trigger.halfExtents, object.name + ".trigger.halfExtents");
         sceneObject.setTriggerVolume(new TriggerVolume(halfExtents[0], halfExtents[1], halfExtents[2]));
+    }
+
+    private static void applyCollider(ObjectDefinition object, SceneObject sceneObject) {
+        if (object.collider == null)
+            return;
+
+        float[] halfExtents = vec3(object.collider.halfExtents, object.name + ".collider.halfExtents");
+        sceneObject.setBoxCollider(new BoxCollider(halfExtents[0], halfExtents[1], halfExtents[2]));
     }
 
     private static SceneObject loadModelObject(ObjectDefinition object, ResourceManager resources, Shader shader) {
