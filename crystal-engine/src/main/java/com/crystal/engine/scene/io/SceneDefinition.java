@@ -52,9 +52,20 @@ public final class SceneDefinition {
 
     public static final class ComponentDefinition {
         public String type;
+
+        // RotationComponent
         public List<Float> speedRadiansPerSecond;
+
+        // KeyframeAnimationComponent
         public Boolean loop;
         public List<KeyframeDefinition> keyframes;
+
+        // DirectionalLightComponent
+        public List<Float> direction;
+        public List<Float> color;
+        public Float intensity;
+        public Float shadowStrength;
+        public Boolean useTransformDirection;
     }
 
     public static final class KeyframeDefinition {

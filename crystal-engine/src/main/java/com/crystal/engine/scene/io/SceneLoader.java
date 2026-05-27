@@ -10,7 +10,8 @@ import com.crystal.engine.render.mesh.Mesh;
 import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Transform;
-import com.crystal.engine.scene.animation.KeyframeAnimationComponent;
+import com.crystal.engine.scene.component.DirectionalLightComponent;
+import com.crystal.engine.scene.component.KeyframeAnimationComponent;
 import com.crystal.engine.scene.animation.TransformKeyframe;
 import com.crystal.engine.scene.collision.TriggerVolume;
 import com.crystal.engine.scene.component.RotationComponent;
@@ -194,8 +195,8 @@ public class SceneLoader {
             applyTransformSource(object, sceneObject);
             applyTags(object, sceneObject);
             applyLayerMask(object, sceneObject);
-            applyComponents(object, sceneObject);
-            applyChildren(object, sceneObject, resources, shader, materials);
+            applyComponents(object, sceneObject, scene);
+            applyChildren(object, sceneObject, scene, resources, shader, materials);
             applyTrigger(object, sceneObject);
 
             if (object.castsShadow != null)
@@ -238,7 +239,7 @@ public class SceneLoader {
             sceneObject.addTag(tag);
     }
 
-    private static void applyComponents(ObjectDefinition object, SceneObject sceneObject) {
+    private static void applyComponents(ObjectDefinition object, SceneObject sceneObject, Scene scene) {
         if (object.components == null)
             return;
 
@@ -262,6 +263,36 @@ public class SceneLoader {
                         new KeyframeAnimationComponent(keyframes)
                             .setLoop(component.loop == null || component.loop)
                     );
+                }
+                case "directionalLight" -> {
+                    DirectionalLightComponent light = new DirectionalLightComponent();
+
+                    if (component.direction != null) {
+                        float[] direction = vec3(
+                            component.direction,
+                            object.name + ".directionalLight.direction"
+                        );
+                        light.setDirection(direction[0], direction[1], direction[2]);
+                    }
+
+                    if (component.color != null) {
+                        float[] color = vec3(
+                            component.color,
+                            object.name + ".directionalLight.color"
+                        );
+                        light.setColor(color[0], color[1], color[2]);
+                    }
+
+                    if (component.intensity != null)
+                        light.setIntensity(component.intensity);
+
+                    if (component.shadowStrength != null)
+                        light.setShadowStrength(component.shadowStrength);
+
+                    if (component.useTransformDirection != null)
+                        light.setUseTransformDirection(component.useTransformDirection);
+
+                    sceneObject.addComponent(light);
                 }
                 default -> throw new IllegalArgumentException("Unsupported component type: " + component.type);
             }
@@ -301,7 +332,7 @@ public class SceneLoader {
         }
     }
 
-    private static void applyChildren(ObjectDefinition object, SceneObject parent, ResourceManager resources,
+    private static void applyChildren(ObjectDefinition object, SceneObject parent, Scene scene, ResourceManager resources,
                                       Shader shader, Map<String, Material> materials) {
         if (object.children == null)
             return;
@@ -312,8 +343,8 @@ public class SceneLoader {
             applyTransformSource(childDefinition, child);
             applyTags(childDefinition, child);
             applyLayerMask(childDefinition, child);
-            applyComponents(childDefinition, child);
-            applyChildren(childDefinition, child, resources, shader, materials);
+            applyComponents(childDefinition, child, scene);
+            applyChildren(childDefinition, child, scene, resources, shader, materials);
             applyTrigger(childDefinition, child);
 
             if (childDefinition.castsShadow != null)

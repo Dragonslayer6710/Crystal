@@ -1,7 +1,8 @@
-package com.crystal.engine.scene.animation;
+package com.crystal.engine.scene.component;
 
 import com.crystal.engine.scene.SceneComponent;
 import com.crystal.engine.scene.SceneUpdateContext;
+import com.crystal.engine.scene.animation.TransformKeyframe;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;

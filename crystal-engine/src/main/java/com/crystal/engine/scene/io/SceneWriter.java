@@ -2,10 +2,11 @@ package com.crystal.engine.scene.io;
 
 import com.crystal.engine.render.RenderLayers;
 import com.crystal.engine.scene.Scene;
+import com.crystal.engine.scene.component.DirectionalLightComponent;
 import com.crystal.engine.scene.source.SceneMaterialSource;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.source.SceneObjectSource;
-import com.crystal.engine.scene.animation.KeyframeAnimationComponent;
+import com.crystal.engine.scene.component.KeyframeAnimationComponent;
 import com.crystal.engine.scene.animation.TransformKeyframe;
 import com.crystal.engine.scene.component.RotationComponent;
 import com.crystal.engine.scene.source.SceneTransformSource;
@@ -54,7 +55,9 @@ public final class SceneWriter {
 
         definition.camera = createCameraDefinition(scene);
         definition.environment = createEnvironmentDefinition(scene);
-        definition.lighting = createLightingDefinition(scene);
+
+        if (scene.getActiveDirectionalLight().isEmpty())
+            definition.lighting = createLightingDefinition(scene);
 
         definition.materials = scene.getMaterialSources()
             .stream()
@@ -249,6 +252,22 @@ public final class SceneWriter {
                 .stream()
                 .map(SceneWriter::createKeyframeDefinition)
                 .toList();
+
+            components.add(component);
+        }
+
+        DirectionalLightComponent directionalLight = object.getComponent(DirectionalLightComponent.class);
+
+        if (directionalLight != null) {
+            var light = directionalLight.getLight();
+
+            ComponentDefinition component = new ComponentDefinition();
+            component.type = "directionalLight";
+            component.direction = vec3(light.getDirection());
+            component.color = vec3(light.getColor());
+            component.intensity = light.getIntensity();
+            component.shadowStrength = light.getShadowStrength();
+            component.useTransformDirection = directionalLight.usesTransformDirection();
 
             components.add(component);
         }

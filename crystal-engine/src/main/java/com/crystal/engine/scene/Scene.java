@@ -5,6 +5,7 @@ import com.crystal.engine.render.environment.Environment;
 import com.crystal.engine.render.opengl.UniformBuffer;
 import com.crystal.engine.scene.camera.Camera;
 import com.crystal.engine.scene.component.CameraComponent;
+import com.crystal.engine.scene.component.DirectionalLightComponent;
 import com.crystal.engine.scene.light.DirectionalLight;
 import com.crystal.engine.render.uniform.SceneUniformData;
 import com.crystal.engine.scene.source.SceneEnvironmentSource;
@@ -18,11 +19,11 @@ public class Scene implements Disposable {
     private final List<SceneObject> rootObjects = new ArrayList<>();
     private final Camera camera = new Camera(0, 0, 0);
 
-    private CameraComponent activeCamera;
-
     private final DirectionalLight directionalLight = new DirectionalLight();
     private final Environment environment = new Environment();
     private SceneEnvironmentSource environmentSource;
+
+    private CameraComponent activeCamera;
 
     private final Map<String, SceneMaterialSource> materialSources = new LinkedHashMap<>();
 
@@ -81,8 +82,25 @@ public class Scene implements Disposable {
         activeCamera = null;
     }
 
+    public List<DirectionalLightComponent> getDirectionalLights() {
+        return findComponents(DirectionalLightComponent.class)
+            .stream()
+            .filter(DirectionalLightComponent::isEnabled)
+            .toList();
+    }
+
     public DirectionalLight getDirectionalLight() {
-        return directionalLight;
+        return getDirectionalLights()
+            .stream()
+            .findFirst()
+            .map(DirectionalLightComponent::getLight)
+            .orElse(directionalLight);
+    }
+
+    public Optional<DirectionalLightComponent> getActiveDirectionalLight() {
+        return getDirectionalLights()
+            .stream()
+            .findFirst();
     }
 
     public Environment getEnvironment() {
@@ -126,6 +144,56 @@ public class Scene implements Disposable {
         }
 
         return Optional.empty();
+    }
+
+    public <T extends SceneComponent> Optional<T> findFirstComponent(Class<T> type) {
+        if (type == null) throw new IllegalArgumentException("Component type cannot be null");
+
+        for (SceneObject object : rootObjects) {
+            Optional<T> match = findFirstComponent(object, type);
+
+            if (match.isPresent())
+                return match;
+        }
+
+        return Optional.empty();
+    }
+
+    private <T extends SceneComponent> Optional<T> findFirstComponent(SceneObject object, Class<T> type) {
+        T component = object.getComponent(type);
+
+        if (component != null)
+            return Optional.of(component);
+
+        for (SceneObject child : object.getChildren()) {
+            Optional<T> match = findFirstComponent(child, type);
+
+            if (match.isPresent())
+                return match;
+        }
+
+        return Optional.empty();
+    }
+
+    public <T extends SceneComponent> List<T> findComponents(Class<T> type) {
+        if (type == null) throw new IllegalArgumentException("Component type cannot be null");
+
+        List<T> components = new ArrayList<>();
+
+        for (SceneObject object : rootObjects)
+            findComponents(object, type, components);
+
+        return components;
+    }
+
+    private <T extends SceneComponent> void findComponents(SceneObject object, Class<T> type, List<T> components) {
+        T component = object.getComponent(type);
+
+        if (component != null)
+            components.add(component);
+
+        for (SceneObject child : object.getChildren())
+            findComponents(child, type, components);
     }
 
     private Optional<SceneObject> findByName(SceneObject object, String name) {
