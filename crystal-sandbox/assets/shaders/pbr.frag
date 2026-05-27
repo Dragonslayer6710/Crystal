@@ -25,6 +25,11 @@ uniform sampler2D brdfLut;
 
 uniform sampler2D shadowMap;
 
+struct PointLight {
+    vec4 positionRadius;
+    vec4 colorIntensity;
+};
+
 layout (std140, binding = 0) uniform SceneData {
     mat4 view;
     mat4 projection;
@@ -36,6 +41,9 @@ layout (std140, binding = 0) uniform SceneData {
     vec4 sunColor;       // rgb = color, a = intensity
 
     mat4 lightSpaceMatrix;
+
+    vec4 pointLightCount;
+    PointLight pointLights[8];
 };
 
 uniform vec3 materialTint;
@@ -160,36 +168,91 @@ float calculateShadow(vec4 lightSpacePosition, vec3 normal, vec3 lightDirection)
     return currentDepth - bias > closestDepth ? 1.0 : 0.0;
 }
 
-vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness, float ao) {
-    vec3 L = normalize(-sunDirection.xyz);
-    vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
-    vec3 H = normalize(L + V);
+vec3 calculatePbrLight(
+    vec3 albedo,
+    vec3 normal,
+    vec3 viewDirection,
+    vec3 lightDirection,
+    vec3 radiance,
+    vec3 F0,
+    vec3 kD,
+    float roughness
+) {
+    vec3 H = normalize(lightDirection + viewDirection);
 
-    float NdotL = max(dot(normal, L), 0.0);
-    float NdotV = max(dot(normal, V), 0.0);
+    float NdotL = max(dot(normal, lightDirection), 0.0);
+    float NdotV = max(dot(normal, viewDirection), 0.0);
 
-    vec3 F0 = vec3(0.04);
-    F0 = mix(F0, albedo, metallic);
-
-    vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
+    vec3 F = fresnelSchlick(max(dot(H, viewDirection), 0.0), F0);
     float D = distributionGGX(normal, H, roughness);
-    float G = geometrySmith(normal, V, L, roughness);
+    float G = geometrySmith(normal, viewDirection, lightDirection, roughness);
 
     vec3 numerator = D * G * F;
     float denominator = 4.0 * NdotV * NdotL + 0.0001;
     vec3 specular = numerator / denominator;
 
     vec3 kS = F;
-    vec3 kD = vec3(1.0) - kS;
-    kD *= 1.0 - metallic;
-
-    vec3 radiance = sunColor.rgb * sunColor.a;
 
     vec3 diffuseBRDF = kD * albedo / PI;
 
-    vec3 directLighting = (diffuseBRDF + specular) * radiance * NdotL;
+    return (diffuseBRDF + specular) * radiance * NdotL;
+}
+
+vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness, float ao) {
+    vec3 L = normalize(-sunDirection.xyz);
+    vec3 V = normalize(cameraPosition.xyz - v_WorldPosition);
+
+    vec3 F0 = vec3(0.04);
+    F0 = mix(F0, albedo, metallic);
+
+    vec3 F = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
+    vec3 kS = F;
+    vec3 kD = vec3(1.0) - kS;
+    kD *= 1.0 - metallic;
+
+    vec3 directLighting = calculatePbrLight(
+        albedo,
+        normal,
+        V,
+        L,
+        sunColor.rgb * sunColor.a,
+        F0,
+        kD,
+        roughness
+    );
+
     float shadow = calculateShadow(v_LightSpacePosition, normal, L);
     directLighting *= (1.0 - shadow * shadowStrength);
+
+    int activePointLights = min(int(pointLightCount.x), 8);
+
+    for (int i = 0; i < activePointLights; i++) {
+        vec3 lightPosition = pointLights[i].positionRadius.xyz;
+        float radius = pointLights[i].positionRadius.w;
+
+        vec3 toLight = lightPosition - v_WorldPosition;
+        float distanceToLight = length(toLight);
+
+        if (radius <= 0.0 || distanceToLight > radius)
+            continue;
+
+        vec3 pointL = toLight / max(distanceToLight, 0.0001);
+        float attenuation = pow(max(1.0 - distanceToLight / radius, 0.0), 2.0);
+        vec3 radiance = pointLights[i].colorIntensity.rgb
+            * pointLights[i].colorIntensity.a
+            * attenuation;
+
+        directLighting += calculatePbrLight(
+            albedo,
+            normal,
+            V,
+            pointL,
+            radiance,
+            F0,
+            kD,
+            roughness
+        );
+    }
 
     vec3 ambientLighting;
 
@@ -204,7 +267,7 @@ vec3 calculateLighting(vec3 albedo, vec3 normal, float metallic, float roughness
         vec2 brdf = texture(brdfLut, vec2(max(dot(normal, V), 0.0), roughness)).rg;
 
         vec3 roughnessFresnel = fresnelSchlickRoughness(max(dot(normal, V), 0.0), F0, roughness);
-        vec3 specularIBL = prefilteredColor * (roughnessFresnel * brdf.x + brdf.y);
+        vec3 specularIBL = prefilteredColor * (F * brdf.x + brdf.y);
 
         ambientLighting = (diffuseIBL * kD  * iblDiffuseIntensity + specularIBL * iblSpecularIntensity) * ao;
     } else {

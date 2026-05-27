@@ -7,6 +7,11 @@ layout (location = 3) in vec3 a_Tangent;
 
 uniform mat4 model;
 
+struct PointLight {
+    vec4 positionRadius;
+    vec4 colorIntensity;
+};
+
 layout (std140, binding = 0) uniform SceneData {
     mat4 view;
     mat4 projection;
@@ -18,6 +23,9 @@ layout (std140, binding = 0) uniform SceneData {
     vec4 sunColor;       // rgb = color, a = intensity
 
     mat4 lightSpaceMatrix;
+
+    vec4 pointLightCount;
+    PointLight pointLights[8];
 };
 
 out vec3 v_WorldPosition;

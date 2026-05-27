@@ -5,21 +5,29 @@ import com.crystal.engine.scene.Scene;
 public final class SceneUniformData {
 
     public static final int BINDING_POINT = UniformBindings.SCENE;
-    public static final int FLOAT_COUNT = 64;
+    public static final int MAX_POINT_LIGHTS = 8;
+
+    public static final int FLOAT_COUNT = 64 + 4 + MAX_POINT_LIGHTS * 8;
     public static final int BYTE_SIZE = FLOAT_COUNT * Float.BYTES;
 
     /*
-     * Must match the Scene uniform block layout in GLSL.
+     * Must match the SceneData uniform block layout in GLSL.
      *
-     * layout(std140, binding = 0) uniform Scene {
-     *     mat4 u_View;              // offset 0   / floats 0-15
-     *     mat4 u_Projection;        // offset 64  / floats 16-31
-     *     vec4 u_Ambient;           // offset 128 / floats 32-35
-     *     vec4 u_CameraPosition;    // offset 144 / floats 36-39
-     *     vec4 u_LightDirection;    // offset 160 / floats 40-43
-     *     vec4 u_LightColor;        // offset 176 / floats 44-47
-     *     mat4 u_lightSpaceMatrix;  // offset 192 / floats 48-63
+     * layout(std140, binding = 0) uniform SceneData {
+     *     mat4 view;                    // offset 0   / floats 0-15
+     *     mat4 projection;              // offset 64  / floats 16-31
+     *     vec4 ambient;                 // offset 128 / floats 32-35
+     *     vec4 cameraPosition;          // offset 144 / floats 36-39
+     *     vec4 sunDirection;            // offset 160 / floats 40-43
+     *     vec4 sunColor;                // offset 176 / floats 44-47
+     *     mat4 lightSpaceMatrix;        // offset 192 / floats 48-63
+     *     vec4 pointLightCount;         // offset 256 / floats 64-67
+     *     PointLight pointLights[8];    // offset 272 / floats 68-131
      * };
+     *
+     * PointLight:
+     *     vec4 positionRadius;          // xyz = position, w = radius
+     *     vec4 colorIntensity;          // rgb = color, w = intensity
      */
 
     private static final int VIEW_MATRIX_OFFSET = 0;
@@ -29,6 +37,10 @@ public final class SceneUniformData {
     private static final int LIGHT_DIRECTION_OFFSET = 40;
     private static final int LIGHT_COLOR_OFFSET = 44;
     private static final int LIGHT_SPACE_MATRIX_OFFSET = 48;
+    private static final int POINT_LIGHT_COUNT_OFFSET = 64;
+    private static final int POINT_LIGHTS_OFFSET = 68;
+
+    private static final int POINT_LIGHT_STRIDE = 8;
 
     private final float[] data = new float[FLOAT_COUNT];
 
@@ -69,6 +81,39 @@ public final class SceneUniformData {
         data[LIGHT_COLOR_OFFSET + 3] = light.getIntensity();
 
         light.getLightSpaceMatrix().get(data, LIGHT_SPACE_MATRIX_OFFSET);
+
+        var pointLights = scene.getPointLights();
+        int pointLightCount = Math.min(pointLights.size(), MAX_POINT_LIGHTS);
+
+        data[POINT_LIGHT_COUNT_OFFSET] = pointLightCount;
+        data[POINT_LIGHT_COUNT_OFFSET + 1] = 0.0f;
+        data[POINT_LIGHT_COUNT_OFFSET + 2] = 0.0f;
+        data[POINT_LIGHT_COUNT_OFFSET + 3] = 0.0f;
+
+        for (int i = 0; i < MAX_POINT_LIGHTS; i++) {
+            int offset = POINT_LIGHTS_OFFSET + i * POINT_LIGHT_STRIDE;
+
+            if (i >= pointLightCount) {
+                for (int j = 0; j < POINT_LIGHT_STRIDE; j++)
+                    data[offset + j] = 0.0f;
+
+                continue;
+            }
+
+            var pointLight = pointLights.get(i).getLight();
+            var position = pointLight.getPosition();
+            var color = pointLight.getColor();
+
+            data[offset] = position.x;
+            data[offset + 1] = position.y;
+            data[offset + 2] = position.z;
+            data[offset + 3] = pointLight.getRadius();
+
+            data[offset + 4] = color.x;
+            data[offset + 5] = color.y;
+            data[offset + 6] = color.z;
+            data[offset + 7] = pointLight.getIntensity();
+        }
 
         return data;
     }
