@@ -84,6 +84,7 @@ public class Renderer implements Disposable {
 
     @Override
     public void dispose() {
+        context.dispose();
         directionalShadowMap.dispose();
     }
 

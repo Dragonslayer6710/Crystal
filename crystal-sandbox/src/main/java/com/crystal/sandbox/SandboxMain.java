@@ -97,7 +97,6 @@ public class SandboxMain implements Game {
             );
 
             ctx.getScene().replaceWith(loadedScene.scene());
-            loadedScene.scene().dispose();
 
             addSceneCamera();
 
@@ -123,8 +122,6 @@ public class SandboxMain implements Game {
                 ctx.getResources(),
                 sceneShader
             );
-
-            loadedScene.scene().dispose();
 
             logger.info("Exported and validated scene '{}'", EXPORTED_SCENE_PATH);
         } catch (RuntimeException e) {

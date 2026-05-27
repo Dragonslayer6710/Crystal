@@ -185,7 +185,6 @@ public class Engine implements WindowEventListener, Application {
             logger.error("Game Shutdown failed", e);
         }
 
-        if (scene != null) scene.dispose();
         if (debugOverlay != null) debugOverlay.dispose();
         if (renderer != null) renderer.dispose();
         if (resourceManager != null) resourceManager.disposeAll();

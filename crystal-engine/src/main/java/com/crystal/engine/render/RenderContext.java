@@ -1,10 +1,12 @@
 package com.crystal.engine.render;
 
 import com.crystal.engine.assets.ResourceManager;
+import com.crystal.engine.core.Disposable;
 import com.crystal.engine.render.command.RenderCommandContext;
 import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.material.RenderState;
 import com.crystal.engine.render.mesh.Mesh;
+import com.crystal.engine.render.opengl.UniformBuffer;
 import com.crystal.engine.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shader.ShaderUniforms;
@@ -17,7 +19,7 @@ import java.util.Arrays;
 
 import static org.lwjgl.opengl.GL46.*;
 
-class RenderContext implements RenderCommandContext {
+class RenderContext implements RenderCommandContext, Disposable {
 
     private static final int MAX_TEXTURE_UNITS = 16;
 
@@ -33,6 +35,10 @@ class RenderContext implements RenderCommandContext {
     private float shadowStrength = 0.6f;
 
     private final SceneUniformData sceneUniformData = new SceneUniformData();
+    private final UniformBuffer sceneUBO = new UniformBuffer(
+        SceneUniformData.BINDING_POINT,
+        SceneUniformData.BYTE_SIZE
+    );
 
     private Boolean currentDepthTest;
     private Boolean currentCullFace;
@@ -74,7 +80,6 @@ class RenderContext implements RenderCommandContext {
 
         float[] data = sceneUniformData.from(scene, aspectRatio);
 
-        var sceneUBO = scene.getSceneUBO();
         sceneUBO.setData(0, data);
         sceneUBO.bind();
 
@@ -254,5 +259,10 @@ class RenderContext implements RenderCommandContext {
         currentMeshId = 0;
 
         Arrays.fill(boundTextures, 0);
+    }
+
+    @Override
+    public void dispose() {
+        sceneUBO.dispose();
     }
 }

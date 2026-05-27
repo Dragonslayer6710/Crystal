@@ -1,21 +1,18 @@
 package com.crystal.engine.scene;
 
-import com.crystal.engine.core.Disposable;
 import com.crystal.engine.render.environment.Environment;
-import com.crystal.engine.render.opengl.UniformBuffer;
 import com.crystal.engine.scene.camera.Camera;
 import com.crystal.engine.scene.component.CameraComponent;
 import com.crystal.engine.scene.component.DirectionalLightComponent;
 import com.crystal.engine.scene.component.PointLightComponent;
 import com.crystal.engine.scene.light.DirectionalLight;
-import com.crystal.engine.render.uniform.SceneUniformData;
 import com.crystal.engine.scene.source.SceneEnvironmentSource;
 import com.crystal.engine.scene.source.SceneMaterialSource;
 import org.joml.Vector3f;
 
 import java.util.*;
 
-public class Scene implements Disposable {
+public class Scene {
 
     private final List<SceneObject> rootObjects = new ArrayList<>();
     private final Camera camera = new Camera(0, 0, 0);
@@ -27,11 +24,6 @@ public class Scene implements Disposable {
     private CameraComponent activeCamera;
 
     private final Map<String, SceneMaterialSource> materialSources = new LinkedHashMap<>();
-
-    private final UniformBuffer sceneUBO = new UniformBuffer(
-            SceneUniformData.BINDING_POINT,
-            SceneUniformData.BYTE_SIZE
-    );
 
     public void add(SceneObject object) {
         if (object == null) throw new IllegalArgumentException("SceneObject cannot be null");
@@ -135,10 +127,6 @@ public class Scene implements Disposable {
 
     public void clearMaterialSources() {
         materialSources.clear();
-    }
-
-    public UniformBuffer getSceneUBO() {
-        return sceneUBO;
     }
 
     public Optional<SceneObject> findByName(String name) {
@@ -305,8 +293,4 @@ public class Scene implements Disposable {
         rootObjects.clear();
     }
 
-    @Override
-    public void dispose() {
-        sceneUBO.dispose();
-    }
 }
