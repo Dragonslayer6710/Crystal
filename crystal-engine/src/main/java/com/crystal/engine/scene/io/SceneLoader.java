@@ -11,10 +11,9 @@ import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Transform;
 import com.crystal.engine.scene.collision.BoxCollider;
-import com.crystal.engine.scene.component.*;
-import com.crystal.engine.scene.animation.TransformKeyframe;
 import com.crystal.engine.scene.collision.TriggerVolume;
 import com.crystal.engine.render.shader.Shader;
+import com.crystal.engine.scene.io.component.SceneComponentRegistry;
 import com.crystal.engine.scene.source.SceneEnvironmentSource;
 import com.crystal.engine.scene.source.SceneMaterialSource;
 import com.crystal.engine.scene.source.SceneObjectSource;
@@ -31,6 +30,8 @@ import java.util.Map;
 import static com.crystal.engine.scene.io.SceneDefinition.*;
 
 public class SceneLoader {
+
+    private static final SceneComponentRegistry COMPONENT_REGISTRY = SceneComponentRegistry.createDefault();
 
     private SceneLoader() {}
 
@@ -245,112 +246,8 @@ public class SceneLoader {
         if (object.components == null)
             return;
 
-        for (ComponentDefinition component : object.components) {
-            switch (component.type) {
-                case "rotation" -> {
-                    float[] speed = vec3(component.speedRadiansPerSecond, object.name + ".rotation.speedRadiansPerSecond");
-                    sceneObject.addComponent(new RotationComponent(speed[0], speed[1], speed[2]));
-                }
-                case "keyframeAnimation" -> {
-                    if (component.keyframes == null || component.keyframes.isEmpty())
-                        throw new IllegalArgumentException(
-                            object.name + ".keyframeAnimation.keyframes must contain at least one keyframe"
-                        );
-
-                    List<TransformKeyframe> keyframes = component.keyframes.stream()
-                        .map(SceneLoader::toTransformKeyframe)
-                        .toList();
-
-                    sceneObject.addComponent(
-                        new KeyframeAnimationComponent(keyframes)
-                            .setLoop(component.loop == null || component.loop)
-                    );
-                }
-                case "directionalLight" -> {
-                    DirectionalLightComponent light = new DirectionalLightComponent();
-
-                    if (component.direction != null) {
-                        float[] direction = vec3(
-                            component.direction,
-                            object.name + ".directionalLight.direction"
-                        );
-                        light.setDirection(direction[0], direction[1], direction[2]);
-                    }
-
-                    if (component.color != null) {
-                        float[] color = vec3(
-                            component.color,
-                            object.name + ".directionalLight.color"
-                        );
-                        light.setColor(color[0], color[1], color[2]);
-                    }
-
-                    if (component.intensity != null)
-                        light.setIntensity(component.intensity);
-
-                    if (component.shadowStrength != null)
-                        light.setShadowStrength(component.shadowStrength);
-
-                    if (component.useTransformDirection != null)
-                        light.setUseTransformDirection(component.useTransformDirection);
-
-                    sceneObject.addComponent(light);
-                }
-                case "pointLight" -> {
-                    PointLightComponent light = new PointLightComponent();
-
-                    if (component.color != null) {
-                        float[] color = vec3(
-                            component.color,
-                            object.name + ".pointLight.color"
-                        );
-                        light.setColor(color[0], color[1], color[2]);
-                    }
-
-                    if (component.intensity != null)
-                        light.setIntensity(component.intensity);
-
-                    if (component.radius != null)
-                        light.setRadius(component.radius);
-
-                    sceneObject.addComponent(light);
-                }
-                case "bob" -> {
-                    BobComponent bob = new BobComponent();
-
-                    if (component.amplitude != null)
-                        bob.setAmplitude(component.amplitude);
-
-                    if (component.speed != null)
-                        bob.setSpeed(component.speed);
-
-                    if (component.phase != null)
-                        bob.setPhase(component.phase);
-
-                    sceneObject.addComponent(bob);
-                }
-                case "orbit" -> {
-                    OrbitComponent orbit = new OrbitComponent();
-
-                    if (component.center != null) {
-                        float[] center = vec3(component.center, object.name + ".orbit.center");
-                        orbit.setCenter(center[0], center[1], center[2]);
-                    }
-
-                    if (component.radius != null)
-                        orbit.setRadius(component.radius);
-
-                    if (component.speed != null)
-                        orbit.setSpeed(component.speed);
-
-                    if (component.phase != null)
-                        orbit.setPhase(component.phase);
-
-                    sceneObject.addComponent(orbit);
-                }
-                default -> throw new IllegalArgumentException("Unsupported component type: " + component.type);
-            }
-        }
+        for (ComponentDefinition component : object.components)
+            sceneObject.addComponent(COMPONENT_REGISTRY.read(object.name, component));
     }
 
     private static void applyLayerMask(ObjectDefinition object, SceneObject sceneObject) {
@@ -483,13 +380,14 @@ public class SceneLoader {
         };
     }
 
-    private static TransformKeyframe toTransformKeyframe(KeyframeDefinition keyframe) {
-        return new TransformKeyframe(
-            keyframe.time,
-            optionalVec3(keyframe.position),
-            optionalVec3(keyframe.rotationDegrees),
-            optionalVec3(keyframe.scale)
-        );
+    private static String sceneName(SceneDefinition definition, Path scenePath) {
+        return definition.name != null && !definition.name.isBlank()
+            ? definition.name
+            : scenePath.getFileName().toString();
+    }
+
+    private static int sceneVersion(SceneDefinition definition) {
+        return definition.version != null ? definition.version : 1;
     }
 
     private static Vector3f optionalVec3(List<Float> values) {
@@ -504,15 +402,5 @@ public class SceneLoader {
         if (values.size() != 3) throw new IllegalArgumentException(fieldName + " must contain exactly 3 values");
 
         return new float[] { values.get(0), values.get(1), values.get(2) };
-    }
-
-    private static String sceneName(SceneDefinition definition, Path scenePath) {
-        return definition.name != null && !definition.name.isBlank()
-            ? definition.name
-            : scenePath.getFileName().toString();
-    }
-
-    private static int sceneVersion(SceneDefinition definition) {
-        return definition.version != null ? definition.version : 1;
     }
 }

@@ -2,11 +2,10 @@ package com.crystal.engine.scene.io;
 
 import com.crystal.engine.render.RenderLayers;
 import com.crystal.engine.scene.Scene;
-import com.crystal.engine.scene.component.*;
+import com.crystal.engine.scene.io.component.SceneComponentRegistry;
 import com.crystal.engine.scene.source.SceneMaterialSource;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.source.SceneObjectSource;
-import com.crystal.engine.scene.animation.TransformKeyframe;
 import com.crystal.engine.scene.source.SceneTransformSource;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,6 +20,8 @@ import java.util.List;
 import static com.crystal.engine.scene.io.SceneDefinition.*;
 
 public final class SceneWriter {
+
+    private static final SceneComponentRegistry COMPONENT_REGISTRY = SceneComponentRegistry.createDefault();
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
         .enable(SerializationFeature.INDENT_OUTPUT)
@@ -235,108 +236,10 @@ public final class SceneWriter {
     }
 
     private static void applyComponents(SceneObject object, ObjectDefinition definition) {
-        List<ComponentDefinition> components = new ArrayList<>();
-
-        RotationComponent rotation = object.getComponent(RotationComponent.class);
-
-        if (rotation != null) {
-            ComponentDefinition component = new ComponentDefinition();
-            component.type = "rotation";
-            component.speedRadiansPerSecond = List.of(
-                rotation.getXRadiansPerSecond(),
-                rotation.getYRadiansPerSecond(),
-                rotation.getZRadiansPerSecond()
-            );
-
-            components.add(component);
-        }
-
-        KeyframeAnimationComponent animation = object.getComponent(KeyframeAnimationComponent.class);
-
-        if (animation != null) {
-            ComponentDefinition component = new ComponentDefinition();
-            component.type = "keyframeAnimation";
-            component.loop = animation.isLoop();
-            component.keyframes = animation.getKeyframes()
-                .stream()
-                .map(SceneWriter::createKeyframeDefinition)
-                .toList();
-
-            components.add(component);
-        }
-
-        BobComponent bob = object.getComponent(BobComponent.class);
-
-        if (bob != null) {
-            ComponentDefinition component = new ComponentDefinition();
-            component.type = "bob";
-            component.amplitude = bob.getAmplitude();
-            component.speed = bob.getSpeed();
-            component.phase = bob.getPhase();
-            components.add(component);
-        }
-
-        OrbitComponent orbit = object.getComponent(OrbitComponent.class);
-
-        if (orbit != null) {
-            ComponentDefinition component = new ComponentDefinition();
-            component.type = "orbit";
-            component.center = vec3(orbit.getCenter());
-            component.radius = orbit.getRadius();
-            component.speed = orbit.getSpeed();
-            component.phase = orbit.getPhase();
-            components.add(component);
-        }
-
-        DirectionalLightComponent directionalLight = object.getComponent(DirectionalLightComponent.class);
-
-        if (directionalLight != null) {
-            var light = directionalLight.getLight();
-
-            ComponentDefinition component = new ComponentDefinition();
-            component.type = "directionalLight";
-            component.direction = vec3(light.getDirection());
-            component.color = vec3(light.getColor());
-            component.intensity = light.getIntensity();
-            component.shadowStrength = light.getShadowStrength();
-            component.useTransformDirection = directionalLight.usesTransformDirection();
-
-            components.add(component);
-        }
-
-        PointLightComponent pointLight = object.getComponent(PointLightComponent.class);
-
-        if (pointLight != null) {
-            var light = pointLight.getLight();
-
-            ComponentDefinition component = new ComponentDefinition();
-            component.type = "pointLight";
-            component.color = vec3(light.getColor());
-            component.intensity = light.getIntensity();
-            component.radius = light.getRadius();
-
-            components.add(component);
-        }
+        List<ComponentDefinition> components = COMPONENT_REGISTRY.writeComponents(object);
 
         if (!components.isEmpty())
             definition.components = components;
-    }
-
-    private static KeyframeDefinition createKeyframeDefinition(TransformKeyframe keyframe) {
-        KeyframeDefinition definition = new KeyframeDefinition();
-
-        definition.time = keyframe.time();
-
-        if (keyframe.position() != null)
-            definition.position = vec3(keyframe.position());
-
-        if (keyframe.rotationDegrees() != null)
-            definition.rotationDegrees = vec3(keyframe.rotationDegrees());
-
-        if (keyframe.scale() != null)
-            definition.scale = vec3(keyframe.scale());
-
-        return definition;
     }
 
     private static boolean isImportedModelRoot(SceneObject object) {
