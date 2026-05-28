@@ -2,18 +2,18 @@ package com.crystal.engine.render;
 
 import com.crystal.engine.core.Disposable;
 import com.crystal.engine.assets.ResourceManager;
-import com.crystal.engine.render.command.ClearCommand;
-import com.crystal.engine.render.command.DrawSceneObjectCommand;
-import com.crystal.engine.render.command.DrawShadowCommand;
-import com.crystal.engine.render.command.DrawSkyboxCommand;
-import com.crystal.engine.render.command.RenderCommand;
+import com.crystal.engine.render.command.*;
 import com.crystal.engine.render.culling.VisibilityCollector;
+import com.crystal.engine.render.material.Material;
 import com.crystal.engine.render.opengl.RenderPass;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shadow.ShadowMap;
+import com.crystal.engine.scene.component.BoxColliderComponent;
+import com.crystal.engine.scene.component.TriggerVolumeComponent;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +37,7 @@ public class Renderer implements Disposable {
 
     private final RenderQueue mainQueue = new RenderQueue();
     private final RenderQueue shadowQueue = new RenderQueue();
+    private final RenderQueue debugQueue = new RenderQueue();
     private final RenderStats stats = new RenderStats();
 
     private int viewportWidth;
@@ -46,7 +47,11 @@ public class Renderer implements Disposable {
 
     private int visibleLayerMask = RenderLayers.ALL;
 
+    private boolean debugCollisionVisible;
+    private Material debugBoxMaterial;
+
     private float exposure = 1.0f;
+
     private final Vector4f clearColor = new Vector4f(0.1f, 0.1f, 0.15f, 1.0f);
     private int debugViewMode = 0;
 
@@ -110,6 +115,7 @@ public class Renderer implements Disposable {
         }
 
         buildMainQueue(scene, visibleObjects);
+        buildDebugQueue(scene);
         executeMainPass();
     }
 
@@ -131,6 +137,14 @@ public class Renderer implements Disposable {
         if (visibleLayerMask == 0) throw new IllegalArgumentException("Visible layer mask cannot be 0");
 
         this.visibleLayerMask = visibleLayerMask;
+    }
+
+    public void setDebugCollisionVisible(boolean debugCollisionVisible) {
+        this.debugCollisionVisible = debugCollisionVisible;
+    }
+
+    public boolean isDebugCollisionVisible() {
+        return debugCollisionVisible;
     }
 
     public void setExposure(float exposure) {
@@ -212,6 +226,7 @@ public class Renderer implements Disposable {
         stats.reset();
         mainQueue.clear();
         shadowQueue.clear();
+        debugQueue.clear();
 
         context.beginFrame();
         context.setDebugViewMode(debugViewMode);
@@ -308,9 +323,68 @@ public class Renderer implements Disposable {
         submitVisibleObjectCommands(visibleObjects);
     }
 
+    private void buildDebugQueue(Scene scene) {
+        if (!debugCollisionVisible)
+            return;
+
+        Material material = getDebugBoxMaterial();
+
+        for (BoxColliderComponent collider : scene.findComponents(BoxColliderComponent.class)) {
+            if (collider.getOwner() == null || !collider.getOwner().isActive())
+                continue;
+
+            submitDebugBox(
+                collider.getOwner(),
+                collider.getHalfExtents(),
+                material,
+                new Vector3f(0.1f, 0.8f, 1.0f)
+            );
+        }
+
+        for (TriggerVolumeComponent trigger : scene.findComponents(TriggerVolumeComponent.class)) {
+            if (trigger.getOwner() == null || !trigger.getOwner().isActive())
+                continue;
+
+            submitDebugBox(
+                trigger.getOwner(),
+                trigger.getHalfExtents(),
+                material,
+                new Vector3f(1.0f, 0.85f, 0.1f)
+            );
+        }
+    }
+
+    private void submitDebugBox(SceneObject owner, Vector3f halfExtents, Material material, Vector3f color) {
+        var position = owner.getTransform().getWorldPosition();
+
+        Matrix4f model = new Matrix4f()
+            .translate(position)
+            .scale(halfExtents.x * 2.0f, halfExtents.y * 2.0f, halfExtents.z * 2.0f);
+
+        debugQueue.submit(new DrawDebugBoxCommand(
+            context.getResources().getDebugCubeMesh(),
+            material,
+            model,
+            color
+        ));
+    }
+
+    private Material getDebugBoxMaterial() {
+        if (debugBoxMaterial == null) {
+            debugBoxMaterial = new Material(context.getResources().getDebugColorShader());
+            debugBoxMaterial.getRenderState()
+                .setWireframe(true)
+                .setCullFace(false)
+                .setDepthTest(true);
+        }
+
+        return debugBoxMaterial;
+    }
+
     private void executeMainPass() {
         try (RenderPass ignored = new RenderPass(viewportWidth, viewportHeight)) {
             mainQueue.execute(context);
+            debugQueue.execute(context);
         }
     }
 

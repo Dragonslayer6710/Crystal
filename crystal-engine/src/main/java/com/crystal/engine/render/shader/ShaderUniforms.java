@@ -2,6 +2,7 @@ package com.crystal.engine.render.shader;
 
 public final class ShaderUniforms {
     public static final String DEBUG_VIEW_MODE = "debugViewMode";
+    public static final String DEBUG_COLOR = "debugColor";
     public static final String EXPOSURE = "exposure";
     public static final String HAS_IBL = "hasIBL";
 

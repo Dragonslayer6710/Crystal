@@ -16,7 +16,10 @@ final class RenderResources {
     private final Mesh skyboxCubeMesh;
 
     private final Shader shadowShader;
+    private final Shader debugColorShader;
+    private final Mesh debugCubeMesh;
     private final ShadowMap directionalShadowMap;
+
 
     RenderResources(
             Texture defaultWhiteTexture,
@@ -26,6 +29,8 @@ final class RenderResources {
             Shader skyboxShader,
             Mesh skyboxCubeMesh,
             Shader shadowShader,
+            Shader debugColorShader,
+            Mesh debugCubeMesh,
             ShadowMap directionalShadowMap
     ) {
         if (defaultWhiteTexture == null) throw new IllegalArgumentException("Default white texture cannot be null");
@@ -37,6 +42,8 @@ final class RenderResources {
         if (skyboxCubeMesh == null) throw new IllegalArgumentException("Skybox cube mesh cannot be null");
 
         if (shadowShader == null) throw new IllegalArgumentException("Shadow shader cannot be null");
+        if (debugColorShader == null) throw new IllegalArgumentException("Debug color shader cannot be null");
+        if (debugCubeMesh == null) throw new IllegalArgumentException("Debug cube mesh cannot be null");
         if (directionalShadowMap == null) throw new IllegalArgumentException("Directional shadow map cannot be null");
 
         this.defaultWhiteTexture = defaultWhiteTexture;
@@ -46,6 +53,8 @@ final class RenderResources {
         this.skyboxShader = skyboxShader;
         this.skyboxCubeMesh = skyboxCubeMesh;
         this.shadowShader = shadowShader;
+        this.debugColorShader = debugColorShader;
+        this.debugCubeMesh = debugCubeMesh;
         this.directionalShadowMap = directionalShadowMap;
     }
 
@@ -75,6 +84,14 @@ final class RenderResources {
 
     Shader getShadowShader() {
         return shadowShader;
+    }
+
+    Shader getDebugColorShader() {
+        return debugColorShader;
+    }
+
+    Mesh getDebugCubeMesh() {
+        return debugCubeMesh;
     }
 
     ShadowMap getDirectionalShadowMap() {

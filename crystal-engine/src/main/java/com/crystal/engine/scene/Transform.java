@@ -16,9 +16,7 @@ public class Transform {
     private final Matrix4f localMatrix = new Matrix4f();
     private final Matrix4f worldMatrix = new Matrix4f();
 
-    public Transform() {
-
-    }
+    public Transform() {}
 
     public Transform(float xPos, float yPos, float zPos) {
         this.position.set(xPos, yPos, zPos);
@@ -160,22 +158,22 @@ public class Transform {
     }
 
     public Vector3f getForwardXZ() {
-        Vector3f forward = getForward();
-        forward.y = 0.0f;
+        float yaw = rotation.y;
 
-        if (forward.lengthSquared() > 0.0f)
-            forward.normalize();
-
-        return forward;
+        return new Vector3f(
+            -(float) Math.sin(yaw),
+            0.0f,
+            -(float) Math.cos(yaw)
+        ).normalize();
     }
 
     public Vector3f getRightXZ() {
-        Vector3f right = getRight();
-        right.y = 0.0f;
+        float yaw = rotation.y;
 
-        if (right.lengthSquared() > 0.0f)
-            right.normalize();
-
-        return right;
+        return new Vector3f(
+            (float) Math.cos(yaw),
+            0.0f,
+            -(float) Math.sin(yaw)
+        ).normalize();
     }
 }

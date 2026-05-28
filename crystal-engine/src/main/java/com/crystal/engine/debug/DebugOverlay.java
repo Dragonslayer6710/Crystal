@@ -124,6 +124,11 @@ public class DebugOverlay implements Disposable {
         if (ImGui.checkbox("Frustum Culling", frustumCulling))
             renderer.setFrustumCullingEnabled(frustumCulling.get());
 
+        ImBoolean debugCollision = new ImBoolean(renderer.isDebugCollisionVisible());
+
+        if (ImGui.checkbox("Collision Debug", debugCollision))
+            renderer.setDebugCollisionVisible(debugCollision.get());
+
         ImFloat exposure = new ImFloat(renderer.getExposure());
 
         if (ImGui.sliderFloat("Exposure", exposure.getData(), 0.1f, 5.0f, "%.2f"))

@@ -63,6 +63,8 @@ class RenderContext implements RenderCommandContext, Disposable {
             resourceManager.getSkyboxShader(),
             resourceManager.getSkyboxCubeMesh(),
             resourceManager.createEngineShaderProgram("shadow_depth"),
+            resourceManager.createEngineShaderProgram("debug_color"),
+            resourceManager.getSkyboxCubeMesh(),
             directionalShadowMap
         );
     }
