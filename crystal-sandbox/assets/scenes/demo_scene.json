@@ -65,9 +65,12 @@
             "rotationDegrees": [90.0, 0.0, -15.0],
             "tags": ["model", "showcase"],
             "castsShadow": true,
-            "collider": {
-                "halfExtents": [0.75, 1.0, 0.75]
-            }
+            "components": [
+                {
+                    "type": "boxCollider",
+                    "halfExtents": [0.75, 1.0, 0.75]
+                }
+            ]
         },
         {
             "name": "Box Textured",
@@ -75,13 +78,14 @@
             "path": "/external/BoxTextured.glb",
             "position": [2.0, 0.0, -1.0],
             "tags": ["model", "showcase", "rotating"],
-            "collider": {
-                "halfExtents": [0.5, 0.5, 0.5]
-            },
             "components": [
                 {
                     "type": "rotation",
                     "speedRadiansPerSecond": [0.0, 1.0, 0.0]
+                },
+                {
+                    "type": "boxCollider",
+                    "halfExtents": [0.5, 0.5, 0.5]
                 }
             ]
         },
@@ -93,9 +97,12 @@
             "scale": [8.0, 1.0, 8.0],
             "tags": ["environment", "floor"],
             "material": "brick",
-            "collider": {
-                "halfExtents": [4.0, 0.1, 4.0]
-            }
+            "components": [
+                {
+                    "type": "boxCollider",
+                    "halfExtents": [4.0, 0.1, 4.0]
+                }
+            ]
         },
         {
             "name": "Collectible A",
@@ -107,19 +114,20 @@
             "material": "brick",
             "components": [
                 {
+                    "type": "rotation",
+                    "speedRadiansPerSecond": [0.0, 2.0, 0.0]
+                },
+                {
                     "type": "bob",
                     "amplitude": 0.2,
                     "speed": 3.0,
                     "phase": 0.0
                 },
                 {
-                    "type": "rotation",
-                    "speedRadiansPerSecond": [0.0, 2.0, 0.0]
+                    "type": "triggerVolume",
+                    "halfExtents": [0.5, 0.5, 0.5]
                 }
-            ],
-            "trigger": {
-                "halfExtents": [0.5, 0.5, 0.5]
-            }
+            ]
         },
         {
             "name": "Collectible B",
@@ -131,19 +139,20 @@
             "material": "brick",
             "components": [
                 {
+                    "type": "rotation",
+                    "speedRadiansPerSecond": [0.0, 2.0, 0.0]
+                },
+                {
                     "type": "bob",
                     "amplitude": 0.2,
                     "speed": 3.0,
                     "phase": 1.0
                 },
                 {
-                    "type": "rotation",
-                    "speedRadiansPerSecond": [0.0, 2.0, 0.0]
+                    "type": "triggerVolume",
+                    "halfExtents": [0.5, 0.5, 0.5]
                 }
-            ],
-            "trigger": {
-                "halfExtents": [0.5, 0.5, 0.5]
-            }
+            ]
         },
         {
             "name": "Collectible C",
@@ -155,19 +164,20 @@
             "material": "brick",
             "components": [
                 {
+                    "type": "rotation",
+                    "speedRadiansPerSecond": [0.0, 2.0, 0.0]
+                },
+                {
                     "type": "bob",
                     "amplitude": 0.2,
                     "speed": 3.0,
                     "phase": 2.0
                 },
                 {
-                    "type": "rotation",
-                    "speedRadiansPerSecond": [0.0, 2.0, 0.0]
+                    "type": "triggerVolume",
+                    "halfExtents": [0.5, 0.5, 0.5]
                 }
-            ],
-            "trigger": {
-                "halfExtents": [0.5, 0.5, 0.5]
-            }
+            ]
         }
     ]
 }

@@ -20,6 +20,8 @@ public final class SceneComponentRegistry {
             .register(new RotationComponentCodec())
             .register(new BobComponentCodec())
             .register(new OrbitComponentCodec())
+            .register(new BoxColliderComponentCodec())
+            .register(new TriggerVolumeComponentCodec())
             .register(new PointLightComponentCodec())
             .register(new DirectionalLightComponentCodec())
             .register(new KeyframeAnimationComponentCodec());

@@ -5,14 +5,7 @@ import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Transform;
 import com.crystal.engine.scene.animation.TransformKeyframe;
-import com.crystal.engine.scene.collision.BoxCollider;
-import com.crystal.engine.scene.collision.TriggerVolume;
-import com.crystal.engine.scene.component.BobComponent;
-import com.crystal.engine.scene.component.DirectionalLightComponent;
-import com.crystal.engine.scene.component.KeyframeAnimationComponent;
-import com.crystal.engine.scene.component.OrbitComponent;
-import com.crystal.engine.scene.component.PointLightComponent;
-import com.crystal.engine.scene.component.RotationComponent;
+import com.crystal.engine.scene.component.*;
 import com.crystal.engine.scene.source.SceneObjectSource;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.Test;
@@ -36,7 +29,7 @@ class SceneWriterTest {
         Scene scene = new Scene();
 
         SceneObject wall = new SceneObject("Wall", null, null, new Transform())
-            .setBoxCollider(new BoxCollider(1.0f, 2.0f, 3.0f));
+            .addComponent(new BoxColliderComponent(1.0f, 2.0f, 3.0f));
 
         scene.add(wall);
 
@@ -44,12 +37,14 @@ class SceneWriterTest {
 
         SceneDefinition definition = SceneLoader.readDefinition(scenePath);
         SceneDefinition.ObjectDefinition exportedWall = definition.objects.getFirst();
+        SceneDefinition.ComponentDefinition collider = exportedWall.components.getFirst();
 
-        assertEquals(List.of(1.0f, 2.0f, 3.0f), exportedWall.collider.halfExtents);
+        assertEquals("boxCollider", collider.type);
+        assertEquals(List.of(1.0f, 2.0f, 3.0f), collider.halfExtents);
     }
 
     @Test
-    void writeDefinitionRoundTripsColliderDefinitions() {
+    void writeDefinitionRoundTripsColliderComponents() {
         Path scenePath = tempDir.resolve("collider.scene.json");
         SceneDefinition definition = new SceneDefinition();
 
@@ -57,17 +52,20 @@ class SceneWriterTest {
         wall.name = "Wall";
         wall.type = "empty";
 
-        SceneDefinition.ColliderDefinition collider = new SceneDefinition.ColliderDefinition();
+        SceneDefinition.ComponentDefinition collider = new SceneDefinition.ComponentDefinition();
+        collider.type = "boxCollider";
         collider.halfExtents = List.of(1.0f, 2.0f, 3.0f);
-        wall.collider = collider;
+        wall.components = List.of(collider);
 
         definition.objects = List.of(wall);
 
         SceneWriter.writeDefinition(scenePath, definition);
 
         SceneDefinition loaded = SceneLoader.readDefinition(scenePath);
+        SceneDefinition.ComponentDefinition loadedCollider = loaded.objects.getFirst().components.getFirst();
 
-        assertEquals(List.of(1.0f, 2.0f, 3.0f), loaded.objects.getFirst().collider.halfExtents);
+        assertEquals("boxCollider", loadedCollider.type);
+        assertEquals(List.of(1.0f, 2.0f, 3.0f), loadedCollider.halfExtents);
     }
 
     @Test
@@ -169,7 +167,6 @@ class SceneWriterTest {
             .addTag("interactive")
             .setLayerMask(RenderLayers.DEBUG | RenderLayers.EDITOR)
             .setCastsShadow(false)
-            .setTriggerVolume(new TriggerVolume(0.5f, 1.0f, 1.5f))
             .addComponent(new RotationComponent(0.1f, 0.2f, 0.3f))
             .addComponent(new KeyframeAnimationComponent(List.of(
                 new TransformKeyframe(
@@ -184,7 +181,8 @@ class SceneWriterTest {
                     new Vector3f(0.0f, 90.0f, 0.0f),
                     new Vector3f(2.0f, 2.0f, 2.0f)
                 )
-            )).setLoop(false));
+            )).setLoop(false))
+            .addComponent(new TriggerVolumeComponent(0.5f, 1.0f, 1.5f));
 
         SceneObject child = new SceneObject(
             "Child",
@@ -216,9 +214,8 @@ class SceneWriterTest {
         assertTrue(exportedParent.tags.contains("interactive"));
         assertEquals(RenderLayers.DEBUG | RenderLayers.EDITOR, exportedParent.layerMask);
         assertEquals(false, exportedParent.castsShadow);
-        assertEquals(List.of(0.5f, 1.0f, 1.5f), exportedParent.trigger.halfExtents);
 
-        assertEquals(2, exportedParent.components.size());
+        assertEquals(3, exportedParent.components.size());
 
         SceneDefinition.ComponentDefinition rotation = exportedParent.components.get(0);
         assertEquals("rotation", rotation.type);
@@ -236,6 +233,10 @@ class SceneWriterTest {
         assertEquals(List.of(2.0f, 3.0f, 4.0f), animation.keyframes.get(1).position);
         assertEquals(List.of(0.0f, 90.0f, 0.0f), animation.keyframes.get(1).rotationDegrees);
         assertEquals(List.of(2.0f, 2.0f, 2.0f), animation.keyframes.get(1).scale);
+
+        SceneDefinition.ComponentDefinition trigger = exportedParent.components.get(2);
+        assertEquals("triggerVolume", trigger.type);
+        assertEquals(List.of(0.5f, 1.0f, 1.5f), trigger.halfExtents);
 
         assertEquals(1, exportedParent.children.size());
 

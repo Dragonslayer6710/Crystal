@@ -3,9 +3,7 @@ package com.crystal.engine.scene;
 import com.crystal.engine.render.environment.Environment;
 import com.crystal.engine.scene.camera.Camera;
 import com.crystal.engine.scene.collision.BoxCollider;
-import com.crystal.engine.scene.component.CameraComponent;
-import com.crystal.engine.scene.component.DirectionalLightComponent;
-import com.crystal.engine.scene.component.PointLightComponent;
+import com.crystal.engine.scene.component.*;
 import com.crystal.engine.scene.light.DirectionalLight;
 import com.crystal.engine.scene.source.SceneEnvironmentSource;
 import com.crystal.engine.scene.source.SceneMaterialSource;
@@ -238,7 +236,12 @@ public class Scene {
     }
 
     private void findTriggersContaining(SceneObject object, Vector3f point, List<SceneObject> matches) {
-        if (object.hasTriggerVolume() && object.getTriggerVolume().contains(point, object.getTransform()))
+        if (!object.isActive())
+            return;
+
+        TriggerVolumeComponent trigger = object.getComponent(TriggerVolumeComponent.class);
+
+        if (trigger != null && trigger.contains(point))
             matches.add(object);
 
         for (SceneObject child : object.getChildren())
@@ -260,7 +263,9 @@ public class Scene {
         if (!object.isActive())
             return;
 
-        if (object.hasBoxCollider() && object.getBoxCollider().contains(point, object.getTransform()))
+        BoxColliderComponent collider = object.getComponent(BoxColliderComponent.class);
+
+        if (collider != null && collider.contains(point))
             matches.add(object);
 
         for (SceneObject child : object.getChildren())
@@ -288,7 +293,9 @@ public class Scene {
         if (!object.isActive())
             return;
 
-        if (object.hasBoxCollider() && object.getBoxCollider().intersects(collider, object.getTransform(), transform))
+        BoxColliderComponent objectCollider = object.getComponent(BoxColliderComponent.class);
+
+        if (objectCollider != null && objectCollider.intersects(collider, transform))
             matches.add(object);
 
         for (SceneObject child : object.getChildren())

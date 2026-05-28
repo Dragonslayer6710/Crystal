@@ -1,6 +1,7 @@
 package com.crystal.engine.scene;
 
 import com.crystal.engine.scene.collision.BoxCollider;
+import com.crystal.engine.scene.component.BoxColliderComponent;
 import org.joml.Vector3f;
 import org.junit.jupiter.api.Test;
 
@@ -16,11 +17,11 @@ class SceneColliderTest {
         Scene scene = new Scene();
 
         SceneObject parent = object("parent", 0.0f, 0.0f, 0.0f)
-            .setBoxCollider(new BoxCollider(1.0f, 1.0f, 1.0f));
+            .addComponent(new BoxColliderComponent(1.0f, 1.0f, 1.0f));
         SceneObject child = object("child", 2.0f, 0.0f, 0.0f)
-            .setBoxCollider(new BoxCollider(1.0f, 1.0f, 1.0f));
+            .addComponent(new BoxColliderComponent(1.0f, 1.0f, 1.0f));
         SceneObject inactive = object("inactive", 0.0f, 0.0f, 0.0f)
-            .setBoxCollider(new BoxCollider(1.0f, 1.0f, 1.0f))
+            .addComponent(new BoxColliderComponent(1.0f, 1.0f, 1.0f))
             .setActive(false);
 
         parent.addChild(child);
@@ -37,9 +38,9 @@ class SceneColliderTest {
         Scene scene = new Scene();
 
         SceneObject wall = object("wall", 2.0f, 0.0f, 0.0f)
-            .setBoxCollider(new BoxCollider(1.0f, 1.0f, 1.0f));
+            .addComponent(new BoxColliderComponent(1.0f, 1.0f, 1.0f));
         SceneObject inactive = object("inactive", 2.0f, 0.0f, 0.0f)
-            .setBoxCollider(new BoxCollider(1.0f, 1.0f, 1.0f))
+            .addComponent(new BoxColliderComponent(1.0f, 1.0f, 1.0f))
             .setActive(false);
 
         scene.add(wall);
