@@ -25,4 +25,10 @@ public final class TriggerVolume {
     public boolean contains(Vector3f point, Transform transform) {
         return volume.contains(point, transform);
     }
+
+    public boolean intersects(BoxCollider other, Transform transform, Transform otherTransform) {
+        if (other == null) throw new IllegalArgumentException("Other collider cannot be null");
+
+        return volume.intersects(other.getVolume(), transform, otherTransform);
+    }
 }

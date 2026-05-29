@@ -119,7 +119,8 @@ public class Engine implements WindowEventListener, Application {
             context.getScene().update(new SceneUpdateContext(
                 time.getDeltaTime(),
                 input,
-                window
+                window,
+                scene
             ));
             time.setUpdateTimeNanos(System.nanoTime() - updateStart);
 

@@ -14,7 +14,8 @@ import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.Transform;
 import com.crystal.engine.scene.component.CameraComponent;
-import com.crystal.engine.scene.component.FlyCameraComponent;
+import com.crystal.engine.scene.component.CameraLookComponent;
+import com.crystal.engine.scene.component.CharacterControllerComponent;
 import com.crystal.engine.scene.io.SceneLoader;
 import com.crystal.engine.scene.io.SceneWriter;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -54,6 +56,8 @@ public class SandboxMain implements Game {
     private EngineContext ctx;
 
     private Shader sceneShader;
+
+    private CharacterControllerComponent characterController;
 
     private SoundBuffer testSound;
     private SoundSource testSoundSource;
@@ -102,10 +106,11 @@ public class SandboxMain implements Game {
 
             ctx.getScene().replaceWith(loadedScene.scene());
 
-            addSceneCamera();
-
             activeTriggers.clear();
             collectedObjects.clear();
+
+            addPlayerController();
+
             collectibleCount = ctx.getScene().findByTag("collectible").size();
 
             logger.info(
@@ -135,28 +140,38 @@ public class SandboxMain implements Game {
         }
     }
 
-    private void addSceneCamera() {
-        var camera = ctx.getScene().getCamera();
-        var cameraTransform = camera.getTransform();
-        var cameraPosition = cameraTransform.getPosition();
+    private void addPlayerController() {
+        Transform controllerTransform = createPlayerControllerTransform();
 
-        Transform sceneCameraTransform = new Transform()
-            .setPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z)
-            .setRotation(cameraTransform.getRotationQuat());
+        CameraComponent cameraComponent = new CameraComponent(ctx.getScene().getCamera());
 
-        CameraComponent cameraComponent = new CameraComponent(camera);
+        characterController = new CharacterControllerComponent()
+            .setMoveSpeed(1.0f)
+            .setSprintMultiplier(2.0f)
+            .setHalfExtents(0.25f, 0.75f, 0.25f);
 
         SceneObject cameraController = new SceneObject(
-            "Scene Camera", null, null, sceneCameraTransform
+            "Player Controller",
+            null,
+            null,
+            controllerTransform
         )
-            .addComponent(new FlyCameraComponent()
-                .setMoveSpeed(1.0f)
-                .setSprintMultiplier(2.0f)
-                .setFlying(false))
+            .addComponent(new CameraLookComponent())
+            .addComponent(characterController)
             .addComponent(cameraComponent);
 
         ctx.getScene().setActiveCamera(cameraComponent);
         ctx.getScene().add(cameraController);
+    }
+
+    private Transform createPlayerControllerTransform() {
+        var camera = ctx.getScene().getCamera();
+        var cameraTransform = camera.getTransform();
+        var cameraPosition = cameraTransform.getPosition();
+
+        return new Transform()
+            .setPosition(cameraPosition.x, cameraPosition.y, cameraPosition.z)
+            .setRotation(cameraTransform.getRotationQuat());
     }
 
     private void logSceneDiagnostics() {
@@ -224,11 +239,18 @@ public class SandboxMain implements Game {
             renderer.cycleDebugViewMode();
     }
 
-    private void updateTriggerDiagnostics() {
-        var cameraPosition = ctx.getScene().getCamera().getTransform().getWorldPosition();
+    private List<SceneObject> currentTriggerIntersections() {
+        if (characterController == null || characterController.getOwner() == null)
+            return List.of();
 
-        Set<String> currentTriggers = ctx.getScene()
-            .findTriggersContaining(cameraPosition)
+        return ctx.getScene().findTriggersIntersecting(
+            characterController.getCollider(),
+            characterController.getOwner().getTransform()
+        );
+    }
+
+    private void updateTriggerDiagnostics() {
+        Set<String> currentTriggers = currentTriggerIntersections()
             .stream()
             .map(SceneObject::getName)
             .collect(Collectors.toSet());
@@ -248,10 +270,7 @@ public class SandboxMain implements Game {
     }
 
     private void updateCollectibles() {
-        var cameraPosition = ctx.getScene().getCamera().getTransform().getWorldPosition();
-
-        var collectibles = ctx.getScene()
-            .findTriggersContaining(cameraPosition)
+        var collectibles = currentTriggerIntersections()
             .stream()
             .filter(object -> object.hasTag("collectible"))
             .toList();

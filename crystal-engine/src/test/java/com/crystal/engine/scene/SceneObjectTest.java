@@ -303,7 +303,7 @@ class SceneObjectTest {
     }
 
     private static SceneUpdateContext context(double deltaTime) {
-        return new SceneUpdateContext(deltaTime, new Input(), new Window(new WindowConfig()));
+        return new SceneUpdateContext(deltaTime, new Input(), new Window(new WindowConfig()), new Scene());
     }
 
     private static class TestComponent extends SceneComponent {

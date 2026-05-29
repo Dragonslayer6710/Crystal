@@ -13,6 +13,7 @@ public class FlyCameraComponent extends SceneComponent {
     private float sprintMultiplier = 2.0f;
     private float mouseSensitivity = 0.002f;
     private boolean flying = false;
+    private boolean movementEnabled = true;
 
     private final InputMap inputMap = new InputMap();
 
@@ -41,7 +42,9 @@ public class FlyCameraComponent extends SceneComponent {
             return;
 
         look(context);
-        move(context);
+
+        if (movementEnabled)
+            move(context);
     }
 
     public FlyCameraComponent setMoveSpeed(float moveSpeed) {
@@ -71,6 +74,15 @@ public class FlyCameraComponent extends SceneComponent {
     public FlyCameraComponent setFlying(boolean flying) {
         this.flying = flying;
         return this;
+    }
+
+    public FlyCameraComponent setMovementEnabled(boolean movementEnabled) {
+        this.movementEnabled = movementEnabled;
+        return this;
+    }
+
+    public boolean isMovementEnabled() {
+        return movementEnabled;
     }
 
     private void look(SceneUpdateContext context) {

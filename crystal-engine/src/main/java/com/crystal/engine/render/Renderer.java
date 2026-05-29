@@ -11,6 +11,7 @@ import com.crystal.engine.scene.Scene;
 import com.crystal.engine.render.shader.Shader;
 import com.crystal.engine.render.shadow.ShadowMap;
 import com.crystal.engine.scene.component.BoxColliderComponent;
+import com.crystal.engine.scene.component.CharacterControllerComponent;
 import com.crystal.engine.scene.component.TriggerVolumeComponent;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -350,6 +351,18 @@ public class Renderer implements Disposable {
                 trigger.getHalfExtents(),
                 material,
                 new Vector3f(1.0f, 0.85f, 0.1f)
+            );
+        }
+
+        for (CharacterControllerComponent controller : scene.findComponents(CharacterControllerComponent.class)) {
+            if (controller.getOwner() == null || !controller.getOwner().isActive())
+                continue;
+
+            submitDebugBox(
+                controller.getOwner(),
+                controller.getHalfExtents(),
+                material,
+                new Vector3f(0.2f, 1.0f, 0.35f)
             );
         }
     }

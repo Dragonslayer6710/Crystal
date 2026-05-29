@@ -1,6 +1,7 @@
 package com.crystal.engine.scene.component;
 
 import com.crystal.engine.input.Input;
+import com.crystal.engine.scene.Scene;
 import com.crystal.engine.scene.SceneObject;
 import com.crystal.engine.scene.SceneUpdateContext;
 import com.crystal.engine.scene.Transform;
@@ -50,6 +51,7 @@ class PointLightComponentTest {
     }
 
     private static SceneUpdateContext context(double deltaTime) {
-        return new SceneUpdateContext(deltaTime, new Input(), new Window(new WindowConfig()));
+        return new SceneUpdateContext(deltaTime, new Input(), new Window(new WindowConfig()), new Scene());
     }
 }
+

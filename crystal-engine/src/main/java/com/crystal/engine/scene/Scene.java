@@ -248,6 +248,36 @@ public class Scene {
             findTriggersContaining(child, point, matches);
     }
 
+    public List<SceneObject> findTriggersIntersecting(BoxCollider collider, Transform transform) {
+        if (collider == null) throw new IllegalArgumentException("Collider cannot be null");
+        if (transform == null) throw new IllegalArgumentException("Transform cannot be null");
+
+        List<SceneObject> matches = new ArrayList<>();
+
+        for (SceneObject object : rootObjects)
+            findTriggersIntersecting(object, collider, transform, matches);
+
+        return matches;
+    }
+
+    private void findTriggersIntersecting(
+        SceneObject object,
+        BoxCollider collider,
+        Transform transform,
+        List<SceneObject> matches
+    ) {
+        if (!object.isActive())
+            return;
+
+        TriggerVolumeComponent trigger = object.getComponent(TriggerVolumeComponent.class);
+
+        if (trigger != null && trigger.getTriggerVolume().intersects(collider, object.getTransform(), transform))
+            matches.add(object);
+
+        for (SceneObject child : object.getChildren())
+            findTriggersIntersecting(child, collider, transform, matches);
+    }
+
     public List<SceneObject> findCollidersContaining(Vector3f point) {
         if (point == null) throw new IllegalArgumentException("Point cannot be null");
 

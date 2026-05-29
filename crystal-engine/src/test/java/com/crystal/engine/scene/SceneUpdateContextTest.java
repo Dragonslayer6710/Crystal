@@ -15,12 +15,14 @@ class SceneUpdateContextTest {
     void storesFrameServicesForComponents() {
         Input input = new Input();
         Window window = new Window(new WindowConfig());
+        Scene scene = new Scene();
 
-        SceneUpdateContext context = new SceneUpdateContext(0.25, input, window);
+        SceneUpdateContext context = new SceneUpdateContext(0.25, input, window, scene);
 
         assertEquals(0.25, context.getDeltaTime());
         assertSame(input, context.getInput());
         assertSame(window, context.getWindow());
+        assertSame(scene, context.getScene());
     }
 
     @Test
@@ -29,7 +31,7 @@ class SceneUpdateContextTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new SceneUpdateContext(0.25, null, window)
+                () -> new SceneUpdateContext(0.25, null, window, new Scene())
         );
     }
 
@@ -39,7 +41,18 @@ class SceneUpdateContextTest {
 
         assertThrows(
                 IllegalArgumentException.class,
-                () -> new SceneUpdateContext(0.25, input, null)
+                () -> new SceneUpdateContext(0.25, input, null, new Scene())
+        );
+    }
+
+    @Test
+    void rejectsNullScene() {
+        Input input = new Input();
+        Window window = new Window(new WindowConfig());
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new SceneUpdateContext(0.25, input, window, null)
         );
     }
 }

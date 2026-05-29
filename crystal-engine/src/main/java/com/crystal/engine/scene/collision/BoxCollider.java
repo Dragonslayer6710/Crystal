@@ -7,7 +7,8 @@ public final class BoxCollider {
 
     private final BoxVolume volume = new BoxVolume();
 
-    public BoxCollider() {}
+    public BoxCollider() {
+    }
 
     public BoxCollider(float halfWidth, float halfHeight, float halfDepth) {
         setHalfExtents(halfWidth, halfHeight, halfDepth);
@@ -15,6 +16,10 @@ public final class BoxCollider {
 
     public Vector3f getHalfExtents() {
         return volume.getHalfExtents();
+    }
+
+    BoxVolume getVolume() {
+        return volume;
     }
 
     public BoxCollider setHalfExtents(float halfWidth, float halfHeight, float halfDepth) {
