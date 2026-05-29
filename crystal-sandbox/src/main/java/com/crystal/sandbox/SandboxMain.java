@@ -37,6 +37,17 @@ public class SandboxMain implements Game {
 
     private static final boolean AUDIO_ENABLED = false;
 
+    private static final float PLAYER_MOVE_SPEED = 1.0f;
+    private static final float PLAYER_SPRINT_MULTIPLIER = 2.0f;
+
+    private static final float PLAYER_HALF_WIDTH = 0.25f;
+    private static final float PLAYER_HALF_HEIGHT = 0.75f;
+    private static final float PLAYER_HALF_DEPTH = 0.25f;
+
+    private static final float PLAYER_COLLIDER_CENTER_X = 0.0f;
+    private static final float PLAYER_COLLIDER_CENTER_Y = -0.75f;
+    private static final float PLAYER_COLLIDER_CENTER_Z = 0.0f;
+
     private final Set<String> activeTriggers = new HashSet<>();
 
     private final Set<String> collectedObjects = new HashSet<>();
@@ -146,9 +157,14 @@ public class SandboxMain implements Game {
         CameraComponent cameraComponent = new CameraComponent(ctx.getScene().getCamera());
 
         characterController = new CharacterControllerComponent()
-            .setMoveSpeed(1.0f)
-            .setSprintMultiplier(2.0f)
-            .setHalfExtents(0.25f, 0.75f, 0.25f);
+            .setMoveSpeed(PLAYER_MOVE_SPEED)
+            .setSprintMultiplier(PLAYER_SPRINT_MULTIPLIER)
+            .setHalfExtents(PLAYER_HALF_WIDTH, PLAYER_HALF_HEIGHT, PLAYER_HALF_DEPTH)
+            .setColliderCenterOffset(
+                PLAYER_COLLIDER_CENTER_X,
+                PLAYER_COLLIDER_CENTER_Y,
+                PLAYER_COLLIDER_CENTER_Z
+            );
 
         SceneObject cameraController = new SceneObject(
             "Player Controller",

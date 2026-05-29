@@ -360,11 +360,37 @@ public class Renderer implements Disposable {
 
             submitDebugBox(
                 controller.getOwner(),
+                controller.getColliderCenterOffset(),
                 controller.getHalfExtents(),
                 material,
                 new Vector3f(0.2f, 1.0f, 0.35f)
             );
         }
+    }
+
+    private void submitDebugBox(
+        SceneObject owner,
+        Vector3f centerOffset,
+        Vector3f halfExtents,
+        Material material,
+        Vector3f color
+    ) {
+        var position = owner.getTransform().getWorldPosition();
+
+        Matrix4f model = new Matrix4f()
+            .translate(
+                position.x + centerOffset.x,
+                position.y + centerOffset.y,
+                position.z + centerOffset.z
+            )
+            .scale(halfExtents.x * 2.0f, halfExtents.y * 2.0f, halfExtents.z * 2.0f);
+
+        debugQueue.submit(new DrawDebugBoxCommand(
+            context.getResources().getDebugCubeMesh(),
+            material,
+            model,
+            color
+        ));
     }
 
     private void submitDebugBox(SceneObject owner, Vector3f halfExtents, Material material, Vector3f color) {

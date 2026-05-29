@@ -5,6 +5,7 @@ import com.crystal.engine.input.action.InputAction;
 import com.crystal.engine.input.action.InputMap;
 import com.crystal.engine.scene.SceneComponent;
 import com.crystal.engine.scene.SceneUpdateContext;
+
 import com.crystal.engine.scene.collision.BoxCollider;
 import com.crystal.engine.scene.collision.CollisionMovement;
 import org.joml.Vector3f;
@@ -12,6 +13,9 @@ import org.joml.Vector3f;
 public class CharacterControllerComponent extends SceneComponent {
 
     private final BoxCollider collider = new BoxCollider(0.25f, 0.75f, 0.25f);
+
+    private final Vector3f colliderCenterOffset = new Vector3f(0.0f, -0.75f, 0.0f);
+
     private final InputMap inputMap = new InputMap();
 
     private float moveSpeed = 2.0f;
@@ -40,8 +44,20 @@ public class CharacterControllerComponent extends SceneComponent {
         return collider.getHalfExtents();
     }
 
+    public Vector3f getColliderCenterOffset() {
+        return new Vector3f(colliderCenterOffset);
+    }
+
     public CharacterControllerComponent setHalfExtents(float halfWidth, float halfHeight, float halfDepth) {
         collider.setHalfExtents(halfWidth, halfHeight, halfDepth);
+        return this;
+    }
+
+    public CharacterControllerComponent setColliderCenterOffset(float x, float y, float z) {
+        if (!Float.isFinite(x) || !Float.isFinite(y) || !Float.isFinite(z))
+            throw new IllegalArgumentException("Collider center offset values must be finite");
+
+        colliderCenterOffset.set(x, y, z);
         return this;
     }
 
@@ -76,6 +92,7 @@ public class CharacterControllerComponent extends SceneComponent {
             getOwner(),
             collider,
             getOwner().getTransform(),
+            colliderCenterOffset,
             desiredMovement
         );
     }
@@ -109,4 +126,5 @@ public class CharacterControllerComponent extends SceneComponent {
 
         return movement.normalize().mul(speed);
     }
+
 }
